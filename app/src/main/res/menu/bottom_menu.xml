@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/menu_despensa"
+        android:icon="@drawable/ic_weekend_black_24dp"
+        android:title="@string/despensa_string"
+        />
+    <item android:id="@+id/menu_home"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/principal_string"
+        />
+    <item android:id="@+id/menu_listas"
+        android:icon="@drawable/ic_lista"
+        android:title="@string/listas_string"
+        />
+    <item android:id="@+id/menu_productos"
+        android:icon="@drawable/ic_productos"
+        android:title="@string/productos_string"
+        />
+    <item android:id="@+id/menu_recetas"
+        android:icon="@drawable/ic_recetas"
+        android:title="@string/recetas_string"/>
+
+
+</menu>

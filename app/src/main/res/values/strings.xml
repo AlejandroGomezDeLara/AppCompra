@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">AppCompra</string>
+    <string name="despensa_string">Despensa</string>
+    <string name="principal_string">Principal</string>
+    <string name="listas_string">Listas</string>
+    <string name="recetas_string">Recetas</string>
+    <string name="productos_string">Productos</string>
+
+</resources>
