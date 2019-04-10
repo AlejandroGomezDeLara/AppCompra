@@ -5,13 +5,14 @@
         android:icon="@drawable/ic_weekend_black_24dp"
         android:title="@string/despensa_string"
         />
-    <item android:id="@+id/menu_home"
-        android:icon="@drawable/ic_home_black_24dp"
-        android:title="@string/principal_string"
-        />
+
     <item android:id="@+id/menu_listas"
         android:icon="@drawable/ic_lista"
         android:title="@string/listas_string"
+        />
+    <item android:id="@+id/menu_home"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/principal_string"
         />
     <item android:id="@+id/menu_productos"
         android:icon="@drawable/ic_productos"

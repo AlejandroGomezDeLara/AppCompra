@@ -19,8 +19,8 @@ public class MenuAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int i) {
         switch (i){
             case 0: return new DespensaFragment();
-            case 1: return new PrincipalFragment();
-            case 2: return new ListasFragment();
+            case 1: return new ListasFragment();
+            case 2: return new PrincipalFragment();
             case 3: return new ProductosFragment();
             case 4: return new RecetasFragment();
         }

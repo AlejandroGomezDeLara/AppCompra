@@ -24,9 +24,6 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
-        myToolbar.setTitle("Principal");
         viewPager=(ViewPager)findViewById(R.id.viewPager);
         MenuAdapter adapter=new MenuAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
@@ -70,10 +67,10 @@ public class MainActivity extends AppCompatActivity{
                         case R.id.menu_despensa:
                             viewPager.setCurrentItem(0);
                             break;
-                        case R.id.menu_home:
+                        case R.id.menu_listas:
                             viewPager.setCurrentItem(1);
                             break;
-                        case R.id.menu_listas:
+                        case R.id.menu_home:
                             viewPager.setCurrentItem(2);
                             break;
                         case R.id.menu_productos:
