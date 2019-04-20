@@ -28,7 +28,6 @@
         android:layout_height="54dp"
         app:menu="@menu/bottom_menu"
         android:layout_alignParentBottom="true"
-        app:itemTextColor="?attr/colorPrimary"
         android:background="@color/navMenuBackgroundColor"/>
 
 
