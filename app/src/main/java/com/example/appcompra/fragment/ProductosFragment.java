@@ -6,84 +6,83 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.example.appcompra.R;
-import com.example.appcompra.adapters.MenuAdapter;
+import com.example.appcompra.clases.Producto;
+import com.example.appcompra.adapters.ProductoAdapter;
+import java.util.ArrayList;
 
 public class ProductosFragment extends Fragment {
-    ViewPager viewPager;
-    MenuItem prevMenuItem;
-    BottomNavigationView menu;
-
+    protected ArrayList<Producto> productos;
+    protected RecyclerView recyclerView;
+    protected ProductoAdapter adapter;
+    ProgressBar loadingIndicator;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_productos, container, false);
-        viewPager = (ViewPager) getActivity().findViewById(R.id.viewPager);
-        MenuAdapter adapter = new MenuAdapter(getActivity().getSupportFragmentManager());
-        viewPager.setAdapter(adapter);
-        //menu de abajo
-        menu = getActivity().findViewById(R.id.menu_bottom);
-        menu.setOnNavigationItemSelectedListener(navListener);
-        menu.getMenu().getItem(4).setChecked(true);
-
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                if (prevMenuItem != null) {
-                    prevMenuItem.setChecked(false);
-                } else {
-                    menu.getMenu().getItem(0).setChecked(false);
-                }
-                menu.getMenu().getItem(position).setChecked(true);
-                prevMenuItem = menu.getMenu().getItem(position);
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-            }
-        });
-
-        viewPager.setCurrentItem(1);
+        loadingIndicator = view.findViewById(R.id.loading_indicator);
+        recyclerView=view.findViewById(R.id.recyclerView);
+        productos=new ArrayList<>();
+        productos.add(new Producto("Cocacola",0));
+        productos.add(new Producto("Cereales",0));
+        productos.add(new Producto("Pescado",0));
+        updateUI(productos);
+        updateEditTextFiltrar(view);
         return view;
     }
+    private void updateEditTextFiltrar(View view){
+        EditText editText=view.findViewById(R.id.editText);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+            }
 
-    BottomNavigationView.OnNavigationItemSelectedListener navListener =
-            new BottomNavigationView.OnNavigationItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                    switch (menuItem.getItemId()) {
-                        case R.id.menu_despensa:
-                            viewPager.setCurrentItem(0);
-                            break;
-                        case R.id.menu_listas:
-                            viewPager.setCurrentItem(1);
-                            break;
-                        case R.id.menu_home:
-                            viewPager.setCurrentItem(2);
-                            break;
-                        case R.id.menu_productos:
-                            viewPager.setCurrentItem(3);
-                            break;
-                        case R.id.menu_recetas:
-                            viewPager.setCurrentItem(4);
-                            break;
-                    }
-                    return false;
-                }
-            };
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-    public void onResume(){
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                filtrar(s.toString());
+            }
+        });
+    }
+
+    public void onResume() {
         super.onResume();
+    }
+
+    private void filtrar(String contenidoEditText){
+        ArrayList<Producto> lista=new ArrayList<>();
+        for (Producto item:productos){
+            if(item.getNombre().toLowerCase().contains(contenidoEditText.toLowerCase())){
+                lista.add(item);
+            }
+        }
+        adapter.filtrarLista(lista);
+    }
+    private void updateUI(ArrayList<Producto> m){
+        /*productos.clear();
+        productos.addAll(m);
+        */
+        adapter=new ProductoAdapter(m, getActivity(), R.layout.item_row_productos, getActivity());
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 }

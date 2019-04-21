@@ -1,8 +1,11 @@
 package com.example.appcompra;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,25 +16,86 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.appcompra.adapters.MenuAdapter;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    ViewPager viewPager;
+    MenuItem prevMenuItem;
+    BottomNavigationView menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login);
-        /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setContentView(R.layout.activity_main);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);*/
+        navigationView.setNavigationItemSelectedListener(this);
+
+        viewPager = (ViewPager) findViewById(R.id.viewPager);
+        MenuAdapter adapter = new MenuAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(adapter);
+        //menu de abajo
+        menu = findViewById(R.id.menu_bottom);
+        menu.setOnNavigationItemSelectedListener(navListener);
+        menu.getMenu().getItem(3).setChecked(true);
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (prevMenuItem != null) {
+                    prevMenuItem.setChecked(false);
+                } else {
+                    menu.getMenu().getItem(0).setChecked(false);
+                }
+                menu.getMenu().getItem(position).setChecked(true);
+                prevMenuItem = menu.getMenu().getItem(position);
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
+
+        viewPager.setCurrentItem(2);
     }
+
+    BottomNavigationView.OnNavigationItemSelectedListener navListener =
+            new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                    switch (menuItem.getItemId()) {
+                        case R.id.menu_despensa:
+                            viewPager.setCurrentItem(0);
+                            break;
+                        case R.id.menu_listas:
+                            viewPager.setCurrentItem(1);
+                            break;
+                        case R.id.menu_home:
+                            viewPager.setCurrentItem(2);
+                            break;
+                        case R.id.menu_productos:
+                            viewPager.setCurrentItem(3);
+                            break;
+                        case R.id.menu_recetas:
+                            viewPager.setCurrentItem(4);
+                            break;
+                    }
+                    return false;
+                }
+            };
 
     @Override
     public void onBackPressed() {
