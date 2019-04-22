@@ -118,7 +118,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="or" />
+                    android:text="o" />
 
                 <View
                     android:layout_width="0dp"
@@ -135,7 +135,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:background="@drawable/button_background"
-                android:text="REGISTRARSE" />
+                android:text="REGISTRATE" />
 
         </LinearLayout>
     </LinearLayout>
