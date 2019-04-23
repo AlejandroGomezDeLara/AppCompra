@@ -20,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -34,8 +35,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -270,13 +270,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
 
             try {
-                socket=new Socket("localhost",7777);
-                in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                out=new PrintWriter(socket.getOutputStream());
-                out.println(mEmail+":"+mPassword);
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
+                DatagramSocket socket=new DatagramSocket();
+                byte[] buf = new byte[1500];
+                String paquete="L:"+mEmail+":"+mPassword;
+                buf= paquete.getBytes();
+                InetAddress address = InetAddress.getByName("192.168.1.140");
+                DatagramPacket packetToSend = new DatagramPacket(buf, buf.length, address, 7777);
+                socket.send(packetToSend);
+                DatagramPacket packetToReceive = new DatagramPacket(buf, buf.length);
+                socket.receive(packetToReceive);
+                String received = new String(packetToReceive.getData(), 0, packetToReceive.getLength());
+                System.out.println(received);
+                socket.close();
+
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -301,7 +307,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
+                Intent intent=new Intent(LoginActivity.this,MainActivity.class);
                 finish();
+                startActivity(intent);
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
