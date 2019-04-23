@@ -100,6 +100,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(LoginActivity.this,RegisterActivity.class);
+                finish();
                 startActivity(intent);
             }
         });
@@ -274,13 +275,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 byte[] buf = new byte[1500];
                 String paquete="L:"+mEmail+":"+mPassword;
                 buf= paquete.getBytes();
-                InetAddress address = InetAddress.getByName("192.168.1.140");
+                InetAddress address = InetAddress.getByName("192.168.1.135");
                 DatagramPacket packetToSend = new DatagramPacket(buf, buf.length, address, 7777);
                 socket.send(packetToSend);
+                /*
                 DatagramPacket packetToReceive = new DatagramPacket(buf, buf.length);
                 socket.receive(packetToReceive);
                 String received = new String(packetToReceive.getData(), 0, packetToReceive.getLength());
                 System.out.println(received);
+                */
                 socket.close();
 
             } catch (UnknownHostException e) {

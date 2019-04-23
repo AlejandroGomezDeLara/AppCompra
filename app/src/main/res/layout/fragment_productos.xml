@@ -16,7 +16,7 @@
         android:background="@drawable/edit_text_background"
         android:drawableLeft="@drawable/ic_search_black_24dp"
         android:drawablePadding="5dp"
-        android:drawableTint="@color/backgroundColor"
+        android:drawableTint="@color/navMenuBackgroundColor"
         android:hint="Buscar productos"
         android:padding="10dp"
         android:layout_marginHorizontal="10dp"
@@ -70,7 +70,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_margin="22dp"
                 android:background="@drawable/ic_lista"
-                android:backgroundTint="@color/menuBackgroundColor"
+                android:backgroundTint="@color/navMenuBackgroundColor"
                 />
         </RelativeLayout>
     </LinearLayout>

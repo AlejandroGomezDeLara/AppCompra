@@ -82,6 +82,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(RegisterActivity.this,LoginActivity.class);
+                finish();
                 startActivity(intent);
             }
         });
