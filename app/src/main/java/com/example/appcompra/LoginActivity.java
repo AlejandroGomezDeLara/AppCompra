@@ -256,9 +256,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         private final String mEmail;
         private final String mPassword;
-        private Socket socket=null;
-        private BufferedReader in;
-        private PrintWriter out;
         public boolean terminado;
 
         UserLoginTask(String email, String password) {

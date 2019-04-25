@@ -77,6 +77,7 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
         }
     }
     public String corregirNombre(String nombre){
+        nombre=nombre.toLowerCase();
         if(nombre.indexOf("_")>-1 || nombre.indexOf(" ")>-1){
             if(nombre.indexOf("_")>-1)
                 nombre=nombre.substring(0,nombre.indexOf("_"))+"...";

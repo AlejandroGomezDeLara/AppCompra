@@ -31,15 +31,9 @@ public class ProductosFragment extends Fragment {
         loadingIndicator = view.findViewById(R.id.loading_indicator);
         recyclerView=view.findViewById(R.id.recyclerView);
         productos=new ArrayList<>();
-        productos.add(new TipoProducto("Cocacola",getContext()));
-        productos.add(new TipoProducto("brocoli",getContext()));
-        productos.add(new TipoProducto("tomate",getContext()));
-        productos.add(new TipoProducto("pinia",getContext()));
-        productos.add(new TipoProducto("peluche",getContext()));
-        productos.add(new TipoProducto("diente",getContext()));
-        productos.add(new TipoProducto("champinion",getContext()));
-        productos.add(new TipoProducto("vinagre",getContext()));
-        productos.add(new TipoProducto("patatas fritas",getContext()));
+        productos.add(new TipoProducto("Vinagre","Ingredientes",getContext()));
+        productos.add(new TipoProducto("Tomate","Verduras",getContext()));
+
 
 
         updateUI(productos);
