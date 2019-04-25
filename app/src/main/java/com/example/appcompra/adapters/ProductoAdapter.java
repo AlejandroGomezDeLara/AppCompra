@@ -49,7 +49,10 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull final ProductoAdapter.ViewHolder viewHolder,final int i) {
         final TipoProducto producto=productos.get(i);
-        viewHolder.nombre.setText(corregirNombre(producto.getNombre()));
+        if(producto.getNombre().contains("niio"))
+            viewHolder.nombre.setText(corregirNombre(producto.getNombre().replaceAll("niio","ñ")));
+        else
+            viewHolder.nombre.setText(corregirNombre(producto.getNombre()));
         if(producto.getImagen()==0){
             viewHolder.imagen.setImageResource(R.drawable.interrogacion);
         }else{
@@ -73,17 +76,23 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             nombre=itemView.findViewById(R.id.nombre_producto);
+
             imagen=itemView.findViewById(R.id.imagen_producto);
         }
     }
     public String corregirNombre(String nombre){
-        nombre=nombre.toLowerCase();
+        if(nombre.contains("niio")){
+            nombre.replaceAll("niio","ñ");
+        }
         if(nombre.indexOf("_")>-1 || nombre.indexOf(" ")>-1){
             if(nombre.indexOf("_")>-1)
                 nombre=nombre.substring(0,nombre.indexOf("_"))+"...";
             else if(nombre.indexOf(" ")>-1)
                 nombre=nombre.substring(0,nombre.indexOf(" "))+"...";
 
+        }
+        if(nombre.length()>8){
+            nombre=nombre.substring(0,7)+"...";
         }
         return nombre;
     }

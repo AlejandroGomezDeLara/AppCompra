@@ -33,7 +33,13 @@ public class ProductosFragment extends Fragment {
         productos=new ArrayList<>();
         productos.add(new TipoProducto("Vinagre","Ingredientes",getContext()));
         productos.add(new TipoProducto("Tomate","Verduras",getContext()));
-
+        productos.add(new TipoProducto("Calzoncillos","ropa",getContext()));
+        productos.add(new TipoProducto("crema de cacao","comida",getContext()));
+        productos.add(new TipoProducto("Destornillador","ropa",getContext()));
+        productos.add(new TipoProducto("platano sos","ropa",getContext()));
+        productos.add(new TipoProducto("fresa con piña","ropa",getContext()));
+        productos.add(new TipoProducto("piña","ropa",getContext()));
+        productos.add(new TipoProducto("bañera","ropa",getContext()));
 
 
         updateUI(productos);

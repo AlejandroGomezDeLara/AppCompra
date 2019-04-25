@@ -9,7 +9,7 @@ public class Producto {
     public int imagen;
 
     public Producto(String nombre, String categoria, Context context) {
-        this.nombre = nombre;
+        this.nombre = corregirNombre(nombre);
         this.categoria = categoria;
         this.context = context;
     }
@@ -46,5 +46,11 @@ public class Producto {
         this.context = context;
     }
 
-
+    public String corregirNombre(String nombre){
+        if(nombre.contains("ñ")){
+            return nombre.replaceAll("ñ","niio");
+        }else{
+            return nombre;
+        }
+    }
 }
