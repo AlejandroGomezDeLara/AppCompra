@@ -26,17 +26,25 @@
             android:layout_gravity="center_horizontal"
             android:layout_height="52dp"
             android:tint="@color/backgroundColor"/>
-        <TextView
-            android:id="@+id/nombre_producto"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:maxLines="2"
-            android:layout_marginHorizontal="8dp"
-            android:layout_gravity="center_horizontal"
-            android:text="Fresas con piña"
-            android:textStyle="bold"
-            android:textSize="14dp"
-            android:textColor="@color/backgroundColor"/>
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/nombre_producto"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:maxLines="2"
+                android:layout_marginHorizontal="8dp"
+                android:gravity="center_vertical"
+                android:layout_gravity="center_horizontal"
+                android:text="Fresas con"
+                android:textStyle="bold"
+                android:textSize="14dp"
+                android:textColor="@color/backgroundColor"/>
+        </LinearLayout>
+
+
     </LinearLayout>
 
 </android.support.v7.widget.CardView>

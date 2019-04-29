@@ -19,7 +19,6 @@
             android:id="@+id/imagen_producto"
             android:layout_width="58dp"
             android:layout_height="58dp"
-            android:src="@drawable/brocoli"
             android:tint="@color/backgroundColor"
             android:layout_gravity="center_vertical"
             android:layout_marginRight="4dp"/>

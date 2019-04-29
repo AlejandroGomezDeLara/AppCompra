@@ -38,21 +38,11 @@ public class ProductosFragment extends Fragment {
         return view;
     }
     public void rellenarProductos(){
-        productos.add(new TipoProducto("Vinagre","Ingredientes"));
-        productos.add(new TipoProducto("Tomate","Verduras"));
-        productos.add(new TipoProducto("Calzoncillos","ropa"));
-        productos.add(new TipoProducto("crema de cacao","comida"));
-        productos.add(new TipoProducto("Destornillador","ropa"));
-        productos.add(new TipoProducto("platano sos","ropa"));
-        productos.add(new TipoProducto("fresa con piña","ropa"));
-        productos.add(new TipoProducto("piña","ropa"));
-        productos.add(new TipoProducto("bañera","ropa"));
-        productos.add(new TipoProducto("Agua","Comida"));
-        productos.add(new TipoProducto("botella de agua","Comida"));
-        productos.add(new TipoProducto("botella de cocacola","Comida"));
-        productos.add(new TipoProducto("chaqueta","Ropa"));
-        productos.add(new TipoProducto("vestido","Ropa"));
-        productos.add(new TipoProducto("macarrones","comida"));
+        productos.add(new TipoProducto("Vinagre","Ingredientes",getContext()));
+        productos.add(new TipoProducto("Tomate","Verduras",getContext()));
+        productos.add(new TipoProducto("fideos","Verduras",getContext()));
+        productos.add(new TipoProducto("fresa con piña","Verduras",getContext()));
+
     }
     private void updateEditTextFiltrar(View view){
         EditText editText=view.findViewById(R.id.editText);

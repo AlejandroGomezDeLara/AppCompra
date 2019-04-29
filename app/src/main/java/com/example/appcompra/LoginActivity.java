@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -261,10 +262,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             try {
                 DatagramSocket socket=new DatagramSocket();
                 byte[] buf = new byte[1500];
-                String paquete=Constants.LOGIN_CARACTERS_SEND +mEmail+Constants.SEPARATOR+mPassword;
+                String paquete=Constants.LOGIN_CARACTERS_SEND+Constants.SEPARATOR+mEmail+Constants.SEPARATOR+mPassword;
                 buf= paquete.getBytes();
                 InetAddress address = InetAddress.getByName(Constants.IP_SERVER);
-                DatagramPacket packetToSend = new DatagramPacket(buf, buf.length, address, 7777);
+                DatagramPacket packetToSend = new DatagramPacket(buf, buf.length, address, Constants.PORT);
                 socket.send(packetToSend);
                 /*
                 DatagramPacket packetToReceive = new DatagramPacket(buf, buf.length);

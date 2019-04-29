@@ -52,7 +52,7 @@ public class DespensaAdapter extends RecyclerView.Adapter<DespensaAdapter.ViewHo
     public void onBindViewHolder(@NonNull final DespensaAdapter.ViewHolder viewHolder,final int i) {
         final Producto producto=productos.get(i);
         viewHolder.nombre.setText(producto.getNombre());
-        viewHolder.imagen.setBackgroundResource(producto.getImagen());
+        viewHolder.imagen.setImageResource(producto.getImagen());
     }
 
 

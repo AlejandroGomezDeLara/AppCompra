@@ -17,7 +17,7 @@ public class Producto {
         this.seleccionado = seleccionado;
     }
 
-    public Producto(String nombre, String categoria) {
+    public Producto(String nombre, String categoria,Context context) {
         this.nombre = corregirNombre(nombre);
         this.categoria = categoria;
         this.context = context;
