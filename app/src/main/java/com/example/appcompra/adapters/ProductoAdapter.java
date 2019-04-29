@@ -6,7 +6,9 @@ import android.content.res.ColorStateList;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.ImageViewCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +60,23 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
         }else{
             viewHolder.imagen.setImageResource(producto.getImagen());
         }
+        viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(producto.isSeleccionado()){
+                    producto.setSeleccionado(false);
+                }else {
+                    producto.setSeleccionado(true);
+                }
+                if(producto.isSeleccionado()){
+                    viewHolder.cardView.setCardBackgroundColor(getContext().getResources().getColor(R.color.navMenuBackgroundColor));
+                }else{
+                    viewHolder.cardView.setCardBackgroundColor(getContext().getResources().getColor(R.color.menuBackgroundColor));
+                }
+            }
+        });
+
+
     }
 
 
@@ -73,10 +92,11 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
     public class ViewHolder extends RecyclerView.ViewHolder{
         TextView nombre;
         ImageView imagen;
+        CardView cardView;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            cardView=(CardView)itemView.findViewById(R.id.item_row_cardView);
             nombre=itemView.findViewById(R.id.nombre_producto);
-
             imagen=itemView.findViewById(R.id.imagen_producto);
         }
     }
@@ -84,16 +104,7 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
         if(nombre.contains("niio")){
             nombre.replaceAll("niio","ñ");
         }
-        if(nombre.indexOf("_")>-1 || nombre.indexOf(" ")>-1){
-            if(nombre.indexOf("_")>-1)
-                nombre=nombre.substring(0,nombre.indexOf("_"))+"...";
-            else if(nombre.indexOf(" ")>-1)
-                nombre=nombre.substring(0,nombre.indexOf(" "))+"...";
 
-        }
-        if(nombre.length()>8){
-            nombre=nombre.substring(0,7)+"...";
-        }
         return nombre;
     }
 }

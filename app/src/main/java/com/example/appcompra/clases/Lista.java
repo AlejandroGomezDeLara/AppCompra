@@ -8,6 +8,14 @@ public class Lista {
     private LinkedList<Usuario> usuarios;
     private LinkedList<Producto> productos;
 
+    public LinkedList<Usuario> getUsuarios() {
+        return usuarios;
+    }
+
+    public LinkedList<Producto> getProductos() {
+        return productos;
+    }
+
     public Lista(String titulo, int imagenFondo) {
         this.titulo = titulo;
         this.imagenFondo = imagenFondo;

@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -36,11 +37,27 @@ public class ListasFragment extends Fragment {
         loadingIndicator = view.findViewById(R.id.loading_indicator);
         recyclerView=view.findViewById(R.id.recyclerView);
         listas=new ArrayList<>();
-        listas.add(new Lista("Fiesta de adrian",0));
-
+        rellenarListas();
         updateUI(listas);
         updateEditTextFiltrar(view);
         return view;
+    }
+    public void rellenarListas(){
+        Lista l=new Lista("Fiesta de manuel",R.color.navMenuBackgroundColor);
+        Usuario pepe=new Usuario("pepe");
+        pepe.setImagenPerfil(R.drawable.abaco);
+        l.añadirUsuario(pepe);
+        l.añadirUsuario(new Usuario("adri"));
+        l.añadirUsuario(new Usuario("Manueee"));
+        Lista l3=new Lista("La compra del mes",R.color.menuBackgroundColor);
+        l3.añadirUsuario(new Usuario("Manolito"));
+        l3.añadirUsuario(new Usuario("Brother"));
+        l3.añadirUsuario(new Usuario("Mama"));
+        l3.añadirUsuario(new Usuario("Papa"));
+        l3.añadirUsuario(new Usuario("Mi tio"));
+        l3.añadirUsuario(new Usuario("Mi tia"));
+        listas.add(l3);
+        listas.add(l);
     }
     private void updateEditTextFiltrar(View view){
         EditText editText=view.findViewById(R.id.editText);
@@ -67,13 +84,13 @@ public class ListasFragment extends Fragment {
     }
 
     private void filtrar(String contenidoEditText){
-        ArrayList<Lista> lista=new ArrayList<>();
-        for (Lista item:lista){
+        ArrayList<Lista> listass=new ArrayList<>();
+        for (Lista item:listass){
             if(item.getTitulo().toLowerCase().contains(contenidoEditText.toLowerCase())){
-                lista.add(item);
+                listass.add(item);
             }
         }
-        adapter.filtrarLista(lista);
+        adapter.filtrarLista(listass);
     }
     private void updateUI(ArrayList<Lista> m){
         /*productos.clear();
@@ -81,6 +98,7 @@ public class ListasFragment extends Fragment {
         */
         adapter=new ListaAdapter(m, getActivity(), R.layout.item_row_listas, getActivity());
         recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }

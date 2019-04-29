@@ -31,6 +31,12 @@ public class ProductosFragment extends Fragment {
         loadingIndicator = view.findViewById(R.id.loading_indicator);
         recyclerView=view.findViewById(R.id.recyclerView);
         productos=new ArrayList<>();
+        rellenarProductos();
+        updateUI(productos);
+        updateEditTextFiltrar(view);
+        return view;
+    }
+    public void rellenarProductos(){
         productos.add(new TipoProducto("Vinagre","Ingredientes",getContext()));
         productos.add(new TipoProducto("Tomate","Verduras",getContext()));
         productos.add(new TipoProducto("Calzoncillos","ropa",getContext()));
@@ -40,11 +46,12 @@ public class ProductosFragment extends Fragment {
         productos.add(new TipoProducto("fresa con piña","ropa",getContext()));
         productos.add(new TipoProducto("piña","ropa",getContext()));
         productos.add(new TipoProducto("bañera","ropa",getContext()));
-
-
-        updateUI(productos);
-        updateEditTextFiltrar(view);
-        return view;
+        productos.add(new TipoProducto("Agua","Comida",getContext()));
+        productos.add(new TipoProducto("botella de agua","Comida",getContext()));
+        productos.add(new TipoProducto("botella de cocacola","Comida",getContext()));
+        productos.add(new TipoProducto("chaqueta","Ropa",getContext()));
+        productos.add(new TipoProducto("vestido","Ropa",getContext()));
+        productos.add(new TipoProducto("macarrones","comida",getContext()));
     }
     private void updateEditTextFiltrar(View view){
         EditText editText=view.findViewById(R.id.editText);

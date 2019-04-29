@@ -52,6 +52,56 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
         final Lista lista=listas.get(i);
         viewHolder.titulo.setText(lista.getTitulo());
         viewHolder.linearLista.setBackgroundResource(lista.getImagenFondo());
+        if(lista.getNumeroUsuarios()==0){
+            viewHolder.imagenUsuario1.setVisibility(View.GONE);
+            viewHolder.imagenUsuario2.setVisibility(View.GONE);
+            viewHolder.imagenUsuario3.setVisibility(View.GONE);
+            viewHolder.nombreUsuario1.setVisibility(View.GONE);
+            viewHolder.imagenUsuario4.setVisibility(View.GONE);
+            viewHolder.nombreUsuario2.setVisibility(View.GONE);
+            viewHolder.nombreUsuario3.setVisibility(View.GONE);
+            viewHolder.nombreUsuario4.setVisibility(View.GONE);
+        }
+        if(lista.getNumeroUsuarios()==1){
+            viewHolder.nombreUsuario1.setText(lista.getUsuarios().get(0).getNombre());
+            viewHolder.imagenUsuario1.setBackgroundResource(lista.getUsuarios().get(0).getImagenPerfil());
+            viewHolder.imagenUsuario2.setVisibility(View.GONE);
+            viewHolder.imagenUsuario3.setVisibility(View.GONE);
+            viewHolder.imagenUsuario4.setVisibility(View.GONE);
+            viewHolder.nombreUsuario2.setVisibility(View.GONE);
+            viewHolder.nombreUsuario3.setVisibility(View.GONE);
+            viewHolder.nombreUsuario4.setVisibility(View.GONE);
+        }
+        if(lista.getNumeroUsuarios()==2){
+            viewHolder.nombreUsuario1.setText(lista.getUsuarios().get(0).getNombre());
+            viewHolder.nombreUsuario2.setText(lista.getUsuarios().get(1).getNombre());
+            viewHolder.imagenUsuario1.setBackgroundResource(lista.getUsuarios().get(0).getImagenPerfil());
+            viewHolder.imagenUsuario2.setBackgroundResource(lista.getUsuarios().get(1).getImagenPerfil());
+            viewHolder.imagenUsuario3.setVisibility(View.GONE);
+            viewHolder.imagenUsuario4.setVisibility(View.GONE);
+            viewHolder.nombreUsuario3.setVisibility(View.GONE);
+            viewHolder.nombreUsuario4.setVisibility(View.GONE);
+        }
+        if(lista.getNumeroUsuarios()==3){
+            viewHolder.nombreUsuario1.setText(lista.getUsuarios().get(0).getNombre());
+            viewHolder.nombreUsuario2.setText(lista.getUsuarios().get(1).getNombre());
+            viewHolder.nombreUsuario3.setText(lista.getUsuarios().get(2).getNombre());
+            viewHolder.imagenUsuario1.setBackgroundResource(lista.getUsuarios().get(0).getImagenPerfil());
+            viewHolder.imagenUsuario2.setBackgroundResource(lista.getUsuarios().get(1).getImagenPerfil());
+            viewHolder.imagenUsuario3.setBackgroundResource(lista.getUsuarios().get(2).getImagenPerfil());
+            viewHolder.imagenUsuario4.setVisibility(View.GONE);
+            viewHolder.nombreUsuario4.setVisibility(View.GONE);
+        }
+        if(lista.getNumeroUsuarios()>=4){
+            viewHolder.nombreUsuario1.setText(lista.getUsuarios().get(0).getNombre());
+            viewHolder.nombreUsuario2.setText(lista.getUsuarios().get(1).getNombre());
+            viewHolder.nombreUsuario3.setText(lista.getUsuarios().get(2).getNombre());
+            viewHolder.nombreUsuario4.setText(lista.getUsuarios().get(3).getNombre());
+            viewHolder.imagenUsuario1.setBackgroundResource(lista.getUsuarios().get(0).getImagenPerfil());
+            viewHolder.imagenUsuario2.setBackgroundResource(lista.getUsuarios().get(1).getImagenPerfil());
+            viewHolder.imagenUsuario3.setBackgroundResource(lista.getUsuarios().get(2).getImagenPerfil());
+            viewHolder.imagenUsuario4.setBackgroundResource(lista.getUsuarios().get(3).getImagenPerfil());
+        }
         if(lista.getNumeroUsuarios()>4){
             viewHolder.numeroPersonas.setText("y "+(lista.getNumeroUsuarios()-4)+" más");
         }else{
@@ -84,7 +134,7 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             titulo=itemView.findViewById(R.id.titulo);
-            linearLista=itemView.findViewById(R.id.lista);
+            linearLista=itemView.findViewById(R.id.linearLista);
             numeroPersonas=itemView.findViewById(R.id.numero_personas);
             imagenUsuario1=itemView.findViewById(R.id.imagen_usuario1);
             imagenUsuario2=itemView.findViewById(R.id.imagen_usuario2);
@@ -96,14 +146,5 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
             nombreUsuario4=itemView.findViewById(R.id.nombre_usuario4);
         }
     }
-    public String corregirNombre(String nombre){
-        if(nombre.indexOf("_")>-1 || nombre.indexOf(" ")>-1){
-            if(nombre.indexOf("_")>-1)
-                nombre=nombre.substring(0,nombre.indexOf("_"))+"...";
-            else if(nombre.indexOf(" ")>-1)
-                nombre=nombre.substring(0,nombre.indexOf(" "))+"...";
 
-        }
-        return nombre;
-    }
 }

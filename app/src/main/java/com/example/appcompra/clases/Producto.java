@@ -7,11 +7,21 @@ public class Producto {
     public String categoria;
     public Context context;
     public int imagen;
+    public boolean seleccionado;
+
+    public boolean isSeleccionado() {
+        return seleccionado;
+    }
+
+    public void setSeleccionado(boolean seleccionado) {
+        this.seleccionado = seleccionado;
+    }
 
     public Producto(String nombre, String categoria, Context context) {
         this.nombre = corregirNombre(nombre);
         this.categoria = categoria;
         this.context = context;
+        this.seleccionado=false;
     }
 
     public String getNombre() {

@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="128dp"
-    android:id="@+id/lista"
-    android:orientation="horizontal"
-    android:background="@color/menuBackgroundColor"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    >
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
+        android:id="@+id/linearLista"
+        android:background="@color/menuBackgroundColor"
         android:focusable="true"
+        android:layout_width="match_parent"
+        android:layout_height="128dp"
         android:padding="12dp"
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         >
 
@@ -25,6 +18,7 @@
             android:layout_gravity="center_horizontal"
             android:text="Esta es la fiesta de Adri"
             android:textStyle="bold"
+            android:textColor="@android:color/white"
             android:textSize="32dp"/>
         <LinearLayout
             android:layout_width="match_parent"
@@ -41,14 +35,16 @@
                     android:id="@+id/imagen_usuario1"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/ic_account_circle_black_24dp"/>
+                    />
+
                 <TextView
                     android:id="@+id/nombre_usuario1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
                     android:layout_gravity="center_vertical"
-                    android:text="Adrianito"/>
+                    android:text="Adrianito"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold" />
             </LinearLayout>
             <LinearLayout
                 android:layout_width="0dp"
@@ -60,13 +56,14 @@
                     android:id="@+id/imagen_usuario2"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/ic_account_circle_black_24dp"/>
+                    />
                 <TextView
                     android:id="@+id/nombre_usuario2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:layout_gravity="center_vertical"
+                    android:textColor="@android:color/white"
                     android:text="Adrianito"/>
             </LinearLayout>
             <LinearLayout
@@ -79,13 +76,14 @@
                     android:id="@+id/imagen_usuario3"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/ic_account_circle_black_24dp"/>
+                    />
                 <TextView
                     android:id="@+id/nombre_usuario3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:layout_gravity="center_vertical"
+                    android:textColor="@android:color/white"
                     android:text="Adrianito"/>
             </LinearLayout>
             <LinearLayout
@@ -98,18 +96,20 @@
                     android:id="@+id/imagen_usuario4"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/ic_account_circle_black_24dp"/>
+                    />
                 <TextView
                     android:id="@+id/nombre_usuario4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:layout_gravity="center_vertical"
+                    android:textColor="@android:color/white"
                     android:text="Adrianito"/>
             </LinearLayout>
 
         </LinearLayout>
         <TextView
+            android:textColor="@android:color/white"
             android:id="@+id/numero_personas"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -117,5 +117,3 @@
             android:textStyle="bold"
             android:text="y 3 más"/>
     </LinearLayout>
-
-</LinearLayout>
