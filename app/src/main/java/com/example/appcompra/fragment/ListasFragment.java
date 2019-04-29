@@ -85,7 +85,7 @@ public class ListasFragment extends Fragment {
 
     private void filtrar(String contenidoEditText){
         ArrayList<Lista> listass=new ArrayList<>();
-        for (Lista item:listass){
+        for (Lista item:listas){
             if(item.getTitulo().toLowerCase().contains(contenidoEditText.toLowerCase())){
                 listass.add(item);
             }

@@ -15,12 +15,13 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 
 import com.example.appcompra.R;
+import com.example.appcompra.clases.Producto;
 import com.example.appcompra.clases.TipoProducto;
 import com.example.appcompra.adapters.ProductoAdapter;
 import java.util.ArrayList;
 
 public class ProductosFragment extends Fragment {
-    protected ArrayList<TipoProducto> productos;
+    protected ArrayList<Producto> productos;
     protected RecyclerView recyclerView;
     protected ProductoAdapter adapter;
     ProgressBar loadingIndicator;
@@ -37,21 +38,21 @@ public class ProductosFragment extends Fragment {
         return view;
     }
     public void rellenarProductos(){
-        productos.add(new TipoProducto("Vinagre","Ingredientes",getContext()));
-        productos.add(new TipoProducto("Tomate","Verduras",getContext()));
-        productos.add(new TipoProducto("Calzoncillos","ropa",getContext()));
-        productos.add(new TipoProducto("crema de cacao","comida",getContext()));
-        productos.add(new TipoProducto("Destornillador","ropa",getContext()));
-        productos.add(new TipoProducto("platano sos","ropa",getContext()));
-        productos.add(new TipoProducto("fresa con piña","ropa",getContext()));
-        productos.add(new TipoProducto("piña","ropa",getContext()));
-        productos.add(new TipoProducto("bañera","ropa",getContext()));
-        productos.add(new TipoProducto("Agua","Comida",getContext()));
-        productos.add(new TipoProducto("botella de agua","Comida",getContext()));
-        productos.add(new TipoProducto("botella de cocacola","Comida",getContext()));
-        productos.add(new TipoProducto("chaqueta","Ropa",getContext()));
-        productos.add(new TipoProducto("vestido","Ropa",getContext()));
-        productos.add(new TipoProducto("macarrones","comida",getContext()));
+        productos.add(new TipoProducto("Vinagre","Ingredientes"));
+        productos.add(new TipoProducto("Tomate","Verduras"));
+        productos.add(new TipoProducto("Calzoncillos","ropa"));
+        productos.add(new TipoProducto("crema de cacao","comida"));
+        productos.add(new TipoProducto("Destornillador","ropa"));
+        productos.add(new TipoProducto("platano sos","ropa"));
+        productos.add(new TipoProducto("fresa con piña","ropa"));
+        productos.add(new TipoProducto("piña","ropa"));
+        productos.add(new TipoProducto("bañera","ropa"));
+        productos.add(new TipoProducto("Agua","Comida"));
+        productos.add(new TipoProducto("botella de agua","Comida"));
+        productos.add(new TipoProducto("botella de cocacola","Comida"));
+        productos.add(new TipoProducto("chaqueta","Ropa"));
+        productos.add(new TipoProducto("vestido","Ropa"));
+        productos.add(new TipoProducto("macarrones","comida"));
     }
     private void updateEditTextFiltrar(View view){
         EditText editText=view.findViewById(R.id.editText);
@@ -78,15 +79,15 @@ public class ProductosFragment extends Fragment {
     }
 
     private void filtrar(String contenidoEditText){
-        ArrayList<TipoProducto> lista=new ArrayList<>();
-        for (TipoProducto item:productos){
+        ArrayList<Producto> lista=new ArrayList<>();
+        for (Producto item:productos){
             if(item.getNombre().toLowerCase().contains(contenidoEditText.toLowerCase())){
                 lista.add(item);
             }
         }
         adapter.filtrarLista(lista);
     }
-    private void updateUI(ArrayList<TipoProducto> m){
+    private void updateUI(ArrayList<Producto> m){
         /*productos.clear();
         productos.addAll(m);
         */

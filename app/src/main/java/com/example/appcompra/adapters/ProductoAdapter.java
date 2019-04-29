@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.appcompra.R;
+import com.example.appcompra.clases.Producto;
 import com.example.appcompra.clases.TipoProducto;
 
 import java.util.ArrayList;
@@ -23,12 +24,12 @@ import java.util.List;
 
 
 public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHolder> {
-    private List<TipoProducto> productos;
+    private List<Producto> productos;
     private Activity activity;
     private int layout;
     private Context context;
 
-    public ProductoAdapter(List<TipoProducto> productos, Activity activity, int layout, Context context) {
+    public ProductoAdapter(List<Producto> productos, Activity activity, int layout, Context context) {
         this.productos = productos;
         this.activity = activity;
         this.layout = layout;
@@ -44,13 +45,10 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
         ViewHolder viewHolder=new ViewHolder(v);
         return viewHolder;
     }
-    public void addProducto(List<TipoProducto> productos){
-        this.productos=productos;
-        notifyDataSetChanged();
-    }
+
     @Override
     public void onBindViewHolder(@NonNull final ProductoAdapter.ViewHolder viewHolder,final int i) {
-        final TipoProducto producto=productos.get(i);
+        final Producto producto=productos.get(i);
         if(producto.getNombre().contains("niio"))
             viewHolder.nombre.setText(corregirNombre(producto.getNombre().replaceAll("niio","ñ")));
         else
@@ -84,7 +82,7 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
     public int getItemCount() {
         return productos.size();
     }
-    public void filtrarLista(ArrayList<TipoProducto> listaFiltrada){
+    public void filtrarLista(ArrayList<Producto> listaFiltrada){
         productos=listaFiltrada;
         notifyDataSetChanged();
     }

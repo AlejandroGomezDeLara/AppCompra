@@ -5,14 +5,14 @@ import android.content.res.Resources;
 
 public class TipoProducto extends Producto {
 
-    public TipoProducto(String nombre,String categoria, Context context) {
-        super(nombre,categoria,context);
+    public TipoProducto(String nombre,String categoria) {
+        super(nombre,categoria);
         this.imagen=setImagen(this.nombre);
     }
 
     public int setImagen(String nombre){
         System.out.println(nombre);
-        Resources resources = context.getResources();
+        Resources resources = getContext().getResources();
         if(resources.getIdentifier(nombre.toLowerCase().replaceAll(" ","_"), "drawable",
                 context.getPackageName())>0){
             return resources.getIdentifier(nombre.toLowerCase().replaceAll(" ","_"), "drawable",
