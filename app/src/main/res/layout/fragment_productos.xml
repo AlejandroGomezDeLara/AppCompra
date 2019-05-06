@@ -69,7 +69,6 @@
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
                 android:layout_margin="22dp"
-                android:background="@drawable/supermercado_carrito_silueta"
                 android:backgroundTint="@color/navMenuBackgroundColor"
                 />
         </RelativeLayout>

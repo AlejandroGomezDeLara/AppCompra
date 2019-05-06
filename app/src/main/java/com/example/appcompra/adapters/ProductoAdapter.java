@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.example.appcompra.R;
 import com.example.appcompra.clases.Producto;
 import com.example.appcompra.clases.TipoProducto;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,10 +54,10 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
             viewHolder.nombre.setText(corregirNombre(producto.getNombre().replaceAll("niio","ñ")));
         else
             viewHolder.nombre.setText(corregirNombre(producto.getNombre()));
-        if(producto.getImagen()==0){
+        if(producto.getUrl().equals("")){
             viewHolder.imagen.setImageResource(R.drawable.interrogacion);
         }else{
-            viewHolder.imagen.setImageResource(producto.getImagen());
+            Picasso.get().load(producto.getUrl()).into(viewHolder.imagen);
         }
         viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override

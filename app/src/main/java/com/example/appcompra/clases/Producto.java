@@ -6,7 +6,7 @@ public class Producto {
     public String nombre;
     public String categoria;
     public Context context;
-    public int imagen;
+    public String url;
     public boolean seleccionado;
 
     public boolean isSeleccionado() {
@@ -32,12 +32,12 @@ public class Producto {
         this.nombre = nombre;
     }
 
-    public int getImagen() {
-        return imagen;
+    public String getUrl() {
+        return url;
     }
 
-    public void setImagen(int imagen) {
-        this.imagen = imagen;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getCategoria() {

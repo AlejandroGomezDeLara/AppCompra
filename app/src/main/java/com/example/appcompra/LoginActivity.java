@@ -258,38 +258,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected Boolean doInBackground(Void... params) {
 
-
-            try {
-                DatagramSocket socket=new DatagramSocket();
-                byte[] buf = new byte[1500];
-                String paquete=Constants.LOGIN_CARACTERS_SEND+Constants.SEPARATOR+mEmail+Constants.SEPARATOR+mPassword;
-                buf= paquete.getBytes();
-                InetAddress address = InetAddress.getByName(Constants.IP_SERVER);
-                DatagramPacket packetToSend = new DatagramPacket(buf, buf.length, address, Constants.PORT);
-                socket.send(packetToSend);
-                /*
-                DatagramPacket packetToReceive = new DatagramPacket(buf, buf.length);
-                socket.receive(packetToReceive);
-                String received = new String(packetToReceive.getData(), 0, packetToReceive.getLength());
-                System.out.println(received);
-                */
-                socket.close();
-
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            /*
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }*/
-
             return true;
         }
 

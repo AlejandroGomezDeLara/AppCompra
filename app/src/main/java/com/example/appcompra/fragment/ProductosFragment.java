@@ -1,5 +1,7 @@
 package com.example.appcompra.fragment;
 
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,6 +16,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
+import com.example.appcompra.LoginActivity;
+import com.example.appcompra.MainActivity;
 import com.example.appcompra.R;
 import com.example.appcompra.clases.Producto;
 import com.example.appcompra.clases.TipoProducto;
@@ -25,6 +29,8 @@ public class ProductosFragment extends Fragment {
     protected RecyclerView recyclerView;
     protected ProductoAdapter adapter;
     ProgressBar loadingIndicator;
+    PeticionProductosTask peticionTask = null;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -32,18 +38,13 @@ public class ProductosFragment extends Fragment {
         loadingIndicator = view.findViewById(R.id.loading_indicator);
         recyclerView=view.findViewById(R.id.recyclerView);
         productos=new ArrayList<>();
-        rellenarProductos();
+        peticionTask = new PeticionProductosTask();
+        peticionTask.execute((Void) null);
         updateUI(productos);
         updateEditTextFiltrar(view);
         return view;
     }
-    public void rellenarProductos(){
-        productos.add(new TipoProducto("Vinagre","Ingredientes",getContext()));
-        productos.add(new TipoProducto("Tomate","Verduras",getContext()));
-        productos.add(new TipoProducto("fideos","Verduras",getContext()));
-        productos.add(new TipoProducto("fresa con piña","Verduras",getContext()));
 
-    }
     private void updateEditTextFiltrar(View view){
         EditText editText=view.findViewById(R.id.editText);
         editText.addTextChangedListener(new TextWatcher() {
@@ -87,4 +88,26 @@ public class ProductosFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
+    public class PeticionProductosTask extends AsyncTask<Void, Void, Boolean> {
+
+        PeticionProductosTask() {
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+
+        }
+
+        @Override
+        protected void onCancelled() {
+
+        }
+    }
+
 }

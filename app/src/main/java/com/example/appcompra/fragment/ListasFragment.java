@@ -45,7 +45,6 @@ public class ListasFragment extends Fragment {
     public void rellenarListas(){
         Lista l=new Lista("Fiesta de manuel",R.color.navMenuBackgroundColor);
         Usuario pepe=new Usuario("pepe");
-        pepe.setImagenPerfil(R.drawable.abaco);
         l.añadirUsuario(pepe);
         l.añadirUsuario(new Usuario("adri"));
         l.añadirUsuario(new Usuario("Manueee"));
