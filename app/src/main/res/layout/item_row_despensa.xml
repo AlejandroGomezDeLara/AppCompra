@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    android:id="@+id/linearLista"
+    android:background="@color/navMenuBackgroundColor"
+    android:focusable="true"
+    android:layout_width="match_parent"
+    android:layout_height="98dp"
+    android:padding="8dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/imagen_producto"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:tint="@color/backgroundColor"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="4dp"/>
+        <TextView
+            android:textColor="@android:color/white"
+            android:id="@+id/nombre_producto"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_horizontal"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="24dp"
+            android:maxLines="2"
+            android:text="Brocoli del "/>
+        <TextView
+            android:textColor="@android:color/white"
+            android:id="@+id/cantidad"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_horizontal"
+            android:textStyle="bold"
+            android:textSize="24dp"
+            android:text="200"/>
+        <TextView
+            android:id="@+id/unidades"
+            android:textColor="@android:color/white"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textStyle="bold"
+            android:textSize="18dp"
+            android:gravity="center_horizontal"
+            android:text="Gramos"/>
+        <Button
+            android:id="@+id/boton_opciones"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:backgroundTint="@color/backgroundColor"
+            android:background="@drawable/ic_more_vert_black_24dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_horizontal"
+            />
+    </LinearLayout>
+
+</LinearLayout>
