@@ -1,25 +1,26 @@
 package com.example.appcompra.fragment;
 
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
+import com.example.appcompra.LoginActivity;
+import com.example.appcompra.MainActivity;
 import com.example.appcompra.R;
 import com.example.appcompra.clases.Producto;
+import com.example.appcompra.clases.TipoProducto;
 import com.example.appcompra.adapters.ProductoAdapter;
 import java.util.ArrayList;
 
@@ -28,6 +29,8 @@ public class ProductosFragment extends Fragment {
     protected RecyclerView recyclerView;
     protected ProductoAdapter adapter;
     ProgressBar loadingIndicator;
+    PeticionProductosTask peticionTask = null;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -35,13 +38,13 @@ public class ProductosFragment extends Fragment {
         loadingIndicator = view.findViewById(R.id.loading_indicator);
         recyclerView=view.findViewById(R.id.recyclerView);
         productos=new ArrayList<>();
-        productos.add(new Producto("Cocacola",0));
-        productos.add(new Producto("Cereales",0));
-        productos.add(new Producto("Pescado",0));
+        peticionTask = new PeticionProductosTask();
+        peticionTask.execute((Void) null);
         updateUI(productos);
         updateEditTextFiltrar(view);
         return view;
     }
+
     private void updateEditTextFiltrar(View view){
         EditText editText=view.findViewById(R.id.editText);
         editText.addTextChangedListener(new TextWatcher() {
@@ -81,8 +84,30 @@ public class ProductosFragment extends Fragment {
         */
         adapter=new ProductoAdapter(m, getActivity(), R.layout.item_row_productos, getActivity());
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 4));
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
+    public class PeticionProductosTask extends AsyncTask<Void, Void, Boolean> {
+
+        PeticionProductosTask() {
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+
+        }
+
+        @Override
+        protected void onCancelled() {
+
+        }
+    }
+
 }

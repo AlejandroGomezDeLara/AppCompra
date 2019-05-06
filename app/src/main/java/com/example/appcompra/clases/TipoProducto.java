@@ -6,8 +6,9 @@ import android.support.v4.content.ContextCompat;
 
 public class TipoProducto extends Producto {
 
-    public TipoProducto(String nombre,String categoria,String urlImagen) {
-        super(nombre,categoria, urlImagen);
+    public TipoProducto(String nombre,String categoria,String url,Context context) {
+        super(nombre,categoria, context);
+        this.url=url;
     }
 
 }

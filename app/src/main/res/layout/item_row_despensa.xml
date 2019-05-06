@@ -2,7 +2,7 @@
 
 <LinearLayout
     android:id="@+id/linearLista"
-    android:background="@color/navMenuBackgroundColor"
+    android:background="@color/menuBackgroundColor"
     android:focusable="true"
     android:layout_width="match_parent"
     android:layout_height="98dp"

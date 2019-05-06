@@ -2,8 +2,13 @@ package com.example.appcompra.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.ImageViewCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +17,8 @@ import android.widget.TextView;
 
 import com.example.appcompra.R;
 import com.example.appcompra.clases.Producto;
+import com.example.appcompra.clases.TipoProducto;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,14 +46,36 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
         ViewHolder viewHolder=new ViewHolder(v);
         return viewHolder;
     }
-    public void addProducto(List<Producto> productos){
-        this.productos=productos;
-        notifyDataSetChanged();
-    }
+
     @Override
     public void onBindViewHolder(@NonNull final ProductoAdapter.ViewHolder viewHolder,final int i) {
         final Producto producto=productos.get(i);
-        viewHolder.nombre.setText(producto.getNombre());
+        if(producto.getNombre().contains("niio"))
+            viewHolder.nombre.setText(corregirNombre(producto.getNombre().replaceAll("niio","ñ")));
+        else
+            viewHolder.nombre.setText(corregirNombre(producto.getNombre()));
+        if(producto.getUrl().equals("")){
+            viewHolder.imagen.setImageResource(R.drawable.interrogacion);
+        }else{
+            Picasso.get().load(producto.getUrl()).into(viewHolder.imagen);
+        }
+        viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(producto.isSeleccionado()){
+                    producto.setSeleccionado(false);
+                }else {
+                    producto.setSeleccionado(true);
+                }
+                if(producto.isSeleccionado()){
+                    viewHolder.cardView.setCardBackgroundColor(getContext().getResources().getColor(R.color.navMenuBackgroundColor));
+                }else{
+                    viewHolder.cardView.setCardBackgroundColor(getContext().getResources().getColor(R.color.menuBackgroundColor));
+                }
+            }
+        });
+
+
     }
 
 
@@ -62,10 +91,19 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
     public class ViewHolder extends RecyclerView.ViewHolder{
         TextView nombre;
         ImageView imagen;
+        CardView cardView;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            cardView=(CardView)itemView.findViewById(R.id.item_row_cardView);
             nombre=itemView.findViewById(R.id.nombre_producto);
             imagen=itemView.findViewById(R.id.imagen_producto);
         }
+    }
+    public String corregirNombre(String nombre){
+        if(nombre.contains("niio")){
+            nombre.replaceAll("niio","ñ");
+        }
+
+        return nombre;
     }
 }

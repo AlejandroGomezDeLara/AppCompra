@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.example.appcompra.R;
 import com.example.appcompra.clases.Lista;
 import com.example.appcompra.clases.Producto;
+import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
 
@@ -52,7 +53,7 @@ public class DespensaAdapter extends RecyclerView.Adapter<DespensaAdapter.ViewHo
     public void onBindViewHolder(@NonNull final DespensaAdapter.ViewHolder viewHolder,final int i) {
         final Producto producto=productos.get(i);
         viewHolder.nombre.setText(producto.getNombre());
-        //Picasso
+        Picasso.get().load(producto.getUrl()).into(viewHolder.imagen);
     }
 
 
