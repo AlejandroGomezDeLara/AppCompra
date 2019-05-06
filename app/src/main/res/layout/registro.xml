@@ -69,6 +69,7 @@
                 android:padding="10dp"
                 android:layout_marginBottom="15dp"
                 />
+
             <AutoCompleteTextView
                 android:id="@+id/email"
                 android:layout_width="match_parent"
@@ -81,7 +82,37 @@
                 android:hint="Email"
                 android:padding="10dp"
                 />
-
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+            <EditText
+                android:id="@+id/direccion"
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
+                android:layout_height="48dp"
+                android:background="@drawable/edit_text_background"
+                android:drawableLeft="@drawable/ic_location_on_black_24dp"
+                android:drawablePadding="5dp"
+                android:drawableTint="@color/backgroundColor"
+                android:hint="Dirección"
+                android:inputType="textPassword"
+                android:layout_marginBottom="15dp"
+                android:padding="10dp" />
+                <EditText
+                    android:id="@+id/edad"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/edit_text_background"
+                    android:drawableLeft="@drawable/ic_cake_black_24dp"
+                    android:drawablePadding="5dp"
+                    android:drawableTint="@color/backgroundColor"
+                    android:hint="Fecha nac."
+                    android:inputType="textPassword"
+                    android:layout_marginBottom="15dp"
+                    android:padding="10dp" />
+            </LinearLayout>
             <EditText
                 android:id="@+id/password"
                 android:layout_width="match_parent"

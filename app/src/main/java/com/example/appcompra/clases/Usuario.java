@@ -8,9 +8,10 @@ public class Usuario {
     private String nombre;
     private String urlImagenPerfil;
 
-    public Usuario(int id,String nombre,String urlImagenPerfil) {
+    public Usuario(int id,String nombre,String email,String urlImagenPerfil) {
         this.id=id;
         this.nombre = nombre;
+        this.email=email;
         this.urlImagenPerfil=urlImagenPerfil;
     }
 

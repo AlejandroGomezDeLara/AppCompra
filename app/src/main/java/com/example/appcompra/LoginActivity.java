@@ -4,9 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
@@ -42,8 +39,6 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.Manifest.permission.READ_CONTACTS;
 
 
 public class LoginActivity extends AppCompatActivity implements Serializable,LoaderCallbacks<Cursor> {
@@ -259,7 +254,7 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
                 socket=new Socket(Constants.IP_SERVER,Constants.PORT);
                 in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out=new PrintWriter(socket.getOutputStream());
-                out.write(Constants.LOGIN_CARACTERS_SEND+Constants.SEPARATOR+mEmail+Constants.SEPARATOR+mPassword);
+                out.write(Constants.LOGIN_CHARACTERS_SEND +Constants.SEPARATOR+mEmail+Constants.SEPARATOR+mPassword);
                 Thread.sleep(2000);
                 respuesta=in.readLine();
                 Log.e("xd",respuesta);
@@ -271,7 +266,13 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
                 e.printStackTrace();
             }
             if(respuesta.split("\\|")[0].equals("LC")) {
-                usuario=new Usuario(Integer.parseInt(respuesta.split("\\|")[1]),respuesta.split("\\|")[2],respuesta.split("\\|")[3]);
+                usuario=new Usuario(Integer.parseInt(respuesta.split("\\|")[1]),respuesta.split("\\|")[2],mEmail,respuesta.split("\\|")[3]);
+                try {
+                    in.close();
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 return true;
             }else
                 return false;

@@ -3,10 +3,8 @@ package com.example.appcompra;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
@@ -20,6 +18,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -27,133 +26,155 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.appcompra.clases.Usuario;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
-import static android.Manifest.permission.READ_CONTACTS;
 
-/**
- * A login screen that offers login via email/password.
- */
-public class RegisterActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
-
-    /**
-     * Id to identity READ_CONTACTS permission request.
-     */
-    private static final int REQUEST_READ_CONTACTS = 0;
-
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
+public class RegisterActivity extends AppCompatActivity implements Serializable,LoaderCallbacks<Cursor> {
     private UserLoginTask mAuthTask = null;
-
-    // UI references.
     private AutoCompleteTextView mEmailView;
+    private EditText mNombreView;
     private EditText mPasswordView;
+    private EditText mFechaNacView;
+    private EditText mDireccionView;
+    private DatePickerDialog dpd;
     private View mProgressView;
     private View mLoginFormView;
-    private View mLoginLink;
+    private Calendar c;
+    public Socket socket=null;
+    public Usuario usuario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.registro);
+        setContentView(R.layout.login);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-        populateAutoComplete();
-
+        mNombreView=(EditText) findViewById(R.id.nombre);
+        mFechaNacView=(EditText)findViewById(R.id.edad);
+        mDireccionView=(EditText)findViewById(R.id.direccion);
         mPasswordView = (EditText) findViewById(R.id.password);
-
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
-        mLoginLink=findViewById(R.id.login_link);
-
-        mLoginLink.setOnClickListener(new OnClickListener() {
+        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(RegisterActivity.this,LoginActivity.class);
-                finish();
-                startActivity(intent);
+            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+                if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
+                    attemptRegister();
+                    return true;
+                }
+                return false;
             }
         });
+
+        Button mEmailSignInButton = (Button) findViewById(R.id.email_register_button);
+        mEmailSignInButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                attemptRegister();
+            }
+        });
+        TextView textLogin=(TextView)findViewById(R.id.login_link);
+        textLogin.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                startActivity(new Intent(RegisterActivity.this,MainActivity.class));
+            }
+        });
+        mFechaNacView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                c=Calendar.getInstance();
+                final int day=c.get(Calendar.DAY_OF_MONTH);
+                int month=c.get(Calendar.MONTH);
+                int year=c.get(Calendar.YEAR);
+                dpd=new DatePickerDialog(RegisterActivity.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                        mFechaNacView.setText(day+"/"+month+"/"+year);
+                    }
+                },day,month,year);
+                dpd.show();
+            }
+        });
+        mLoginFormView = findViewById(R.id.login_form);
+        mProgressView = findViewById(R.id.login_progress);
     }
 
-    private void populateAutoComplete() {
-        if (!mayRequestContacts()) {
+
+    private void attemptRegister() {
+        if (mAuthTask != null) {
             return;
         }
 
-        getLoaderManager().initLoader(0, null, this);
-    }
+        // Reseteamos los errores.
+        mEmailView.setError(null);
+        mPasswordView.setError(null);
 
-    private boolean mayRequestContacts() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            return true;
+        // Guardamos los valores de los edit text
+        String nombre=mNombreView.getText().toString();
+        String edad=mFechaNacView.getText().toString();
+        String direccion=mDireccionView.getText().toString();
+        String email = mEmailView.getText().toString();
+        String password = mPasswordView.getText().toString();
+
+        boolean cancel = false;
+        View focusView = null;
+
+        // Comprobamos si es valida segun nuestros criterios la contraseña, si es que ha puesto una
+        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+            mPasswordView.setError(getString(R.string.error_invalid_password));
+            focusView = mPasswordView;
+            cancel = true;
         }
-        if (checkSelfPermission(READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-            return true;
+
+        // Lo mismo con el email
+        if (TextUtils.isEmpty(email)) {
+            mEmailView.setError(getString(R.string.error_field_required));
+            focusView = mEmailView;
+            cancel = true;
+        } else if (!isEmailValid(email)) {
+            mEmailView.setError(getString(R.string.error_invalid_email));
+            focusView = mEmailView;
+            cancel = true;
         }
-        if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
-            Snackbar.make(mEmailView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(android.R.string.ok, new View.OnClickListener() {
-                        @Override
-                        @TargetApi(Build.VERSION_CODES.M)
-                        public void onClick(View v) {
-                            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-                        }
-                    });
+
+        if (cancel) {
+            // Hay algun error; no empezar el login y focus el primer view
+            focusView.requestFocus();
         } else {
-            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-        }
-        return false;
-    }
-
-    /**
-     * Callback received when a permissions request has been completed.
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_READ_CONTACTS) {
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                populateAutoComplete();
-            }
+            // Muestra el spinner del progreso, crea el async task y lo ejecutamos
+            showProgress(true);
+            mAuthTask = new UserLoginTask(nombre,email,direccion,edad,password);
+            mAuthTask.execute((Void) null);
         }
     }
-
-    /**
-     * Set up the {@link android.app.ActionBar}, if the API is available.
-     */
-
-
-    /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
-     */
 
     private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
+        //Lo dejamos asi por ahora
         return email.contains("@");
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
+        //Lo dejamos asi por ahora
         return password.length() > 4;
     }
 
     /**
-     * Shows the progress UI and hides the login form.
+     * Mostramos el UI de proceso y ocultamos el login form
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
@@ -188,20 +209,16 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
         }
     }
 
+
+    //Los cursores estos son para autocompletar los emails
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return new CursorLoader(this,
-                // Retrieve data rows for the device user's 'profile' contact.
                 Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
                         ContactsContract.Contacts.Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
-
-                // Select only email addresses.
                 ContactsContract.Contacts.Data.MIMETYPE +
                         " = ?", new String[]{ContactsContract.CommonDataKinds.Email
                 .CONTENT_ITEM_TYPE},
-
-                // Show primary email addresses first. Note that there won't be
-                // a primary email address if the user hasn't specified one.
                 ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
     }
 
@@ -223,7 +240,6 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
     }
 
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
-        //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
         ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(RegisterActivity.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
@@ -243,45 +259,80 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
     }
 
     /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
+     * Async task para conectar a los sockets
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
         private final String mEmail;
         private final String mPassword;
+        private final String mNombre;
+        private final String mDireccion;
+        private final String mEdad;
+        private String respuesta;
+        private BufferedReader in;
+        private PrintWriter out;
+        public boolean terminado;
 
-        UserLoginTask(String email, String password) {
+        UserLoginTask(String nombre,String email,String direccion,String edad,String password) {
+            mNombre=nombre;
+            mDireccion=direccion;
+            mEdad=edad;
             mEmail = email;
             mPassword = password;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
+
 
             try {
-                // Simulate network access.
+                socket=new Socket(Constants.IP_SERVER,Constants.PORT);
+                in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                out=new PrintWriter(socket.getOutputStream());
+                out.write(Constants.REGISTER_CHARACTERS_SEND +Constants.SEPARATOR+mNombre+Constants.SEPARATOR+mEmail+Constants.SEPARATOR+mDireccion+Constants.SEPARATOR+mEdad+Constants.SEPARATOR+mPassword);
                 Thread.sleep(2000);
+                respuesta=in.readLine();
+                Log.e("xd",respuesta);
             } catch (InterruptedException e) {
                 return false;
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-
-
-
-            // TODO: register the new account here.
-            return true;
+            if(respuesta.split("\\|")[0].equals("RC")) {
+                try {
+                    out.write(Constants.LOGIN_CHARACTERS_SEND +Constants.SEPARATOR+mEmail+Constants.SEPARATOR+mPassword);
+                    respuesta=in.readLine();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if(respuesta.split("\\|")[0].equals("LC")) {
+                    usuario=new Usuario(Integer.parseInt(respuesta.split("\\|")[1]),respuesta.split("\\|")[2],mEmail,respuesta.split("\\|")[3]);
+                    try {
+                        in.close();
+                        out.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    return true;
+                }else
+                    return false;
+            }else
+                return false;
         }
 
         @Override
         protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
             showProgress(false);
 
             if (success) {
+                Intent intent=new Intent(RegisterActivity.this,MainActivity.class);
+                intent.putExtra("Usuario", (Serializable) usuario);
                 finish();
+                startActivity(intent);
             } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
+                mPasswordView.setError("Email o contraseña incorrectos");
                 mPasswordView.requestFocus();
             }
         }
