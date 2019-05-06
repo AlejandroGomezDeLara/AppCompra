@@ -4,6 +4,9 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
@@ -28,38 +31,29 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.appcompra.clases.Usuario;
+
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.*;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A login screen that offers login via email/password.
- */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+import static android.Manifest.permission.READ_CONTACTS;
 
-    /**
-     * Id to identity READ_CONTACTS permission request.
-     */
-    private static final int REQUEST_READ_CONTACTS = 0;
 
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
+public class LoginActivity extends AppCompatActivity implements Serializable,LoaderCallbacks<Cursor> {
     private UserLoginTask mAuthTask = null;
-
-    // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    public Socket socket=null;
+    public Usuario usuario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +86,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(LoginActivity.this,RegisterActivity.class);
-                finish();
                 startActivity(intent);
             }
         });
@@ -248,6 +241,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         private final String mEmail;
         private final String mPassword;
+        private String respuesta;
+        private BufferedReader in;
+        private PrintWriter out;
         public boolean terminado;
 
         UserLoginTask(String email, String password) {
@@ -258,20 +254,40 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected Boolean doInBackground(Void... params) {
 
-            return true;
+
+            try {
+                socket=new Socket(Constants.IP_SERVER,Constants.PORT);
+                in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                out=new PrintWriter(socket.getOutputStream());
+                out.write(Constants.LOGIN_CARACTERS_SEND+Constants.SEPARATOR+mEmail+Constants.SEPARATOR+mPassword);
+                Thread.sleep(2000);
+                respuesta=in.readLine();
+                Log.e("xd",respuesta);
+            } catch (InterruptedException e) {
+                return false;
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if(respuesta.split("\\|")[0].equals("LC")) {
+                usuario=new Usuario(Integer.parseInt(respuesta.split("\\|")[1]),respuesta.split("\\|")[2],respuesta.split("\\|")[3]);
+                return true;
+            }else
+                return false;
         }
 
         @Override
         protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
             showProgress(false);
 
             if (success) {
                 Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+                intent.putExtra("Usuario", (Serializable) usuario);
                 finish();
                 startActivity(intent);
             } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
+                mPasswordView.setError("Email o contraseña incorrectos");
                 mPasswordView.requestFocus();
             }
         }

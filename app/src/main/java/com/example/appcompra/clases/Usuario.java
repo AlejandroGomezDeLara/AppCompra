@@ -3,13 +3,15 @@ package com.example.appcompra.clases;
 import com.example.appcompra.R;
 
 public class Usuario {
+    private int id;
     private String email;
     private String nombre;
-    private int imagenPerfil;
+    private String urlImagenPerfil;
 
-    public Usuario(String nombre) {
+    public Usuario(int id,String nombre,String urlImagenPerfil) {
+        this.id=id;
         this.nombre = nombre;
-        this.imagenPerfil= R.drawable.ic_account_circle_black_24dp;
+        this.urlImagenPerfil=urlImagenPerfil;
     }
 
     public String getEmail() {
@@ -28,11 +30,11 @@ public class Usuario {
         this.nombre = nombre;
     }
 
-    public int getImagenPerfil() {
-        return imagenPerfil;
-    }
+    public int getId() { return id; }
 
-    public void setImagenPerfil(int imagenPerfil) {
-        this.imagenPerfil = imagenPerfil;
-    }
+    public void setId(int id) { this.id = id; }
+
+    public String getUrlImagenPerfil() { return urlImagenPerfil; }
+
+    public void setUrlImagenPerfil(String urlImagenPerfil) {this.urlImagenPerfil = urlImagenPerfil;}
 }
