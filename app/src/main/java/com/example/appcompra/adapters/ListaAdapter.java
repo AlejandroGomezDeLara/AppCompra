@@ -64,7 +64,6 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
         }
         if(lista.getNumeroUsuarios()==1){
             viewHolder.nombreUsuario1.setText(lista.getUsuarios().get(0).getNombre());
-            viewHolder.imagenUsuario1.setBackgroundResource(lista.getUsuarios().get(0).getImagenPerfil());
             viewHolder.imagenUsuario2.setVisibility(View.GONE);
             viewHolder.imagenUsuario3.setVisibility(View.GONE);
             viewHolder.imagenUsuario4.setVisibility(View.GONE);
@@ -75,8 +74,6 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
         if(lista.getNumeroUsuarios()==2){
             viewHolder.nombreUsuario1.setText(lista.getUsuarios().get(0).getNombre());
             viewHolder.nombreUsuario2.setText(lista.getUsuarios().get(1).getNombre());
-            viewHolder.imagenUsuario1.setBackgroundResource(lista.getUsuarios().get(0).getImagenPerfil());
-            viewHolder.imagenUsuario2.setBackgroundResource(lista.getUsuarios().get(1).getImagenPerfil());
             viewHolder.imagenUsuario3.setVisibility(View.GONE);
             viewHolder.imagenUsuario4.setVisibility(View.GONE);
             viewHolder.nombreUsuario3.setVisibility(View.GONE);
@@ -86,9 +83,6 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
             viewHolder.nombreUsuario1.setText(lista.getUsuarios().get(0).getNombre());
             viewHolder.nombreUsuario2.setText(lista.getUsuarios().get(1).getNombre());
             viewHolder.nombreUsuario3.setText(lista.getUsuarios().get(2).getNombre());
-            viewHolder.imagenUsuario1.setBackgroundResource(lista.getUsuarios().get(0).getImagenPerfil());
-            viewHolder.imagenUsuario2.setBackgroundResource(lista.getUsuarios().get(1).getImagenPerfil());
-            viewHolder.imagenUsuario3.setBackgroundResource(lista.getUsuarios().get(2).getImagenPerfil());
             viewHolder.imagenUsuario4.setVisibility(View.GONE);
             viewHolder.nombreUsuario4.setVisibility(View.GONE);
         }
@@ -97,10 +91,6 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
             viewHolder.nombreUsuario2.setText(lista.getUsuarios().get(1).getNombre());
             viewHolder.nombreUsuario3.setText(lista.getUsuarios().get(2).getNombre());
             viewHolder.nombreUsuario4.setText(lista.getUsuarios().get(3).getNombre());
-            viewHolder.imagenUsuario1.setBackgroundResource(lista.getUsuarios().get(0).getImagenPerfil());
-            viewHolder.imagenUsuario2.setBackgroundResource(lista.getUsuarios().get(1).getImagenPerfil());
-            viewHolder.imagenUsuario3.setBackgroundResource(lista.getUsuarios().get(2).getImagenPerfil());
-            viewHolder.imagenUsuario4.setBackgroundResource(lista.getUsuarios().get(3).getImagenPerfil());
         }
         if(lista.getNumeroUsuarios()>4){
             viewHolder.numeroPersonas.setText("y "+(lista.getNumeroUsuarios()-4)+" más");

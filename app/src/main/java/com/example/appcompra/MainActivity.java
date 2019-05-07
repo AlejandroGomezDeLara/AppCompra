@@ -15,9 +15,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.appcompra.adapters.MenuAdapter;
 import com.example.appcompra.clases.Usuario;
+import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -41,7 +44,13 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
+        View headView=navigationView.getHeaderView(0);
+        TextView nombreUsuario=headView.findViewById(R.id.drawer_nombre);
+        nombreUsuario.setText(usuario.getNombre());
+        TextView emailUsuario=headView.findViewById(R.id.drawer_email);
+        emailUsuario.setText(usuario.getEmail());
+        ImageView imagenUsuario=headView.findViewById(R.id.drawer_imagen);
+        Picasso.get().load(usuario.getUrlImagenPerfil()).into(imagenUsuario);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         MenuAdapter adapter = new MenuAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);

@@ -55,7 +55,6 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
         else
             viewHolder.nombre.setText(corregirNombre(producto.getNombre()));
         if(producto.getUrl().equals("")){
-            viewHolder.imagen.setImageResource(R.drawable.interrogacion);
         }else{
             Picasso.get().load(producto.getUrl()).into(viewHolder.imagen);
         }

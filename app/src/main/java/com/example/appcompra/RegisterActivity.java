@@ -61,7 +61,7 @@ public class RegisterActivity extends AppCompatActivity implements Serializable,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login);
+        setContentView(R.layout.registro);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         mNombreView=(EditText) findViewById(R.id.nombre);
@@ -288,8 +288,8 @@ public class RegisterActivity extends AppCompatActivity implements Serializable,
             try {
                 socket=new Socket(Constants.IP_SERVER,Constants.PORT);
                 in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                out=new PrintWriter(socket.getOutputStream());
-                out.write(Constants.REGISTER_CHARACTERS_SEND +Constants.SEPARATOR+mNombre+Constants.SEPARATOR+mEmail+Constants.SEPARATOR+mDireccion+Constants.SEPARATOR+mEdad+Constants.SEPARATOR+mPassword);
+                out=new PrintWriter(socket.getOutputStream(),true);
+                out.println(Constants.REGISTER_CHARACTERS_SEND +Constants.SEPARATOR+mNombre+Constants.SEPARATOR+mEmail+Constants.SEPARATOR+mDireccion+Constants.SEPARATOR+mEdad+Constants.SEPARATOR+mPassword);
                 Thread.sleep(2000);
                 respuesta=in.readLine();
                 Log.e("xd",respuesta);
@@ -302,7 +302,7 @@ public class RegisterActivity extends AppCompatActivity implements Serializable,
             }
             if(respuesta.split("\\|")[0].equals("RC")) {
                 try {
-                    out.write(Constants.LOGIN_CHARACTERS_SEND +Constants.SEPARATOR+mEmail+Constants.SEPARATOR+mPassword);
+                    out.println(Constants.LOGIN_CHARACTERS_SEND +Constants.SEPARATOR+mEmail+Constants.SEPARATOR+mPassword);
                     respuesta=in.readLine();
                 } catch (IOException e) {
                     e.printStackTrace();

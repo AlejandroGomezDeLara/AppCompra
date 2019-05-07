@@ -43,20 +43,7 @@ public class ListasFragment extends Fragment {
         return view;
     }
     public void rellenarListas(){
-        Lista l=new Lista("Fiesta de manuel",R.color.navMenuBackgroundColor);
-        Usuario pepe=new Usuario("pepe");
-        l.añadirUsuario(pepe);
-        l.añadirUsuario(new Usuario("adri"));
-        l.añadirUsuario(new Usuario("Manueee"));
-        Lista l3=new Lista("La compra del mes",R.color.menuBackgroundColor);
-        l3.añadirUsuario(new Usuario("Manolito"));
-        l3.añadirUsuario(new Usuario("Brother"));
-        l3.añadirUsuario(new Usuario("Mama"));
-        l3.añadirUsuario(new Usuario("Papa"));
-        l3.añadirUsuario(new Usuario("Mi tio"));
-        l3.añadirUsuario(new Usuario("Mi tia"));
-        listas.add(l3);
-        listas.add(l);
+
     }
     private void updateEditTextFiltrar(View view){
         EditText editText=view.findViewById(R.id.editText);
