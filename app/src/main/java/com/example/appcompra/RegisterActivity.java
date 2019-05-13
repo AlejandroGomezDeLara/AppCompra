@@ -98,15 +98,17 @@ public class RegisterActivity extends AppCompatActivity implements Serializable,
             @Override
             public void onClick(View v) {
                 c=Calendar.getInstance();
+                c.add(Calendar.YEAR,0);
                 final int day=c.get(Calendar.DAY_OF_MONTH);
-                int month=c.get(Calendar.MONTH);
-                int year=c.get(Calendar.YEAR);
+                final int month=c.get(Calendar.MONTH);
+                final int year=c.get(Calendar.YEAR);
                 dpd=new DatePickerDialog(RegisterActivity.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        mFechaNacView.setText(day+"/"+month+"/"+year);
+                        mFechaNacView.setText(dayOfMonth+"/"+(month+1)+"/"+year);
                     }
                 },day,month,year);
+                dpd.getDatePicker().setMinDate(c.getTimeInMillis());
                 dpd.show();
             }
         });
@@ -289,7 +291,7 @@ public class RegisterActivity extends AppCompatActivity implements Serializable,
                 socket=new Socket(Constants.IP_SERVER,Constants.PORT);
                 in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out=new PrintWriter(socket.getOutputStream(),true);
-                out.println(Constants.REGISTER_CHARACTERS_SEND +Constants.SEPARATOR+mNombre+Constants.SEPARATOR+mEmail+Constants.SEPARATOR+mDireccion+Constants.SEPARATOR+mEdad+Constants.SEPARATOR+mPassword);
+                out.println(Constants.REGISTER_PETICION +Constants.SEPARATOR+mNombre+Constants.SEPARATOR+mEmail+Constants.SEPARATOR+mDireccion+Constants.SEPARATOR+mEdad+Constants.SEPARATOR+mPassword);
                 Thread.sleep(2000);
                 respuesta=in.readLine();
                 Log.e("xd",respuesta);
@@ -300,15 +302,15 @@ public class RegisterActivity extends AppCompatActivity implements Serializable,
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if(respuesta.split("\\|")[0].equals("RC")) {
+            if(respuesta.split("\\|")[0].equals(Constants.REGISTER_RESPUESTA_CORRECTA)) {
                 try {
-                    out.println(Constants.LOGIN_CHARACTERS_SEND +Constants.SEPARATOR+mEmail+Constants.SEPARATOR+mPassword);
+                    out.println(Constants.LOGIN_RESPUESTA_CORRECTA +Constants.SEPARATOR+mEmail+Constants.SEPARATOR+mPassword);
                     respuesta=in.readLine();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                if(respuesta.split("\\|")[0].equals("LC")) {
-                    usuario=new Usuario(Integer.parseInt(respuesta.split("\\|")[1]),respuesta.split("\\|")[2],mEmail,respuesta.split("\\|")[3]);
+                if(respuesta.split("\\|")[0].equals(Constants.LOGIN_RESPUESTA_CORRECTA)) {
+                    usuario=new Usuario(socket,Integer.parseInt(respuesta.split("\\|")[1]),respuesta.split("\\|")[2],mEmail,respuesta.split("\\|")[3]);
                     try {
                         in.close();
                         out.close();

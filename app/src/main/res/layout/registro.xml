@@ -65,7 +65,6 @@
                 android:drawablePadding="5dp"
                 android:drawableTint="@color/backgroundColor"
                 android:hint="Nombre de usuario"
-                android:inputType="textPassword"
                 android:padding="10dp"
                 android:layout_marginBottom="15dp"
                 />
@@ -96,7 +95,6 @@
                 android:drawablePadding="5dp"
                 android:drawableTint="@color/backgroundColor"
                 android:hint="Dirección"
-                android:inputType="textPassword"
                 android:layout_marginBottom="15dp"
                 android:padding="10dp" />
                 <EditText
@@ -109,7 +107,6 @@
                     android:drawablePadding="5dp"
                     android:drawableTint="@color/backgroundColor"
                     android:hint="Fecha nac."
-                    android:inputType="textPassword"
                     android:layout_marginBottom="15dp"
                     android:padding="10dp" />
             </LinearLayout>
