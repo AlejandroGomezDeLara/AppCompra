@@ -2,9 +2,9 @@ package com.example.appcompra.clases;
 
 public class Categoria {
     private int id;
-    private int nombre;
+    private String nombre;
 
-    public Categoria(int id, int nombre) {
+    public Categoria(int id, String nombre) {
         this.id = id;
         this.nombre = nombre;
     }
@@ -17,11 +17,11 @@ public class Categoria {
         this.id = id;
     }
 
-    public int getNombre() {
+    public String getNombre() {
         return nombre;
     }
 
-    public void setNombre(int nombre) {
+    public void setNombre(String nombre) {
         this.nombre = nombre;
     }
 }

@@ -3,6 +3,7 @@ package com.example.appcompra.utils;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.appcompra.clases.Categoria;
 import com.example.appcompra.clases.Producto;
 import com.example.appcompra.clases.TipoProducto;
 
@@ -37,4 +38,28 @@ public class QueryUtils {
 
         return productos;
     }
+
+    public static ArrayList<Categoria> categoriasJson(String entrada){
+        int id;
+        String nombre;
+        ArrayList<Categoria> categorias=new ArrayList<>();
+        try{
+            JSONObject raiz=new JSONObject(entrada);
+            JSONArray data=raiz.getJSONArray("categorias");
+            JSONObject categoriaActual;
+            for (int i=0;i<data.length();i++){
+                categoriaActual=data.getJSONObject(i);
+                id=categoriaActual.getInt("id");
+                nombre=categoriaActual.getString("nombre");
+                Categoria c=new Categoria(id,nombre);
+                categorias.add(c);
+            }
+
+        }catch (JSONException e){
+            Log.e("JSONException ","JSON mal formado "+e.getMessage());
+        }
+
+        return categorias;
+    }
+
 }

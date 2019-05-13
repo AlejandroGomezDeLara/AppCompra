@@ -14,14 +14,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.appcompra.Constants;
 import com.example.appcompra.LoginActivity;
 import com.example.appcompra.MainActivity;
 import com.example.appcompra.R;
+import com.example.appcompra.clases.Categoria;
 import com.example.appcompra.clases.Producto;
 import com.example.appcompra.clases.TipoProducto;
 import com.example.appcompra.adapters.ProductoAdapter;
@@ -38,14 +41,17 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ProductosFragment extends Fragment {
     protected ArrayList<Producto> productos;
     private Usuario usuario;
     protected RecyclerView recyclerView;
     protected ProductoAdapter adapter;
-    ProgressBar loadingIndicator;
-    PeticionProductosTask peticionTask = null;
+    protected ProgressBar loadingIndicator;
+    protected PeticionProductosTask peticionTask = null;
+    protected PeticionCategoriasTask categoriasTask=null;
+    protected Spinner categoriasSpinner;
     QueryUtils q;
     @Nullable
     @Override
@@ -54,6 +60,7 @@ public class ProductosFragment extends Fragment {
         loadingIndicator = view.findViewById(R.id.loading_indicator);
         q=new QueryUtils();
         usuario=((MainActivity)this.getActivity()).getUsuario();
+        categoriasSpinner=view.findViewById(R.id.spinner_categorias);
         recyclerView=view.findViewById(R.id.recyclerView);
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -69,6 +76,8 @@ public class ProductosFragment extends Fragment {
         productos=new ArrayList<>();
         peticionTask = new PeticionProductosTask();
         peticionTask.execute((Void) null);
+        categoriasTask=new PeticionCategoriasTask();
+        categoriasTask.execute((Void) null);
         updateUI(productos);
         updateEditTextFiltrar(view);
         return view;
@@ -101,21 +110,13 @@ public class ProductosFragment extends Fragment {
         }
         adapter.filtrarLista(lista);
     }
-    private void updateUI(ArrayList<Producto> m){
-        /*productos.clear();
-        productos.addAll(m);
-        */
-        adapter=new ProductoAdapter(m, getActivity(), R.layout.item_row_productos, getActivity());
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 4));
-        recyclerView.setAdapter(adapter);
 
-        adapter.notifyDataSetChanged();
-    }
     public class PeticionProductosTask extends AsyncTask<Void, Void, ArrayList<Producto>> {
         private Socket socket;
         private BufferedReader in;
         private PrintWriter out;
+        private ArrayList<Producto> tipoProductos=new ArrayList<>();
+        private String json;
 
         PeticionProductosTask() {
         }
@@ -127,13 +128,18 @@ public class ProductosFragment extends Fragment {
             try {
                 in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out=new PrintWriter(socket.getOutputStream(),true);
-                out.println(Constants.PRODUCTOS_PETICION+Constants.SEPARATOR+"ID CATEGORIA AQUI"+Constants.SEPARATOR+"NUMERO DE PAGINADO");
+                out.println(Constants.PRODUCTOS_CATEGORIA_PETICION+Constants.SEPARATOR+"ID CATEGORIA AQUI"+Constants.SEPARATOR+"NUMERO DE PAGINADO");
+                String entrada=in.readLine();
+                if(entrada.split(Constants.SEPARATOR)[0].equals(Constants.PRODUCTOS_CATEGORIA_RESPUESTA_CORRECTA)){
+                    json=entrada.split(Constants.SEPARATOR)[1];
+                    tipoProductos=q.tipoProductosJson(json,"Pescado");
+                }
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
             */
-            ArrayList<Producto> tipoProductos=new ArrayList<>();
-            String json="{\"productos\":[{\"id\":1,\"nombre\":\"hamburguesa\",\"url\":\"https://image.flaticon.com/icons/png/512/93/93104.png\"},{\"id\":2,\"nombre\":\"patata\",\"url\":\"https://image.flaticon.com/icons/png/512/89/89421.png\"},{\"id\":3,\"nombre\":\"aceitunas\",\"url\":\"https://image.flaticon.com/icons/png/512/89/89421.png\"},{\"id\":4,\"nombre\":\"aceite\",\"url\":\"https://image.flaticon.com/icons/png/512/89/89421.png\"}]}";
+            json="{\"productos\":[{\"id\":1,\"nombre\":\"hamburguesa\",\"url\":\"https://image.flaticon.com/icons/png/512/93/93104.png\"},{\"id\":2,\"nombre\":\"patata\",\"url\":\"https://image.flaticon.com/icons/png/512/89/89421.png\"},{\"id\":3,\"nombre\":\"aceitunas\",\"url\":\"https://image.flaticon.com/icons/png/512/89/89421.png\"},{\"id\":4,\"nombre\":\"aceite\",\"url\":\"https://image.flaticon.com/icons/png/512/89/89421.png\"}]}";
             tipoProductos=q.tipoProductosJson(json,"Pescado");
             return tipoProductos;
         }
@@ -152,5 +158,72 @@ public class ProductosFragment extends Fragment {
 
     }
 
+    public class PeticionCategoriasTask extends AsyncTask<Void, Void, ArrayList<Categoria>> {
+        private Socket socket;
+        private BufferedReader in;
+        private PrintWriter out;
+        private String json;
+        private ArrayList<Categoria> categorias=new ArrayList<>();
+        PeticionCategoriasTask() {
+        }
 
+        @Override
+        protected ArrayList<Categoria> doInBackground(Void... params) {
+            /*
+            socket=usuario.getSocket();
+            try {
+                in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                out=new PrintWriter(socket.getOutputStream(),true);
+                out.println(Constants.CATEGORIAS_PETICION);
+                String entrada=in.readLine();
+                if(entrada.split(Constants.SEPARATOR)[0].equals(Constants.CATEGORIAS_RESPUESTA_CORRECTA)){
+                    json=in.readLine();
+                    categorias=q.categoriasJson(json);
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            */
+            json="{\"categorias\":[{\"id\":1,\"nombre\":\"Marisco y pescado\"},{\"id\":2,\"nombre\":\"Carne\"},{\"id\":3,\"nombre\":\"Cereales\"}]}";
+            categorias=q.categoriasJson(json);
+            return categorias;
+        }
+
+        @Override
+        protected void onPostExecute(final ArrayList<Categoria> categorias) {
+            updateSpinner(categorias);
+        }
+
+        @Override
+        protected void onCancelled() {
+
+        }
+
+
+    }
+
+    private void updateSpinner(ArrayList<Categoria> c) {
+        List<String> valoresSpinner=new ArrayList<>();
+        for (int i=0;i<c.size();i++){
+            valoresSpinner.add(c.get(i).getNombre());
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                getActivity(),
+                android.R.layout.simple_spinner_item,
+                valoresSpinner
+        );
+        categoriasSpinner.setAdapter(adapter);
+    }
+    private void updateUI(ArrayList<Producto> m){
+        /*productos.clear();
+        productos.addAll(m);
+        */
+        adapter=new ProductoAdapter(m, getActivity(), R.layout.item_row_productos, getActivity());
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 4));
+        recyclerView.setAdapter(adapter);
+
+        adapter.notifyDataSetChanged();
+    }
 }
