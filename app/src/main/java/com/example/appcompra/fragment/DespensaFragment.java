@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
+import com.example.appcompra.MainActivity;
 import com.example.appcompra.R;
 import com.example.appcompra.adapters.DespensaAdapter;
 import com.example.appcompra.adapters.ListaAdapter;
@@ -32,6 +33,7 @@ public class DespensaFragment extends Fragment {
     protected RecyclerView recyclerView;
     protected DespensaAdapter adapter;
     ProgressBar loadingIndicator;
+    private Usuario usuario;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -39,6 +41,7 @@ public class DespensaFragment extends Fragment {
         loadingIndicator = view.findViewById(R.id.loading_indicator);
         recyclerView=view.findViewById(R.id.recyclerView);
         productos=new ArrayList<>();
+        usuario=((MainActivity)this.getActivity()).getUsuario();
         rellenarProductos();
         updateUI(productos);
         updateEditTextFiltrar(view);

@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
+import com.example.appcompra.MainActivity;
 import com.example.appcompra.R;
 import com.example.appcompra.adapters.ListaAdapter;
 import com.example.appcompra.clases.Lista;
@@ -30,6 +31,7 @@ public class ListasFragment extends Fragment {
     protected RecyclerView recyclerView;
     protected ListaAdapter adapter;
     ProgressBar loadingIndicator;
+    private Usuario usuario;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -37,6 +39,7 @@ public class ListasFragment extends Fragment {
         loadingIndicator = view.findViewById(R.id.loading_indicator);
         recyclerView=view.findViewById(R.id.recyclerView);
         listas=new ArrayList<>();
+        usuario=((MainActivity)this.getActivity()).getUsuario();
         rellenarListas();
         updateUI(listas);
         updateEditTextFiltrar(view);

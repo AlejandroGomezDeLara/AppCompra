@@ -3,18 +3,29 @@ package com.example.appcompra.clases;
 import com.example.appcompra.R;
 
 import java.io.Serializable;
+import java.net.Socket;
 
 public class Usuario implements Serializable {
+    private Socket socket;
     private int id;
     private String email;
     private String nombre;
     private String urlImagenPerfil;
 
-    public Usuario(int id,String nombre,String email,String urlImagenPerfil) {
+    public Usuario(Socket socket,int id,String nombre,String email,String urlImagenPerfil) {
+        this.socket=socket;
         this.id=id;
         this.nombre = nombre;
         this.email=email;
         this.urlImagenPerfil=urlImagenPerfil;
+    }
+
+    public Socket getSocket() {
+        return socket;
+    }
+
+    public void setSocket(Socket socket) {
+        this.socket = socket;
     }
 
     public String getEmail() {

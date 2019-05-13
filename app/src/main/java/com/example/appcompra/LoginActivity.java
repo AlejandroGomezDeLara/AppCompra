@@ -254,7 +254,7 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
                 socket=new Socket(Constants.IP_SERVER,Constants.PORT);
                 in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out=new PrintWriter(socket.getOutputStream(),true);
-                out.println(Constants.LOGIN_CHARACTERS_SEND +Constants.SEPARATOR+mEmail+Constants.SEPARATOR+mPassword);
+                out.println(Constants.LOGIN_PETICION +Constants.SEPARATOR+mEmail+Constants.SEPARATOR+mPassword);
                 Thread.sleep(2000);
                 respuesta=in.readLine();
                 Log.e("xd",respuesta);
@@ -265,8 +265,8 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
             } catch (IOException e) {
                 e.printStackTrace();
             }
-           if(respuesta.split(Constants.SEPARATOR)[0].equals("LC")) {
-                usuario=new Usuario(Integer.parseInt(respuesta.split(Constants.SEPARATOR)[1]),respuesta.split(Constants.SEPARATOR)[2],mEmail,respuesta.split(Constants.SEPARATOR)[3]);
+           if(respuesta.split(Constants.SEPARATOR)[0].equals(Constants.LOGIN_RESPUESTA_CORRECTA)) {
+                usuario=new Usuario(socket,Integer.parseInt(respuesta.split(Constants.SEPARATOR)[1]),respuesta.split(Constants.SEPARATOR)[2],mEmail,respuesta.split(Constants.SEPARATOR)[3]);
                 try {
                     in.close();
                     out.close();
@@ -276,8 +276,8 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
                 return true;
             }else
                 return false;
-                */
-            usuario=new Usuario(Integer.parseInt("1"),"pepe",mEmail,"https://cdn.computerhoy.com/sites/navi.axelspringer.es/public/styles/480/public/media/image/2018/08/fotos-perfil-whatsapp_16.jpg?itok=aqeTumbO");
+            */
+            usuario=new Usuario(socket,Integer.parseInt("1"),"pepe",mEmail,"https://cdn.computerhoy.com/sites/navi.axelspringer.es/public/styles/480/public/media/image/2018/08/fotos-perfil-whatsapp_16.jpg?itok=aqeTumbO");
             return true;
         }
 

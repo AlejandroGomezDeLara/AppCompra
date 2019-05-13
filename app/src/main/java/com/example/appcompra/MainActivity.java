@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
     public Usuario getUsuario() {
-        return usuario;
+        return this.usuario;
     }
 
     public void setUsuario(Usuario usuario) {
