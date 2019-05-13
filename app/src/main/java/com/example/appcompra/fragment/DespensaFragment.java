@@ -48,7 +48,7 @@ public class DespensaFragment extends Fragment {
         return view;
     }
     public void rellenarProductos(){
-        productos.add(new TipoProducto("Hamburguesa","Ingredientes","https://image.flaticon.com/icons/png/512/93/93104.png",getContext()));
+        productos.add(new TipoProducto(2,"Hamburguesa","Ingredientes","https://image.flaticon.com/icons/png/512/93/93104.png"));
 
     }
     private void updateEditTextFiltrar(View view){

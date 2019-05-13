@@ -3,9 +3,9 @@ package com.example.appcompra.clases;
 import android.content.Context;
 
 public class Producto {
+    public int id;
     public String nombre;
     public String categoria;
-    public Context context;
     public String url;
     public boolean seleccionado;
 
@@ -17,11 +17,20 @@ public class Producto {
         this.seleccionado = seleccionado;
     }
 
-    public Producto(String nombre, String categoria,Context context) {
+    public Producto(int id,String nombre, String categoria,String url) {
+        this.id=id;
+        this.url=url;
         this.nombre = corregirNombre(nombre);
         this.categoria = categoria;
-        this.context = context;
         this.seleccionado=false;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getNombre() {
@@ -46,14 +55,6 @@ public class Producto {
 
     public void setCategoria(String categoria) {
         this.categoria = categoria;
-    }
-
-    public Context getContext() {
-        return context;
-    }
-
-    public void setContext(Context context) {
-        this.context = context;
     }
 
     public String corregirNombre(String nombre){

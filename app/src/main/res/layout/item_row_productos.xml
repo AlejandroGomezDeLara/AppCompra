@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView
-    android:layout_width="98dp"
-    android:layout_height="98dp"
+    android:layout_width="86dp"
+    android:layout_height="86dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/item_row_cardView"
     android:orientation="horizontal"

@@ -6,10 +6,9 @@ import android.content.res.Resources;
 public class ProductoComercial extends Producto{
     private String marca;
 
-    public ProductoComercial(String nombre,String marca,String url,String categoria,Context context ) {
-        super(nombre,categoria,context);
+    public ProductoComercial(int id,String nombre,String marca,String url,String categoria ) {
+        super(id,nombre,categoria,url);
         this.marca=marca;
-        this.url=url;
     }
 
 }

@@ -26,6 +26,11 @@ import com.example.appcompra.clases.Producto;
 import com.example.appcompra.clases.TipoProducto;
 import com.example.appcompra.adapters.ProductoAdapter;
 import com.example.appcompra.clases.Usuario;
+import com.example.appcompra.utils.QueryUtils;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -41,12 +46,13 @@ public class ProductosFragment extends Fragment {
     protected ProductoAdapter adapter;
     ProgressBar loadingIndicator;
     PeticionProductosTask peticionTask = null;
-
+    QueryUtils q;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_productos, container, false);
         loadingIndicator = view.findViewById(R.id.loading_indicator);
+        q=new QueryUtils();
         usuario=((MainActivity)this.getActivity()).getUsuario();
         recyclerView=view.findViewById(R.id.recyclerView);
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -106,7 +112,7 @@ public class ProductosFragment extends Fragment {
 
         adapter.notifyDataSetChanged();
     }
-    public class PeticionProductosTask extends AsyncTask<Void, Void, Boolean> {
+    public class PeticionProductosTask extends AsyncTask<Void, Void, ArrayList<Producto>> {
         private Socket socket;
         private BufferedReader in;
         private PrintWriter out;
@@ -115,28 +121,27 @@ public class ProductosFragment extends Fragment {
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
+        protected ArrayList<Producto> doInBackground(Void... params) {
+            /*
             socket=usuario.getSocket();
             try {
                 in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out=new PrintWriter(socket.getOutputStream(),true);
-                //petición al servidor
                 out.println(Constants.PRODUCTOS_PETICION+Constants.SEPARATOR+"ID CATEGORIA AQUI"+Constants.SEPARATOR+"NUMERO DE PAGINADO");
-                productos=procesarJson(in.readLine());
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return true;
+            */
+            ArrayList<Producto> tipoProductos=new ArrayList<>();
+            String json="{\"productos\":[{\"id\":1,\"nombre\":\"hamburguesa\",\"url\":\"https://image.flaticon.com/icons/png/512/93/93104.png\"},{\"id\":2,\"nombre\":\"patata\",\"url\":\"https://image.flaticon.com/icons/png/512/89/89421.png\"},{\"id\":3,\"nombre\":\"aceitunas\",\"url\":\"https://image.flaticon.com/icons/png/512/89/89421.png\"},{\"id\":4,\"nombre\":\"aceite\",\"url\":\"https://image.flaticon.com/icons/png/512/89/89421.png\"}]}";
+            tipoProductos=q.tipoProductosJson(json,"Pescado");
+            return tipoProductos;
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
-            if(success){
-                Log.e("xd","Productos actualizados");
-            }else{
-                Log.e("xd","Error al actualizar los productos");
-            }
+        protected void onPostExecute(final ArrayList<Producto> tipoProductos) {
+            updateUI(tipoProductos);
+            Log.e("peticion","productos actualizados");
         }
 
         @Override
@@ -144,12 +149,7 @@ public class ProductosFragment extends Fragment {
 
         }
 
-        protected ArrayList<Producto> procesarJson(String entrada){
 
-            //procesar de x forma los productos
-
-            return new ArrayList<Producto>();
-        }
     }
 
 

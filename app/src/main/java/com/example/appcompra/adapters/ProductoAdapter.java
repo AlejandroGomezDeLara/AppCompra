@@ -50,14 +50,9 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull final ProductoAdapter.ViewHolder viewHolder,final int i) {
         final Producto producto=productos.get(i);
-        if(producto.getNombre().contains("niio"))
-            viewHolder.nombre.setText(corregirNombre(producto.getNombre().replaceAll("niio","ñ")));
-        else
-            viewHolder.nombre.setText(corregirNombre(producto.getNombre()));
-        if(producto.getUrl().equals("")){
-        }else{
-            Picasso.get().load(producto.getUrl()).into(viewHolder.imagen);
-        }
+        viewHolder.nombre.setText(corregirNombre(producto.getNombre()));
+        Picasso.get().load(producto.getUrl()).into(viewHolder.imagen);
+
         viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,10 +94,8 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
         }
     }
     public String corregirNombre(String nombre){
-        if(nombre.contains("niio")){
-            nombre.replaceAll("niio","ñ");
-        }
-
+        if(nombre.contains("_"))
+            nombre=nombre.replaceAll("_"," ");
         return nombre;
     }
 }
