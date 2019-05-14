@@ -310,7 +310,7 @@ public class RegisterActivity extends AppCompatActivity implements Serializable,
                     e.printStackTrace();
                 }
                 if(respuesta.split("\\|")[0].equals(Constants.LOGIN_RESPUESTA_CORRECTA)) {
-                    usuario=new Usuario(socket,Integer.parseInt(respuesta.split("\\|")[1]),respuesta.split("\\|")[2],mEmail,respuesta.split("\\|")[3]);
+                    usuario=new Usuario(Integer.parseInt(respuesta.split("\\|")[1]),respuesta.split("\\|")[2],mEmail,respuesta.split("\\|")[3]);
                     try {
                         in.close();
                         out.close();

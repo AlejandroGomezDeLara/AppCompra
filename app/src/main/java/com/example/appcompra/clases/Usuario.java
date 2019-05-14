@@ -12,8 +12,7 @@ public class Usuario implements Serializable {
     private String nombre;
     private String urlImagenPerfil;
 
-    public Usuario(Socket socket,int id,String nombre,String email,String urlImagenPerfil) {
-        this.socket=socket;
+    public Usuario(int id,String nombre,String email,String urlImagenPerfil) {
         this.id=id;
         this.nombre = nombre;
         this.email=email;

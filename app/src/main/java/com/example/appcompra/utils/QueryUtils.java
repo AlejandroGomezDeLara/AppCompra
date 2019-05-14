@@ -11,9 +11,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.Socket;
 import java.util.ArrayList;
 
 public class QueryUtils {
+    private static Socket socket;
+
     public static ArrayList<Producto> tipoProductosJson(String entrada, String categoria){
         int id;
         String nombre;
@@ -62,4 +65,11 @@ public class QueryUtils {
         return categorias;
     }
 
+    public static synchronized Socket getSocket(){
+        return socket;
+    }
+
+    public static synchronized void setSocket(Socket socket){
+        QueryUtils.socket = socket;
+    }
 }

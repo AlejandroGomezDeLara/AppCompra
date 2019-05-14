@@ -29,6 +29,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.appcompra.clases.Usuario;
+import com.example.appcompra.utils.QueryUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -249,7 +250,7 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
         @Override
         protected Boolean doInBackground(Void... params) {
 
-            /*
+
             try {
                 socket=new Socket(Constants.IP_SERVER,Constants.PORT);
                 in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -266,7 +267,8 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
                 e.printStackTrace();
             }
            if(respuesta.split(Constants.SEPARATOR)[0].equals(Constants.LOGIN_RESPUESTA_CORRECTA)) {
-                usuario=new Usuario(socket,Integer.parseInt(respuesta.split(Constants.SEPARATOR)[1]),respuesta.split(Constants.SEPARATOR)[2],mEmail,respuesta.split(Constants.SEPARATOR)[3]);
+               QueryUtils.setSocket(socket);
+               usuario=new Usuario(Integer.parseInt("1"),"pepe",mEmail,"https://cdn.computerhoy.com/sites/navi.axelspringer.es/public/styles/480/public/media/image/2018/08/fotos-perfil-whatsapp_16.jpg?itok=aqeTumbO");
                 try {
                     in.close();
                     out.close();
@@ -276,9 +278,6 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
                 return true;
             }else
                 return false;
-            */
-            usuario=new Usuario(socket,Integer.parseInt("1"),"pepe",mEmail,"https://cdn.computerhoy.com/sites/navi.axelspringer.es/public/styles/480/public/media/image/2018/08/fotos-perfil-whatsapp_16.jpg?itok=aqeTumbO");
-            return true;
         }
 
         @Override
