@@ -74,10 +74,10 @@ public class ProductosFragment extends Fragment {
             }
         });
         productos=new ArrayList<>();
-        peticionTask = new PeticionProductosTask();
-        peticionTask.execute((Void) null);
         categoriasTask=new PeticionCategoriasTask();
         categoriasTask.execute((Void) null);
+        peticionTask = new PeticionProductosTask();
+        peticionTask.execute((Void) null);
         updateUI(productos);
         updateEditTextFiltrar(view);
         return view;
@@ -123,13 +123,14 @@ public class ProductosFragment extends Fragment {
 
         @Override
         protected ArrayList<Producto> doInBackground(Void... params) {
-            /*
-            socket=usuario.getSocket();
+
+            socket=QueryUtils.getSocket();
             try {
                 in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out=new PrintWriter(socket.getOutputStream(),true);
                 out.println(Constants.PRODUCTOS_CATEGORIA_PETICION+Constants.SEPARATOR+"ID CATEGORIA AQUI"+Constants.SEPARATOR+"NUMERO DE PAGINADO");
                 String entrada=in.readLine();
+                Log.e("respuesta",entrada.split(Constants.SEPARATOR)[1]);
                 if(entrada.split(Constants.SEPARATOR)[0].equals(Constants.PRODUCTOS_CATEGORIA_RESPUESTA_CORRECTA)){
                     json=entrada.split(Constants.SEPARATOR)[1];
                     tipoProductos=q.tipoProductosJson(json,"Pescado");
@@ -138,8 +139,8 @@ public class ProductosFragment extends Fragment {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            */
-            json="{\"productos\":[{\"id\":1,\"nombre\":\"hamburguesa\",\"url\":\"https://image.flaticon.com/icons/png/512/93/93104.png\"},{\"id\":2,\"nombre\":\"patata\",\"url\":\"https://image.flaticon.com/icons/png/512/89/89421.png\"},{\"id\":3,\"nombre\":\"aceitunas\",\"url\":\"https://image.flaticon.com/icons/png/512/89/89421.png\"},{\"id\":4,\"nombre\":\"aceite\",\"url\":\"https://image.flaticon.com/icons/png/512/89/89421.png\"}]}";
+
+            //json="{\"productos\":[{\"id\":1,\"nombre\":\"hamburguesa\",\"url\":\"https://image.flaticon.com/icons/png/512/93/93104.png\"},{\"id\":2,\"nombre\":\"patata\",\"url\":\"https://image.flaticon.com/icons/png/512/89/89421.png\"},{\"id\":3,\"nombre\":\"aceitunas\",\"url\":\"https://image.flaticon.com/icons/png/512/89/89421.png\"},{\"id\":4,\"nombre\":\"aceite\",\"url\":\"https://image.flaticon.com/icons/png/512/89/89421.png\"}]}";
             tipoProductos=q.tipoProductosJson(json,"Pescado");
             return tipoProductos;
         }
@@ -169,23 +170,24 @@ public class ProductosFragment extends Fragment {
 
         @Override
         protected ArrayList<Categoria> doInBackground(Void... params) {
-            /*
-            socket=usuario.getSocket();
+
+            socket=QueryUtils.getSocket();
             try {
                 in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out=new PrintWriter(socket.getOutputStream(),true);
                 out.println(Constants.CATEGORIAS_PETICION);
                 String entrada=in.readLine();
+                Log.e("respuesta",entrada.split(Constants.SEPARATOR)[1]);
                 if(entrada.split(Constants.SEPARATOR)[0].equals(Constants.CATEGORIAS_RESPUESTA_CORRECTA)){
-                    json=in.readLine();
+                    json=entrada.split(Constants.SEPARATOR)[1];
                     categorias=q.categoriasJson(json);
                 }
 
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e("errorIO",e.getMessage());
             }
-            */
-            json="{\"categorias\":[{\"id\":1,\"nombre\":\"Marisco y pescado\"},{\"id\":2,\"nombre\":\"Carne\"},{\"id\":3,\"nombre\":\"Cereales\"}]}";
+
+            //json="{\"categorias\":[{\"id\":1,\"nombre\":\"Marisco y pescado\"},{\"id\":2,\"nombre\":\"Carne\"},{\"id\":3,\"nombre\":\"Cereales\"}]}";
             categorias=q.categoriasJson(json);
             return categorias;
         }
