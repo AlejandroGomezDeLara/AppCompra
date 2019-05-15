@@ -68,6 +68,7 @@
                 android:drawableTint="@color/backgroundColor"
                 android:hint="Email"
                 android:padding="10dp"
+                android:inputType="textEmailAddress"
 
                 />
 

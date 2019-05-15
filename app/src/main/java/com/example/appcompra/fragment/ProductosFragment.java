@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -52,16 +53,20 @@ public class ProductosFragment extends Fragment {
     protected PeticionProductosTask peticionTask = null;
     protected PeticionCategoriasTask categoriasTask=null;
     protected Spinner categoriasSpinner;
+    protected int idCategoria;
     QueryUtils q;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_productos, container, false);
-        loadingIndicator = view.findViewById(R.id.loading_indicator);
+        loadingIndicator=view.findViewById(R.id.loading_indicator);
+        updateLoadingBar(true);
+        idCategoria=9;
         q=new QueryUtils();
         usuario=((MainActivity)this.getActivity()).getUsuario();
         categoriasSpinner=view.findViewById(R.id.spinner_categorias);
         recyclerView=view.findViewById(R.id.recyclerView);
+        productos=new ArrayList<>();
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -73,13 +78,23 @@ public class ProductosFragment extends Fragment {
                 }
             }
         });
-        productos=new ArrayList<>();
         categoriasTask=new PeticionCategoriasTask();
         categoriasTask.execute((Void) null);
-        peticionTask = new PeticionProductosTask();
-        peticionTask.execute((Void) null);
-        updateUI(productos);
+        categoriasSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                idCategoria=position+1;
+                peticionTask = new PeticionProductosTask(idCategoria);
+                peticionTask.execute((Void) null);
+
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+            }
+
+        });
         updateEditTextFiltrar(view);
+
         return view;
     }
 
@@ -96,11 +111,9 @@ public class ProductosFragment extends Fragment {
             }
         });
     }
-
     public void onResume() {
         super.onResume();
     }
-
     private void filtrar(String contenidoEditText){
         ArrayList<Producto> lista=new ArrayList<>();
         for (Producto item:productos){
@@ -110,15 +123,15 @@ public class ProductosFragment extends Fragment {
         }
         adapter.filtrarLista(lista);
     }
-
     public class PeticionProductosTask extends AsyncTask<Void, Void, ArrayList<Producto>> {
         private Socket socket;
         private BufferedReader in;
         private PrintWriter out;
         private ArrayList<Producto> tipoProductos=new ArrayList<>();
         private String json;
-
-        PeticionProductosTask() {
+        private int idCategoria;
+        PeticionProductosTask(int idCategoria) {
+            this.idCategoria=idCategoria;
         }
 
         @Override
@@ -128,12 +141,14 @@ public class ProductosFragment extends Fragment {
             try {
                 in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out=new PrintWriter(socket.getOutputStream(),true);
-                out.println(Constants.PRODUCTOS_CATEGORIA_PETICION+Constants.SEPARATOR+"ID CATEGORIA AQUI"+Constants.SEPARATOR+"NUMERO DE PAGINADO");
+                Log.e("datos",""+Constants.PRODUCTOS_CATEGORIA_PETICION+Constants.SEPARATOR+idCategoria);
+                out.println(Constants.PRODUCTOS_CATEGORIA_PETICION+Constants.SEPARATOR+idCategoria);
                 String entrada=in.readLine();
                 Log.e("respuesta",entrada.split(Constants.SEPARATOR)[1]);
                 if(entrada.split(Constants.SEPARATOR)[0].equals(Constants.PRODUCTOS_CATEGORIA_RESPUESTA_CORRECTA)){
                     json=entrada.split(Constants.SEPARATOR)[1];
                     tipoProductos=q.tipoProductosJson(json,"Pescado");
+
                 }
 
             } catch (IOException e) {
@@ -147,6 +162,10 @@ public class ProductosFragment extends Fragment {
 
         @Override
         protected void onPostExecute(final ArrayList<Producto> tipoProductos) {
+            if(tipoProductos.isEmpty()){
+                updateLoadingBar(false);
+                Toast.makeText(getContext(), "No hay productos", Toast.LENGTH_LONG).show();
+            }
             updateUI(tipoProductos);
             Log.e("peticion","productos actualizados");
         }
@@ -158,7 +177,6 @@ public class ProductosFragment extends Fragment {
 
 
     }
-
     public class PeticionCategoriasTask extends AsyncTask<Void, Void, ArrayList<Categoria>> {
         private Socket socket;
         private BufferedReader in;
@@ -204,17 +222,22 @@ public class ProductosFragment extends Fragment {
 
 
     }
-
     private void updateSpinner(ArrayList<Categoria> c) {
         List<String> valoresSpinner=new ArrayList<>();
         for (int i=0;i<c.size();i++){
             valoresSpinner.add(c.get(i).getNombre());
         }
+        /*
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 getActivity(),
                 android.R.layout.simple_spinner_item,
                 valoresSpinner
         );
+        */
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                getContext(),R.layout.spinner_item,valoresSpinner
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         categoriasSpinner.setAdapter(adapter);
     }
     private void updateUI(ArrayList<Producto> m){
@@ -227,5 +250,11 @@ public class ProductosFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         adapter.notifyDataSetChanged();
+    }
+    private void updateLoadingBar(boolean visibilidad){
+        if(visibilidad){
+            loadingIndicator.setVisibility(View.VISIBLE);
+        }else
+            loadingIndicator.setVisibility(View.GONE);
     }
 }

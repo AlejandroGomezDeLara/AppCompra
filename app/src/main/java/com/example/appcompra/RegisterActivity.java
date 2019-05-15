@@ -31,6 +31,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.appcompra.clases.Usuario;
+import com.example.appcompra.utils.QueryUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -51,6 +52,7 @@ public class RegisterActivity extends AppCompatActivity implements Serializable,
     private EditText mPasswordView;
     private EditText mFechaNacView;
     private EditText mDireccionView;
+    private int edad;
     private DatePickerDialog dpd;
     private View mProgressView;
     private View mLoginFormView;
@@ -98,7 +100,7 @@ public class RegisterActivity extends AppCompatActivity implements Serializable,
             @Override
             public void onClick(View v) {
                 c=Calendar.getInstance();
-                c.add(Calendar.YEAR,0);
+                c.add(Calendar.YEAR,-80);
                 final int day=c.get(Calendar.DAY_OF_MONTH);
                 final int month=c.get(Calendar.MONTH);
                 final int year=c.get(Calendar.YEAR);
@@ -106,6 +108,7 @@ public class RegisterActivity extends AppCompatActivity implements Serializable,
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         mFechaNacView.setText(dayOfMonth+"/"+(month+1)+"/"+year);
+                        edad=year-Calendar.getInstance().get(Calendar.YEAR);
                     }
                 },day,month,year);
                 dpd.getDatePicker().setMinDate(c.getTimeInMillis());
@@ -128,7 +131,6 @@ public class RegisterActivity extends AppCompatActivity implements Serializable,
 
         // Guardamos los valores de los edit text
         String nombre=mNombreView.getText().toString();
-        String edad=mFechaNacView.getText().toString();
         String direccion=mDireccionView.getText().toString();
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
@@ -269,13 +271,13 @@ public class RegisterActivity extends AppCompatActivity implements Serializable,
         private final String mPassword;
         private final String mNombre;
         private final String mDireccion;
-        private final String mEdad;
+        private final int mEdad;
         private String respuesta;
         private BufferedReader in;
         private PrintWriter out;
         public boolean terminado;
 
-        UserLoginTask(String nombre,String email,String direccion,String edad,String password) {
+        UserLoginTask(String nombre,String email,String direccion,int edad,String password) {
             mNombre=nombre;
             mDireccion=direccion;
             mEdad=edad;
@@ -288,15 +290,16 @@ public class RegisterActivity extends AppCompatActivity implements Serializable,
 
 
             try {
-                socket=new Socket(Constants.IP_SERVER,Constants.PORT);
+                if(QueryUtils.getSocket()==null)
+                    socket=new Socket(Constants.IP_SERVER,Constants.PORT);
+                else
+                    socket=QueryUtils.getSocket();
+
                 in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out=new PrintWriter(socket.getOutputStream(),true);
                 out.println(Constants.REGISTER_PETICION +Constants.SEPARATOR+mNombre+Constants.SEPARATOR+mEmail+Constants.SEPARATOR+mDireccion+Constants.SEPARATOR+mEdad+Constants.SEPARATOR+mPassword);
-                Thread.sleep(2000);
                 respuesta=in.readLine();
                 Log.e("xd",respuesta);
-            } catch (InterruptedException e) {
-                return false;
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -334,6 +337,8 @@ public class RegisterActivity extends AppCompatActivity implements Serializable,
                 finish();
                 startActivity(intent);
             } else {
+                finish();
+                startActivity(getIntent());
                 mPasswordView.setError("Email o contraseña incorrectos");
                 mPasswordView.requestFocus();
             }

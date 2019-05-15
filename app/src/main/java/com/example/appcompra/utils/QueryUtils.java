@@ -30,7 +30,7 @@ public class QueryUtils {
                 productoActual=data.getJSONObject(i);
                 id=productoActual.getInt("id");
                 nombre=productoActual.getString("nombre");
-                urlImagen=productoActual.getString("url");
+                urlImagen=productoActual.getString("urlimagen");
                 TipoProducto p=new TipoProducto(id,nombre,categoria,urlImagen);
                 productos.add(p);
             }

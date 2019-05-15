@@ -80,6 +80,7 @@
                 android:drawableTint="@color/backgroundColor"
                 android:hint="Email"
                 android:padding="10dp"
+                android:inputType="textEmailAddress"
                 />
             <LinearLayout
                 android:layout_width="match_parent"

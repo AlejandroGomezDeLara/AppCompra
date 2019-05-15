@@ -252,15 +252,15 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
 
 
             try {
-                socket=new Socket(Constants.IP_SERVER,Constants.PORT);
+                if(QueryUtils.getSocket()==null)
+                    socket=new Socket(Constants.IP_SERVER,Constants.PORT);
+                else
+                    socket=QueryUtils.getSocket();
                 in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out=new PrintWriter(socket.getOutputStream(),true);
                 out.println(Constants.LOGIN_PETICION +Constants.SEPARATOR+mEmail+Constants.SEPARATOR+mPassword);
-                Thread.sleep(2000);
                 respuesta=in.readLine();
                 Log.e("xd",respuesta);
-            } catch (InterruptedException e) {
-                return false;
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -286,8 +286,11 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
                 finish();
                 startActivity(intent);
             } else {
+                finish();
+                startActivity(getIntent());
                 mPasswordView.setError("Email o contraseña incorrectos");
                 mPasswordView.requestFocus();
+
             }
         }
 
