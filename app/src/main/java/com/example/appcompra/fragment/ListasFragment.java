@@ -51,9 +51,9 @@ public class ListasFragment extends Fragment {
         recyclerView=view.findViewById(R.id.recyclerView);
         listas=new ArrayList<>();
         usuario=((MainActivity)this.getActivity()).getUsuario();
-        listasTask=new PeticionListasTask();
-        listasTask.execute((Void) null);
-        updateEditTextFiltrar(view);
+        /*listasTask=new PeticionListasTask();
+        listasTask.execute((Void) null);*/
+        //updateEditTextFiltrar(view);
         return view;
     }
 

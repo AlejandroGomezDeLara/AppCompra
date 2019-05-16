@@ -27,6 +27,7 @@ import com.example.appcompra.MainActivity;
 import com.example.appcompra.R;
 import com.example.appcompra.clases.Categoria;
 import com.example.appcompra.clases.Producto;
+import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.TipoProducto;
 import com.example.appcompra.adapters.ProductoAdapter;
 import com.example.appcompra.clases.Usuario;
@@ -60,7 +61,6 @@ public class ProductosFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_productos, container, false);
         loadingIndicator=view.findViewById(R.id.loading_indicator);
-        updateLoadingBar(true);
         idCategoria=9;
         q=new QueryUtils();
         usuario=((MainActivity)this.getActivity()).getUsuario();
@@ -78,26 +78,34 @@ public class ProductosFragment extends Fragment {
                 }
             }
         });
-        categoriasTask=new PeticionCategoriasTask();
-        categoriasTask.execute((Void) null);
+        if(!Singleton.getInstance().existenProductos()){
+            peticionTask = new PeticionProductosTask(idCategoria);
+            peticionTask.execute((Void) null);
+        }else{
+            updateSpinner(Singleton.getInstance().getCategorias());
+        }
+        if(!Singleton.getInstance().existenCategorias()){
+            categoriasTask=new PeticionCategoriasTask();
+            categoriasTask.execute((Void) null);
+        }else{
+            updateUI(Singleton.getInstance().getListaProductos());
+        }
         categoriasSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 idCategoria=position+1;
                 peticionTask = new PeticionProductosTask(idCategoria);
                 peticionTask.execute((Void) null);
-
             }
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
             }
 
         });
-        updateEditTextFiltrar(view);
+        //updateEditTextFiltrar(view);
 
         return view;
     }
-
     private void updateEditTextFiltrar(View view){
         EditText editText=view.findViewById(R.id.editText);
         editText.addTextChangedListener(new TextWatcher() {
@@ -113,6 +121,7 @@ public class ProductosFragment extends Fragment {
     }
     public void onResume() {
         super.onResume();
+        productos=Singleton.getInstance().getListaProductos();
     }
     private void filtrar(String contenidoEditText){
         ArrayList<Producto> lista=new ArrayList<>();
@@ -142,7 +151,7 @@ public class ProductosFragment extends Fragment {
                 in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out=new PrintWriter(socket.getOutputStream(),true);
                 Log.e("datos",""+Constants.PRODUCTOS_CATEGORIA_PETICION+Constants.SEPARATOR+idCategoria);
-                out.println(Constants.PRODUCTOS_CATEGORIA_PETICION+Constants.SEPARATOR+idCategoria);
+                out.println(Constants.PRODUCTOS_CATEGORIA_PETICION+Constants.SEPARATOR+usuario.getId()+Constants.SEPARATOR+idCategoria);
                 String entrada=in.readLine();
                 Log.e("respuesta",entrada.split(Constants.SEPARATOR)[1]);
                 if(entrada.split(Constants.SEPARATOR)[0].equals(Constants.PRODUCTOS_CATEGORIA_RESPUESTA_CORRECTA)){
@@ -157,13 +166,13 @@ public class ProductosFragment extends Fragment {
 
             //json="{\"productos\":[{\"id\":1,\"nombre\":\"hamburguesa\",\"url\":\"https://image.flaticon.com/icons/png/512/93/93104.png\"},{\"id\":2,\"nombre\":\"patata\",\"url\":\"https://image.flaticon.com/icons/png/512/89/89421.png\"},{\"id\":3,\"nombre\":\"aceitunas\",\"url\":\"https://image.flaticon.com/icons/png/512/89/89421.png\"},{\"id\":4,\"nombre\":\"aceite\",\"url\":\"https://image.flaticon.com/icons/png/512/89/89421.png\"}]}";
             tipoProductos=q.tipoProductosJson(json,"Pescado");
+            Singleton.getInstance().setListaProductos(tipoProductos);
             return tipoProductos;
         }
 
         @Override
         protected void onPostExecute(final ArrayList<Producto> tipoProductos) {
-            if(tipoProductos.isEmpty()){
-                updateLoadingBar(false);
+            if(Singleton.getInstance().existenProductos()){
                 Toast.makeText(getContext(), "No hay productos", Toast.LENGTH_LONG).show();
             }
             updateUI(tipoProductos);
@@ -193,7 +202,7 @@ public class ProductosFragment extends Fragment {
             try {
                 in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out=new PrintWriter(socket.getOutputStream(),true);
-                out.println(Constants.CATEGORIAS_PETICION);
+                out.println(Constants.CATEGORIAS_PETICION+Constants.SEPARATOR+usuario.getId());
                 String entrada=in.readLine();
                 Log.e("respuesta",entrada.split(Constants.SEPARATOR)[1]);
                 if(entrada.split(Constants.SEPARATOR)[0].equals(Constants.CATEGORIAS_RESPUESTA_CORRECTA)){
@@ -207,6 +216,7 @@ public class ProductosFragment extends Fragment {
 
             //json="{\"categorias\":[{\"id\":1,\"nombre\":\"Marisco y pescado\"},{\"id\":2,\"nombre\":\"Carne\"},{\"id\":3,\"nombre\":\"Cereales\"}]}";
             categorias=q.categoriasJson(json);
+            Singleton.getInstance().setCategorias(categorias);
             return categorias;
         }
 
@@ -257,4 +267,5 @@ public class ProductosFragment extends Fragment {
         }else
             loadingIndicator.setVisibility(View.GONE);
     }
+
 }
