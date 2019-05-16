@@ -4,8 +4,10 @@ import android.content.Context;
 import android.util.Log;
 
 import com.example.appcompra.clases.Categoria;
+import com.example.appcompra.clases.Lista;
 import com.example.appcompra.clases.Producto;
 import com.example.appcompra.clases.TipoProducto;
+import com.example.appcompra.clases.Usuario;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -71,5 +73,40 @@ public class QueryUtils {
 
     public static synchronized void setSocket(Socket socket){
         QueryUtils.socket = socket;
+    }
+
+    public static ArrayList<Lista> listasJson(String json) {
+        int id;
+        String nombre;
+        String url;
+        ArrayList<Lista> listas=new ArrayList<>();
+        ArrayList<String> usuariosLista=new ArrayList<>();
+        try{
+            JSONObject raiz=new JSONObject(json);
+            JSONArray data=raiz.getJSONArray("listas");
+            JSONObject listaActual;
+            for (int i=0;i<data.length();i++){
+                listaActual=data.getJSONObject(i);
+                id=listaActual.getInt("id");
+                nombre=listaActual.getString("nombre");
+                url=listaActual.getString("url");
+                if(listaActual.getJSONArray("usuarios")!=null){
+                    JSONArray usuarios=listaActual.getJSONArray("usuarios");
+                    for (int j=0;j<usuarios.length();j++){
+                        JSONObject usuario=usuarios.getJSONObject(i);
+                        usuariosLista.add(usuario.getString("nombre"));
+                    }
+                }
+                Lista c=new Lista(id,nombre,url);
+                if(!usuariosLista.isEmpty())
+                    c.setUsuarios(usuariosLista);
+                listas.add(c);
+            }
+
+        }catch (JSONException e){
+            Log.e("JSONException ","JSON mal formado "+e.getMessage());
+        }
+
+        return listas;
     }
 }

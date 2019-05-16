@@ -1,29 +1,41 @@
 package com.example.appcompra.clases;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class Lista {
+    private int id;
     private String titulo;
-    private int imagenFondo;
-    private LinkedList<Usuario> usuarios;
-    private LinkedList<Producto> productos;
+    private ArrayList<Producto> productos;
+    private String urlImagen;
+    private ArrayList<String> usuarios;
 
-    public LinkedList<Usuario> getUsuarios() {
+    public ArrayList<String> getUsuarios() {
         return usuarios;
     }
 
-    public LinkedList<Producto> getProductos() {
+    public void setProductos(ArrayList<Producto> productos) {
+        this.productos = productos;
+    }
+
+    public void setUsuarios(ArrayList<String> usuarios) {
+        this.usuarios = usuarios;
+    }
+
+    public ArrayList<Producto> getProductos() {
         return productos;
     }
 
-    public Lista(String titulo, int imagenFondo) {
+    public Lista(int id,String titulo, String urlImagen) {
+        this.urlImagen=urlImagen;
         this.titulo = titulo;
-        this.imagenFondo = imagenFondo;
-        usuarios=new LinkedList<>();
-        productos=new LinkedList<>();
+        usuarios=new ArrayList<>();
+        productos=new ArrayList<>();
     }
 
-    public void añadirUsuario(Usuario u){
+
+    public void añadirUsuario(String u){
         usuarios.add(u);
     }
     public void añadirProducto(Producto p){
@@ -37,23 +49,24 @@ public class Lista {
         this.titulo = titulo;
     }
 
-    public int getImagenFondo() {
-        return imagenFondo;
+    public int getId() {
+        return id;
     }
 
-    public void setImagenFondo(int imagenFondo) {
-        this.imagenFondo = imagenFondo;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getUrlImagen() {
+        return urlImagen;
+    }
+
+    public void setUrlImagen(String urlImagen) {
+        this.urlImagen = urlImagen;
     }
 
     public int getNumeroUsuarios() {
         return usuarios.size();
     }
 
-    public void setUsuarios(LinkedList<Usuario> usuarios) {
-        this.usuarios = usuarios;
-    }
-
-    public void setProductos(LinkedList<Producto> productos) {
-        this.productos = productos;
-    }
 }

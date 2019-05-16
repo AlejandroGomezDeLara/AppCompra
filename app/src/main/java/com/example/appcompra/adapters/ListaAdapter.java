@@ -3,6 +3,10 @@ package com.example.appcompra.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.ImageViewCompat;
@@ -16,6 +20,8 @@ import android.widget.TextView;
 
 import com.example.appcompra.R;
 import com.example.appcompra.clases.Lista;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +57,24 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull final ListaAdapter.ViewHolder viewHolder,final int i) {
         final Lista lista=listas.get(i);
         viewHolder.titulo.setText(lista.getTitulo());
-        viewHolder.linearLista.setBackgroundResource(lista.getImagenFondo());
+        Picasso.get().load(lista.getUrlImagen()).into(new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    viewHolder.linearLista.setBackground(new BitmapDrawable(bitmap));
+                }
+            }
+
+            @Override
+            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+            }
+        });
         if(lista.getNumeroUsuarios()==0){
             viewHolder.imagenUsuario1.setVisibility(View.GONE);
             viewHolder.imagenUsuario2.setVisibility(View.GONE);
@@ -63,7 +86,7 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
             viewHolder.nombreUsuario4.setVisibility(View.GONE);
         }
         if(lista.getNumeroUsuarios()==1){
-            viewHolder.nombreUsuario1.setText(lista.getUsuarios().get(0).getNombre());
+            viewHolder.nombreUsuario1.setText(lista.getUsuarios().get(0));
             viewHolder.imagenUsuario2.setVisibility(View.GONE);
             viewHolder.imagenUsuario3.setVisibility(View.GONE);
             viewHolder.imagenUsuario4.setVisibility(View.GONE);
@@ -72,25 +95,25 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
             viewHolder.nombreUsuario4.setVisibility(View.GONE);
         }
         if(lista.getNumeroUsuarios()==2){
-            viewHolder.nombreUsuario1.setText(lista.getUsuarios().get(0).getNombre());
-            viewHolder.nombreUsuario2.setText(lista.getUsuarios().get(1).getNombre());
+            viewHolder.nombreUsuario1.setText(lista.getUsuarios().get(0));
+            viewHolder.nombreUsuario2.setText(lista.getUsuarios().get(1));
             viewHolder.imagenUsuario3.setVisibility(View.GONE);
             viewHolder.imagenUsuario4.setVisibility(View.GONE);
             viewHolder.nombreUsuario3.setVisibility(View.GONE);
             viewHolder.nombreUsuario4.setVisibility(View.GONE);
         }
         if(lista.getNumeroUsuarios()==3){
-            viewHolder.nombreUsuario1.setText(lista.getUsuarios().get(0).getNombre());
-            viewHolder.nombreUsuario2.setText(lista.getUsuarios().get(1).getNombre());
-            viewHolder.nombreUsuario3.setText(lista.getUsuarios().get(2).getNombre());
+            viewHolder.nombreUsuario1.setText(lista.getUsuarios().get(0));
+            viewHolder.nombreUsuario2.setText(lista.getUsuarios().get(1));
+            viewHolder.nombreUsuario3.setText(lista.getUsuarios().get(2));
             viewHolder.imagenUsuario4.setVisibility(View.GONE);
             viewHolder.nombreUsuario4.setVisibility(View.GONE);
         }
         if(lista.getNumeroUsuarios()>=4){
-            viewHolder.nombreUsuario1.setText(lista.getUsuarios().get(0).getNombre());
-            viewHolder.nombreUsuario2.setText(lista.getUsuarios().get(1).getNombre());
-            viewHolder.nombreUsuario3.setText(lista.getUsuarios().get(2).getNombre());
-            viewHolder.nombreUsuario4.setText(lista.getUsuarios().get(3).getNombre());
+            viewHolder.nombreUsuario1.setText(lista.getUsuarios().get(0));
+            viewHolder.nombreUsuario2.setText(lista.getUsuarios().get(1));
+            viewHolder.nombreUsuario3.setText(lista.getUsuarios().get(2));
+            viewHolder.nombreUsuario4.setText(lista.getUsuarios().get(3));
         }
         if(lista.getNumeroUsuarios()>4){
             viewHolder.numeroPersonas.setText("y "+(lista.getNumeroUsuarios()-4)+" más");

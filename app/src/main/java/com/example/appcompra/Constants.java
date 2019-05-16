@@ -16,5 +16,7 @@ public class Constants {
     public static final String CATEGORIAS_PETICION="C";
     public static final String CATEGORIAS_RESPUESTA_CORRECTA="CC";
     public static final String CATEGORIAS_RESPUESTA_FALLIDA="CF";
-
+    public static final String LISTAS_PETICION="LL";
+    public static final String PRODUCTOS_LISTA="PL";
+    public static final String LISTAS_RESPUESTA_CORRECTA ="LLC";
 }

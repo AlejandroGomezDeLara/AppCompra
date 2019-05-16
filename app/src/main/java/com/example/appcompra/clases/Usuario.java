@@ -19,6 +19,11 @@ public class Usuario implements Serializable {
         this.urlImagenPerfil=urlImagenPerfil;
     }
 
+    public Usuario(String nombre,String urlImagenPerfil) {
+        this.nombre = nombre;
+        this.urlImagenPerfil=urlImagenPerfil;
+    }
+
     public Socket getSocket() {
         return socket;
     }
