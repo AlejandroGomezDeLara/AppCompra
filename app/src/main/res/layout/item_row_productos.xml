@@ -1,50 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView
-    android:layout_width="86dp"
-    android:layout_height="86dp"
+    android:layout_width="92dp"
+    android:layout_height="98dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/item_row_cardView"
     android:orientation="horizontal"
     app:cardCornerRadius="5dp"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    app:cardBackgroundColor="@color/menuBackgroundColor"
+    app:cardBackgroundColor=""
     android:layout_margin="2dp"
     >
-
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:focusable="true"
-        android:paddingTop="8dp"
-        android:orientation="vertical"
-        >
+        android:layout_height="match_parent">
         <ImageView
             android:id="@+id/imagen_producto"
-            android:layout_width="52dp"
+            android:layout_width="64dp"
             android:layout_gravity="center_horizontal"
-            android:layout_height="52dp"
-            android:tint="@color/backgroundColor"/>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/nombre_producto"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:maxLines="2"
-                android:layout_marginHorizontal="8dp"
-                android:gravity="center_vertical"
-                android:layout_gravity="center_horizontal"
-                android:text="Fresas con"
-                android:textStyle="bold"
-                android:textSize="14dp"
-                android:textColor="@color/backgroundColor"/>
-        </LinearLayout>
+            android:layout_height="64dp"
+            android:src="@drawable/ic_shopping_cart_black_24dp"
+            android:layout_centerHorizontal="true"
+            android:tint="@color/navMenuBackgroundColor"/>
+        <TextView
+            android:id="@+id/nombre_producto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="2"
+            android:layout_below="@+id/imagen_producto"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_horizontal"
+            android:text="Fresas"
+            android:textStyle="bold"
+            android:textSize="14dp"
+            android:textColor="@color/navMenuBackgroundColor"/>
+    </RelativeLayout>
 
-
-    </LinearLayout>
 
 </android.support.v7.widget.CardView>
