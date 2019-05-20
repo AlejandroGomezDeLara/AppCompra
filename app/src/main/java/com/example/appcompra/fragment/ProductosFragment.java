@@ -47,6 +47,7 @@ import java.util.List;
 
 public class ProductosFragment extends Fragment {
     protected ArrayList<Producto> productos;
+    protected ArrayList<Categoria> categorias;
     private Usuario usuario;
     protected RecyclerView recyclerView;
     protected ProductoAdapter adapter;
@@ -67,35 +68,23 @@ public class ProductosFragment extends Fragment {
         categoriasSpinner=view.findViewById(R.id.spinner_categorias);
         recyclerView=view.findViewById(R.id.recyclerView);
         productos=new ArrayList<>();
+        categorias=new ArrayList<>();
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-
                 if (!recyclerView.canScrollVertically(1)) {
                     Toast.makeText(getContext(), "Ha llegado al final realizando nueva petición", Toast.LENGTH_LONG).show();
 
                 }
             }
         });
-        if(!Singleton.getInstance().existenProductos()){
-            peticionTask = new PeticionProductosTask(idCategoria);
-            peticionTask.execute((Void) null);
-        }else{
-            updateSpinner(Singleton.getInstance().getCategorias());
-        }
-        if(!Singleton.getInstance().existenCategorias()){
-            categoriasTask=new PeticionCategoriasTask();
-            categoriasTask.execute((Void) null);
-        }else{
-            updateUI(Singleton.getInstance().getListaProductos());
-        }
+        actualizar();
         categoriasSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 idCategoria=position+1;
-                peticionTask = new PeticionProductosTask(idCategoria);
-                peticionTask.execute((Void) null);
+                pedirProductos(idCategoria);
             }
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
@@ -121,8 +110,9 @@ public class ProductosFragment extends Fragment {
     }
     public void onResume() {
         super.onResume();
-        productos=Singleton.getInstance().getListaProductos();
+        actualizar();
     }
+
     private void filtrar(String contenidoEditText){
         ArrayList<Producto> lista=new ArrayList<>();
         for (Producto item:productos){
@@ -150,33 +140,37 @@ public class ProductosFragment extends Fragment {
             try {
                 in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out=new PrintWriter(socket.getOutputStream(),true);
-                Log.e("datos",""+Constants.PRODUCTOS_CATEGORIA_PETICION+Constants.SEPARATOR+idCategoria);
                 out.println(Constants.PRODUCTOS_CATEGORIA_PETICION+Constants.SEPARATOR+usuario.getId()+Constants.SEPARATOR+idCategoria);
                 String entrada=in.readLine();
                 Log.e("respuesta",entrada.split(Constants.SEPARATOR)[1]);
                 if(entrada.split(Constants.SEPARATOR)[0].equals(Constants.PRODUCTOS_CATEGORIA_RESPUESTA_CORRECTA)){
                     json=entrada.split(Constants.SEPARATOR)[1];
-                    tipoProductos=q.tipoProductosJson(json,"Pescado");
-
+                    String nombreCategoria="";
+                    for (Categoria cat : Singleton.getInstance().getCategorias())
+                    {
+                        if(cat.getId()==idCategoria){
+                            nombreCategoria=cat.getNombre();
+                        }
+                    }
+                    tipoProductos=q.tipoProductosJson(json,nombreCategoria);
+                    Singleton.getInstance().setListaProductos(tipoProductos);
                 }
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            //json="{\"productos\":[{\"id\":1,\"nombre\":\"hamburguesa\",\"url\":\"https://image.flaticon.com/icons/png/512/93/93104.png\"},{\"id\":2,\"nombre\":\"patata\",\"url\":\"https://image.flaticon.com/icons/png/512/89/89421.png\"},{\"id\":3,\"nombre\":\"aceitunas\",\"url\":\"https://image.flaticon.com/icons/png/512/89/89421.png\"},{\"id\":4,\"nombre\":\"aceite\",\"url\":\"https://image.flaticon.com/icons/png/512/89/89421.png\"}]}";
-            tipoProductos=q.tipoProductosJson(json,"Pescado");
-            Singleton.getInstance().setListaProductos(tipoProductos);
+
             return tipoProductos;
         }
 
         @Override
         protected void onPostExecute(final ArrayList<Producto> tipoProductos) {
-            if(Singleton.getInstance().existenProductos()){
+            if(!Singleton.getInstance().existenProductos()){
                 Toast.makeText(getContext(), "No hay productos", Toast.LENGTH_LONG).show();
+            }else{
+                updateUI(tipoProductos);
             }
-            updateUI(tipoProductos);
-            Log.e("peticion","productos actualizados");
         }
 
         @Override
@@ -261,11 +255,28 @@ public class ProductosFragment extends Fragment {
 
         adapter.notifyDataSetChanged();
     }
-    private void updateLoadingBar(boolean visibilidad){
-        if(visibilidad){
-            loadingIndicator.setVisibility(View.VISIBLE);
-        }else
-            loadingIndicator.setVisibility(View.GONE);
+
+
+    private void pedirProductos(int idCategoria){
+        if(!Singleton.getInstance().existenProductos() && Singleton.getInstance().existenCategorias()){
+            peticionTask = new PeticionProductosTask(idCategoria);
+            peticionTask.execute((Void) null);
+        }else{
+            updateUI(Singleton.getInstance().getListaProductos());
+        }
+    }
+    private void pedirCategorias(){
+        if(!Singleton.getInstance().existenCategorias()){
+            categoriasTask=new PeticionCategoriasTask();
+            categoriasTask.execute((Void) null);
+        }else{
+            updateSpinner(Singleton.getInstance().getCategorias());
+        }
+    }
+
+    private void actualizar(){
+        pedirCategorias();
+        pedirProductos(idCategoria);
     }
 
 }

@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.example.appcompra.Constants;
 import com.example.appcompra.MainActivity;
@@ -23,6 +24,7 @@ import com.example.appcompra.R;
 import com.example.appcompra.adapters.ListaAdapter;
 import com.example.appcompra.clases.Categoria;
 import com.example.appcompra.clases.Lista;
+import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.TipoProducto;
 import com.example.appcompra.adapters.ProductoAdapter;
 import com.example.appcompra.clases.Usuario;
@@ -51,8 +53,8 @@ public class ListasFragment extends Fragment {
         recyclerView=view.findViewById(R.id.recyclerView);
         listas=new ArrayList<>();
         usuario=((MainActivity)this.getActivity()).getUsuario();
-        /*listasTask=new PeticionListasTask();
-        listasTask.execute((Void) null);*/
+        listasTask=new PeticionListasTask();
+        listasTask.execute((Void) null);
         //updateEditTextFiltrar(view);
         return view;
     }
@@ -90,6 +92,8 @@ public class ListasFragment extends Fragment {
         }
         adapter.filtrarLista(listass);
     }
+
+
     private void updateUI(ArrayList<Lista> m){
         /*productos.clear();
         productos.addAll(m);
@@ -124,6 +128,7 @@ public class ListasFragment extends Fragment {
                 if(entrada.split(Constants.SEPARATOR)[0].equals(Constants.LISTAS_RESPUESTA_CORRECTA)){
                     json=entrada.split(Constants.SEPARATOR)[1];
                     listas=QueryUtils.listasJson(json);
+                    Singleton.getInstance().setListas(listas);
                 }
 
             } catch (IOException e) {
@@ -135,7 +140,11 @@ public class ListasFragment extends Fragment {
 
         @Override
         protected void onPostExecute(final ArrayList<Lista> listas) {
-            updateUI(listas);
+            if(!Singleton.getInstance().existenListas()){
+                Toast.makeText(getContext(), "No hay listas", Toast.LENGTH_LONG).show();
+            }else{
+                updateUI(listas);
+            }
         }
 
         @Override

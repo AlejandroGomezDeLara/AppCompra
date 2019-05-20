@@ -7,12 +7,14 @@ public class Singleton {
 
     private ArrayList<Producto> listaProductos;
     private ArrayList<Categoria> categorias;
+    private ArrayList<Lista> listas;
 
     private static Singleton instance;
 
     public Singleton () {
         listaProductos = new ArrayList();
         categorias=new ArrayList<>();
+        listas=new ArrayList<>();
     }
 
     public static Singleton getInstance () {
@@ -21,6 +23,15 @@ public class Singleton {
 
         return instance;
     }
+
+    public ArrayList<Lista> getListas() {
+        return listas;
+    }
+
+    public void setListas(ArrayList<Lista> listas) {
+        this.listas = listas;
+    }
+
 
     public ArrayList<Categoria> getCategorias() {
         return categorias;
@@ -40,6 +51,10 @@ public class Singleton {
 
     public boolean existenProductos(){
         return listaProductos!=null && !listaProductos.isEmpty();
+    }
+
+    public boolean existenListas(){
+        return listas!=null && !listas.isEmpty();
     }
 
     public boolean existenCategorias() {
