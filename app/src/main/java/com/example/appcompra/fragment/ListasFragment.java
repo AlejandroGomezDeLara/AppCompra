@@ -53,8 +53,12 @@ public class ListasFragment extends Fragment {
         recyclerView=view.findViewById(R.id.recyclerView);
         listas=new ArrayList<>();
         usuario=((MainActivity)this.getActivity()).getUsuario();
-        listasTask=new PeticionListasTask();
-        listasTask.execute((Void) null);
+        if(!Singleton.getInstance().existenListas()){
+            listasTask=new PeticionListasTask();
+            listasTask.execute((Void) null);
+        }else{
+            updateUI(Singleton.getInstance().getListas());
+        }
         //updateEditTextFiltrar(view);
         return view;
     }

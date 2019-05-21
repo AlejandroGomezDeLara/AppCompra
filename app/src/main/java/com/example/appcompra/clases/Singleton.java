@@ -2,19 +2,28 @@ package com.example.appcompra.clases;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 
 public class Singleton {
 
-    private ArrayList<Producto> listaProductos;
     private ArrayList<Categoria> categorias;
+    private TreeMap<Integer,ArrayList<Producto>> ultimosProductos;
+    public TreeMap<Integer, ArrayList<Producto>> getUltimosProductos() {
+        return ultimosProductos;
+    }
+
+    public void setUltimosProductos(TreeMap<Integer, ArrayList<Producto>> ultimosProductos) {
+        this.ultimosProductos = ultimosProductos;
+    }
+
     private ArrayList<Lista> listas;
 
     private static Singleton instance;
 
     public Singleton () {
-        listaProductos = new ArrayList();
         categorias=new ArrayList<>();
         listas=new ArrayList<>();
+        ultimosProductos=new TreeMap<>();
     }
 
     public static Singleton getInstance () {
@@ -39,18 +48,6 @@ public class Singleton {
 
     public void setCategorias(ArrayList<Categoria> categorias) {
         this.categorias = categorias;
-    }
-
-    public ArrayList<Producto> getListaProductos() {
-        return listaProductos;
-    }
-
-    public void setListaProductos(ArrayList<Producto> listaProductos) {
-        this.listaProductos = listaProductos;
-    }
-
-    public boolean existenProductos(){
-        return listaProductos!=null && !listaProductos.isEmpty();
     }
 
     public boolean existenListas(){

@@ -16,7 +16,7 @@
         android:background="@drawable/edit_text_background"
         android:drawableLeft="@drawable/ic_search_black_24dp"
         android:drawablePadding="5dp"
-        android:drawableTint="@color/navMenuBackgroundColor"
+        android:drawableTint="@color/colorProducto"
         android:hint="Buscar productos"
         android:padding="10dp"
         android:layout_marginHorizontal="10dp"
@@ -28,12 +28,18 @@
         >
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
             <Spinner
                 android:id="@+id/spinner_categorias"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
+                android:spinnerMode="dropdown"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_marginHorizontal="16dp"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/menuBackgroundColor"
+                android:background="@drawable/spinner_background"
+                android:backgroundTint="@color/colorProducto"
                 >
             </Spinner>
         </LinearLayout>
@@ -62,7 +68,8 @@
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
                 android:layout_margin="22dp"
-                android:backgroundTint="@color/navMenuBackgroundColor"
+                android:background="@drawable/ic_shopping_cart_black_24dp"
+                android:backgroundTint="@color/colorProducto"
                 />
         </RelativeLayout>
     </LinearLayout>

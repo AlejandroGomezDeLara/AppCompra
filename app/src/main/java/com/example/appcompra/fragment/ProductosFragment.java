@@ -44,6 +44,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 
 public class ProductosFragment extends Fragment {
     protected ArrayList<Producto> productos;
@@ -75,16 +76,22 @@ public class ProductosFragment extends Fragment {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (!recyclerView.canScrollVertically(1)) {
                     Toast.makeText(getContext(), "Ha llegado al final realizando nueva petición", Toast.LENGTH_LONG).show();
-
                 }
             }
         });
-        actualizar();
+        pedirCategorias();
         categoriasSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 idCategoria=position+1;
-                pedirProductos(idCategoria);
+                updateUI(new ArrayList<Producto>());
+                loadingIndicator.setVisibility(View.VISIBLE);
+                if(!Singleton.getInstance().getUltimosProductos().containsKey(idCategoria)){
+                    pedirProductos(idCategoria);
+                }else{
+                    loadingIndicator.setVisibility(View.GONE);
+                    updateUI(Singleton.getInstance().getUltimosProductos().get(idCategoria));
+                }
             }
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
@@ -110,7 +117,7 @@ public class ProductosFragment extends Fragment {
     }
     public void onResume() {
         super.onResume();
-        actualizar();
+        categorias=Singleton.getInstance().getCategorias();
     }
 
     private void filtrar(String contenidoEditText){
@@ -142,18 +149,19 @@ public class ProductosFragment extends Fragment {
                 out=new PrintWriter(socket.getOutputStream(),true);
                 out.println(Constants.PRODUCTOS_CATEGORIA_PETICION+Constants.SEPARATOR+usuario.getId()+Constants.SEPARATOR+idCategoria);
                 String entrada=in.readLine();
-                Log.e("respuesta",entrada.split(Constants.SEPARATOR)[1]);
-                if(entrada.split(Constants.SEPARATOR)[0].equals(Constants.PRODUCTOS_CATEGORIA_RESPUESTA_CORRECTA)){
-                    json=entrada.split(Constants.SEPARATOR)[1];
-                    String nombreCategoria="";
-                    for (Categoria cat : Singleton.getInstance().getCategorias())
-                    {
-                        if(cat.getId()==idCategoria){
-                            nombreCategoria=cat.getNombre();
+                if(entrada!=null && !entrada.isEmpty()){
+                    Log.e("respuesta",entrada.split(Constants.SEPARATOR)[1]);
+                    if(entrada.split(Constants.SEPARATOR)[0].equals(Constants.PRODUCTOS_CATEGORIA_RESPUESTA_CORRECTA)){
+                        json=entrada.split(Constants.SEPARATOR)[1];
+                        String nombreCategoria="";
+                        for (Categoria cat : Singleton.getInstance().getCategorias())
+                        {
+                            if(cat.getId()==idCategoria){
+                                nombreCategoria=cat.getNombre();
+                            }
                         }
+                        Singleton.getInstance().getUltimosProductos().put(idCategoria,q.tipoProductosJson(json,nombreCategoria));
                     }
-                    tipoProductos=q.tipoProductosJson(json,nombreCategoria);
-                    Singleton.getInstance().setListaProductos(tipoProductos);
                 }
 
             } catch (IOException e) {
@@ -166,10 +174,11 @@ public class ProductosFragment extends Fragment {
 
         @Override
         protected void onPostExecute(final ArrayList<Producto> tipoProductos) {
-            if(!Singleton.getInstance().existenProductos()){
+            loadingIndicator.setVisibility(View.GONE);
+            if(!Singleton.getInstance().getUltimosProductos().containsKey(idCategoria)){
                 Toast.makeText(getContext(), "No hay productos", Toast.LENGTH_LONG).show();
             }else{
-                updateUI(tipoProductos);
+                updateUI(Singleton.getInstance().getUltimosProductos().get(idCategoria));
             }
         }
 
@@ -198,19 +207,17 @@ public class ProductosFragment extends Fragment {
                 out=new PrintWriter(socket.getOutputStream(),true);
                 out.println(Constants.CATEGORIAS_PETICION+Constants.SEPARATOR+usuario.getId());
                 String entrada=in.readLine();
-                Log.e("respuesta",entrada.split(Constants.SEPARATOR)[1]);
-                if(entrada.split(Constants.SEPARATOR)[0].equals(Constants.CATEGORIAS_RESPUESTA_CORRECTA)){
-                    json=entrada.split(Constants.SEPARATOR)[1];
-                    categorias=q.categoriasJson(json);
+                if(entrada!=null && !entrada.isEmpty()) {
+                    Log.e("respuesta", entrada.split(Constants.SEPARATOR)[1]);
+                    if (entrada.split(Constants.SEPARATOR)[0].equals(Constants.CATEGORIAS_RESPUESTA_CORRECTA)) {
+                        json = entrada.split(Constants.SEPARATOR)[1];
+                        categorias = q.categoriasJson(json);
+                        Singleton.getInstance().setCategorias(categorias);
+                    }
                 }
-
             } catch (IOException e) {
                 Log.e("errorIO",e.getMessage());
             }
-
-            //json="{\"categorias\":[{\"id\":1,\"nombre\":\"Marisco y pescado\"},{\"id\":2,\"nombre\":\"Carne\"},{\"id\":3,\"nombre\":\"Cereales\"}]}";
-            categorias=q.categoriasJson(json);
-            Singleton.getInstance().setCategorias(categorias);
             return categorias;
         }
 
@@ -258,12 +265,8 @@ public class ProductosFragment extends Fragment {
 
 
     private void pedirProductos(int idCategoria){
-        if(!Singleton.getInstance().existenProductos() && Singleton.getInstance().existenCategorias()){
-            peticionTask = new PeticionProductosTask(idCategoria);
-            peticionTask.execute((Void) null);
-        }else{
-            updateUI(Singleton.getInstance().getListaProductos());
-        }
+        peticionTask = new PeticionProductosTask(idCategoria);
+        peticionTask.execute((Void) null);
     }
     private void pedirCategorias(){
         if(!Singleton.getInstance().existenCategorias()){
@@ -272,6 +275,7 @@ public class ProductosFragment extends Fragment {
         }else{
             updateSpinner(Singleton.getInstance().getCategorias());
         }
+
     }
 
     private void actualizar(){

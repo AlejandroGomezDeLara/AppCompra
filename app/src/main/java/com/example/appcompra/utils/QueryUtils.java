@@ -13,8 +13,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 public class QueryUtils {
     private static Socket socket;
@@ -80,21 +83,23 @@ public class QueryUtils {
         String nombre;
         String url;
         ArrayList<Lista> listas=new ArrayList<>();
-        ArrayList<String> usuariosLista=new ArrayList<>();
+        ArrayList<String> usuariosLista;
         try{
             JSONObject raiz=new JSONObject(json);
             JSONArray data=raiz.getJSONArray("listas");
             JSONObject listaActual;
             for (int i=0;i<data.length();i++){
+                usuariosLista=new ArrayList<>();
                 listaActual=data.getJSONObject(i);
                 id=listaActual.getInt("id");
                 nombre=listaActual.getString("nombre");
                 url=listaActual.getString("url");
-                if(listaActual.getJSONArray("usuarios")!=null){
-                    JSONArray usuarios=listaActual.getJSONArray("usuarios");
-                    for (int j=0;j<usuarios.length();j++){
-                        JSONObject usuario=usuarios.getJSONObject(i);
-                        usuariosLista.add(usuario.getString("nombre"));
+                if(listaActual.getString("usuarios")!=null){
+                    String usuarios=listaActual.getString("usuarios");
+                    if(!usuarios.isEmpty()){
+                        for (int j=0;j<usuarios.split(",").length;j++){
+                            usuariosLista.add(usuarios.split(",")[j]);
+                        }
                     }
                 }
                 Lista c=new Lista(id,nombre,url);

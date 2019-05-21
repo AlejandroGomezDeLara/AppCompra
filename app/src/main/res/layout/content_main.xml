@@ -29,7 +29,7 @@
         android:layout_height="54dp"
         app:menu="@menu/bottom_menu"
         android:layout_alignParentBottom="true"
-        android:background="@color/navMenuBackgroundColor"/>
+        android:background="@drawable/gradient"/>
 
 
 </LinearLayout>

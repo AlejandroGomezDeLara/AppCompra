@@ -57,6 +57,7 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull final ListaAdapter.ViewHolder viewHolder,final int i) {
         final Lista lista=listas.get(i);
         viewHolder.titulo.setText(lista.getTitulo());
+        ImageView img=new ImageView(getContext());
         Picasso.get().load(lista.getUrlImagen()).into(new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
@@ -76,40 +77,40 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
             }
         });
         if(lista.getNumeroUsuarios()==0){
-            viewHolder.imagenUsuario1.setVisibility(View.GONE);
-            viewHolder.imagenUsuario2.setVisibility(View.GONE);
-            viewHolder.imagenUsuario3.setVisibility(View.GONE);
-            viewHolder.nombreUsuario1.setVisibility(View.GONE);
-            viewHolder.imagenUsuario4.setVisibility(View.GONE);
-            viewHolder.nombreUsuario2.setVisibility(View.GONE);
-            viewHolder.nombreUsuario3.setVisibility(View.GONE);
-            viewHolder.nombreUsuario4.setVisibility(View.GONE);
+            viewHolder.usuario1.setVisibility(View.GONE);
+            viewHolder.usuario2.setVisibility(View.GONE);
+            viewHolder.usuario3.setVisibility(View.GONE);
+            viewHolder.usuario4.setVisibility(View.GONE);
         }
         if(lista.getNumeroUsuarios()==1){
+            viewHolder.usuario1.setVisibility(View.VISIBLE);
+            viewHolder.usuario2.setVisibility(View.GONE);
+            viewHolder.usuario3.setVisibility(View.GONE);
+            viewHolder.usuario4.setVisibility(View.GONE);
             viewHolder.nombreUsuario1.setText(lista.getUsuarios().get(0));
-            viewHolder.imagenUsuario2.setVisibility(View.GONE);
-            viewHolder.imagenUsuario3.setVisibility(View.GONE);
-            viewHolder.imagenUsuario4.setVisibility(View.GONE);
-            viewHolder.nombreUsuario2.setVisibility(View.GONE);
-            viewHolder.nombreUsuario3.setVisibility(View.GONE);
-            viewHolder.nombreUsuario4.setVisibility(View.GONE);
         }
         if(lista.getNumeroUsuarios()==2){
+            viewHolder.usuario1.setVisibility(View.VISIBLE);
+            viewHolder.usuario2.setVisibility(View.VISIBLE);
+            viewHolder.usuario3.setVisibility(View.GONE);
+            viewHolder.usuario4.setVisibility(View.GONE);
             viewHolder.nombreUsuario1.setText(lista.getUsuarios().get(0));
             viewHolder.nombreUsuario2.setText(lista.getUsuarios().get(1));
-            viewHolder.imagenUsuario3.setVisibility(View.GONE);
-            viewHolder.imagenUsuario4.setVisibility(View.GONE);
-            viewHolder.nombreUsuario3.setVisibility(View.GONE);
-            viewHolder.nombreUsuario4.setVisibility(View.GONE);
         }
         if(lista.getNumeroUsuarios()==3){
+            viewHolder.usuario1.setVisibility(View.VISIBLE);
+            viewHolder.usuario2.setVisibility(View.VISIBLE);
+            viewHolder.usuario3.setVisibility(View.VISIBLE);
+            viewHolder.usuario4.setVisibility(View.GONE);
             viewHolder.nombreUsuario1.setText(lista.getUsuarios().get(0));
             viewHolder.nombreUsuario2.setText(lista.getUsuarios().get(1));
             viewHolder.nombreUsuario3.setText(lista.getUsuarios().get(2));
-            viewHolder.imagenUsuario4.setVisibility(View.GONE);
-            viewHolder.nombreUsuario4.setVisibility(View.GONE);
         }
         if(lista.getNumeroUsuarios()>=4){
+            viewHolder.usuario1.setVisibility(View.VISIBLE);
+            viewHolder.usuario2.setVisibility(View.VISIBLE);
+            viewHolder.usuario3.setVisibility(View.VISIBLE);
+            viewHolder.usuario4.setVisibility(View.VISIBLE);
             viewHolder.nombreUsuario1.setText(lista.getUsuarios().get(0));
             viewHolder.nombreUsuario2.setText(lista.getUsuarios().get(1));
             viewHolder.nombreUsuario3.setText(lista.getUsuarios().get(2));
@@ -136,6 +137,10 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
         TextView titulo;
         LinearLayout linearLista;
         TextView numeroPersonas;
+        LinearLayout usuario1;
+        LinearLayout usuario2;
+        LinearLayout usuario3;
+        LinearLayout usuario4;
         ImageView imagenUsuario1;
         ImageView imagenUsuario2;
         ImageView imagenUsuario3;
@@ -148,6 +153,10 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
             super(itemView);
             titulo=itemView.findViewById(R.id.titulo);
             linearLista=itemView.findViewById(R.id.linearLista);
+            usuario1=itemView.findViewById(R.id.usuario1);
+            usuario2=itemView.findViewById(R.id.usuario2);
+            usuario3=itemView.findViewById(R.id.usuario3);
+            usuario4=itemView.findViewById(R.id.usuario4);
             numeroPersonas=itemView.findViewById(R.id.numero_personas);
             imagenUsuario1=itemView.findViewById(R.id.imagen_usuario1);
             imagenUsuario2=itemView.findViewById(R.id.imagen_usuario2);

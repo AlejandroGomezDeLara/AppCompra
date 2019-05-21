@@ -142,7 +142,7 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
 
     private boolean isPasswordValid(String password) {
         //Lo dejamos asi por ahora
-        return password.length() > 4;
+        return password.length() > 1;
     }
 
     /**

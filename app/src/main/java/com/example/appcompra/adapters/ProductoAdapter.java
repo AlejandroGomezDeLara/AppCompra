@@ -50,7 +50,9 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull final ProductoAdapter.ViewHolder viewHolder,final int i) {
         final Producto producto=productos.get(i);
-        viewHolder.nombre.setText(corregirNombre(producto.getNombre()));
+        String nombre=producto.getNombre();
+        nombre=nombre.substring(0,1).toUpperCase() + nombre.substring(1);
+        viewHolder.nombre.setText(corregirNombre(nombre));
         Picasso.get().load(producto.getUrl()).into(viewHolder.imagen);
 
         viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
@@ -64,7 +66,7 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
                 if(producto.isSeleccionado()){
                     viewHolder.cardView.setCardBackgroundColor(getContext().getResources().getColor(R.color.navMenuBackgroundColor));
                 }else{
-                    viewHolder.cardView.setCardBackgroundColor(getContext().getResources().getColor(R.color.menuBackgroundColor));
+                    viewHolder.cardView.setCardBackgroundColor(getContext().getResources().getColor(R.color.backgroundColor));
                 }
             }
         });
