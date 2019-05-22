@@ -10,14 +10,17 @@
     tools:context=".LoginActivity">
     <!-- Login progress -->
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <ProgressBar
         android:id="@+id/login_progress"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
-        android:indeterminateTint="@color/backgroundColor"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:indeterminateTint="@color/backgroundColor"
+        android:layout_centerInParent="true"
         android:visibility="gone" />
 
 
@@ -140,4 +143,5 @@
 
         </LinearLayout>
     </LinearLayout>
+    </RelativeLayout>
 </LinearLayout>

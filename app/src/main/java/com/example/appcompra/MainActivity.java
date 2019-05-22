@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.example.appcompra.adapters.MenuAdapter;
 import com.example.appcompra.clases.Usuario;
+import com.example.appcompra.utils.QueryUtils;
 import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         usuario= (Usuario)getIntent().getExtras().getSerializable("Usuario");
+        QueryUtils.setUsuario(usuario);
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

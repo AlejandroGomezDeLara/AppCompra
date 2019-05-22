@@ -1,6 +1,12 @@
 package com.example.appcompra.fragment;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,6 +25,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.appcompra.Constants;
@@ -26,7 +33,9 @@ import com.example.appcompra.LoginActivity;
 import com.example.appcompra.MainActivity;
 import com.example.appcompra.R;
 import com.example.appcompra.clases.Categoria;
+import com.example.appcompra.clases.CategoriaViewModel;
 import com.example.appcompra.clases.Producto;
+import com.example.appcompra.clases.ProductoViewModel;
 import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.TipoProducto;
 import com.example.appcompra.adapters.ProductoAdapter;
@@ -46,6 +55,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
+import static android.content.Context.CONNECTIVITY_SERVICE;
+
 public class ProductosFragment extends Fragment {
     protected ArrayList<Producto> productos;
     protected ArrayList<Categoria> categorias;
@@ -53,16 +64,19 @@ public class ProductosFragment extends Fragment {
     protected RecyclerView recyclerView;
     protected ProductoAdapter adapter;
     protected ProgressBar loadingIndicator;
-    protected PeticionProductosTask peticionTask = null;
-    protected PeticionCategoriasTask categoriasTask=null;
     protected Spinner categoriasSpinner;
     protected int idCategoria;
+    protected TextView mEmptyStateTextView;
+    protected ProductoViewModel modelProductos;
+    protected CategoriaViewModel categoriaViewModel;
+    protected PeticionProductosTask peticionTask = null;
     QueryUtils q;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_productos, container, false);
         loadingIndicator=view.findViewById(R.id.loading_indicator);
+        mEmptyStateTextView=view.findViewById(R.id.emptyStateView);
         idCategoria=9;
         q=new QueryUtils();
         usuario=((MainActivity)this.getActivity()).getUsuario();
@@ -79,13 +93,17 @@ public class ProductosFragment extends Fragment {
                 }
             }
         });
-        pedirCategorias();
+        categoriaViewModel= ViewModelProviders.of(getActivity()).get(CategoriaViewModel.class);
+        modelProductos= ViewModelProviders.of(getActivity()).get(ProductoViewModel.class);
+
         categoriasSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                idCategoria=position+1;
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, final long id) {
+                idCategoria = position + 1;
                 updateUI(new ArrayList<Producto>());
                 loadingIndicator.setVisibility(View.VISIBLE);
+                mEmptyStateTextView.setVisibility(View.GONE);
+                Singleton.getInstance().setPosicionSpinner(position);
                 if(!Singleton.getInstance().getUltimosProductos().containsKey(idCategoria)){
                     pedirProductos(idCategoria);
                 }else{
@@ -93,6 +111,7 @@ public class ProductosFragment extends Fragment {
                     updateUI(Singleton.getInstance().getUltimosProductos().get(idCategoria));
                 }
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
             }
@@ -115,9 +134,35 @@ public class ProductosFragment extends Fragment {
             }
         });
     }
+
     public void onResume() {
         super.onResume();
-        categorias=Singleton.getInstance().getCategorias();
+        ConnectivityManager manager=(ConnectivityManager)getActivity().getSystemService(CONNECTIVITY_SERVICE);
+        final NetworkInfo info=manager.getActiveNetworkInfo();
+        boolean isConnected=info!=null && info.isConnected();
+        if(isConnected) {
+            categoriaViewModel.getCategorias().observe(getActivity(), new Observer<ArrayList<Categoria>>() {
+                @Override
+                public void onChanged(@Nullable ArrayList<Categoria> categorias) {
+                    if(categorias!=null){
+                        updateSpinner(categorias);
+                    }
+                }
+            });
+
+            modelProductos.getProductos().observe(getActivity(), new Observer<ArrayList<Producto>>() {
+                @Override
+                public void onChanged(@Nullable ArrayList<Producto> p) {
+                    if (p != null) {
+                        updateUI(p);
+                    }
+                }
+            });
+
+        }else{
+            loadingIndicator.setVisibility(View.GONE);
+            mEmptyStateTextView.setText(R.string.no_internet);
+        }
     }
 
     private void filtrar(String contenidoEditText){
@@ -129,110 +174,7 @@ public class ProductosFragment extends Fragment {
         }
         adapter.filtrarLista(lista);
     }
-    public class PeticionProductosTask extends AsyncTask<Void, Void, ArrayList<Producto>> {
-        private Socket socket;
-        private BufferedReader in;
-        private PrintWriter out;
-        private ArrayList<Producto> tipoProductos=new ArrayList<>();
-        private String json;
-        private int idCategoria;
-        PeticionProductosTask(int idCategoria) {
-            this.idCategoria=idCategoria;
-        }
 
-        @Override
-        protected ArrayList<Producto> doInBackground(Void... params) {
-
-            socket=QueryUtils.getSocket();
-            try {
-                in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                out=new PrintWriter(socket.getOutputStream(),true);
-                out.println(Constants.PRODUCTOS_CATEGORIA_PETICION+Constants.SEPARATOR+usuario.getId()+Constants.SEPARATOR+idCategoria);
-                String entrada=in.readLine();
-                if(entrada!=null && !entrada.isEmpty()){
-                    Log.e("respuesta",entrada.split(Constants.SEPARATOR)[1]);
-                    if(entrada.split(Constants.SEPARATOR)[0].equals(Constants.PRODUCTOS_CATEGORIA_RESPUESTA_CORRECTA)){
-                        json=entrada.split(Constants.SEPARATOR)[1];
-                        String nombreCategoria="";
-                        for (Categoria cat : Singleton.getInstance().getCategorias())
-                        {
-                            if(cat.getId()==idCategoria){
-                                nombreCategoria=cat.getNombre();
-                            }
-                        }
-                        Singleton.getInstance().getUltimosProductos().put(idCategoria,q.tipoProductosJson(json,nombreCategoria));
-                    }
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-
-            return tipoProductos;
-        }
-
-        @Override
-        protected void onPostExecute(final ArrayList<Producto> tipoProductos) {
-            loadingIndicator.setVisibility(View.GONE);
-            if(!Singleton.getInstance().getUltimosProductos().containsKey(idCategoria)){
-                Toast.makeText(getContext(), "No hay productos", Toast.LENGTH_LONG).show();
-            }else{
-                updateUI(Singleton.getInstance().getUltimosProductos().get(idCategoria));
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-
-        }
-
-
-    }
-    public class PeticionCategoriasTask extends AsyncTask<Void, Void, ArrayList<Categoria>> {
-        private Socket socket;
-        private BufferedReader in;
-        private PrintWriter out;
-        private String json;
-        private ArrayList<Categoria> categorias=new ArrayList<>();
-        PeticionCategoriasTask() {
-        }
-
-        @Override
-        protected ArrayList<Categoria> doInBackground(Void... params) {
-
-            socket=QueryUtils.getSocket();
-            try {
-                in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                out=new PrintWriter(socket.getOutputStream(),true);
-                out.println(Constants.CATEGORIAS_PETICION+Constants.SEPARATOR+usuario.getId());
-                String entrada=in.readLine();
-                if(entrada!=null && !entrada.isEmpty()) {
-                    Log.e("respuesta", entrada.split(Constants.SEPARATOR)[1]);
-                    if (entrada.split(Constants.SEPARATOR)[0].equals(Constants.CATEGORIAS_RESPUESTA_CORRECTA)) {
-                        json = entrada.split(Constants.SEPARATOR)[1];
-                        categorias = q.categoriasJson(json);
-                        Singleton.getInstance().setCategorias(categorias);
-                    }
-                }
-            } catch (IOException e) {
-                Log.e("errorIO",e.getMessage());
-            }
-            return categorias;
-        }
-
-        @Override
-        protected void onPostExecute(final ArrayList<Categoria> categorias) {
-            updateSpinner(categorias);
-        }
-
-        @Override
-        protected void onCancelled() {
-
-        }
-
-
-    }
     private void updateSpinner(ArrayList<Categoria> c) {
         List<String> valoresSpinner=new ArrayList<>();
         for (int i=0;i<c.size();i++){
@@ -250,7 +192,9 @@ public class ProductosFragment extends Fragment {
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         categoriasSpinner.setAdapter(adapter);
+        categoriasSpinner.setSelection(Singleton.getInstance().getPosicionSpinner());
     }
+
     private void updateUI(ArrayList<Producto> m){
         /*productos.clear();
         productos.addAll(m);
@@ -262,25 +206,72 @@ public class ProductosFragment extends Fragment {
 
         adapter.notifyDataSetChanged();
     }
-
-
-    private void pedirProductos(int idCategoria){
+    public void pedirProductos(int idCategoria) {
         peticionTask = new PeticionProductosTask(idCategoria);
         peticionTask.execute((Void) null);
     }
-    private void pedirCategorias(){
-        if(!Singleton.getInstance().existenCategorias()){
-            categoriasTask=new PeticionCategoriasTask();
-            categoriasTask.execute((Void) null);
-        }else{
-            updateSpinner(Singleton.getInstance().getCategorias());
+
+    public class PeticionProductosTask extends AsyncTask<Void, Void, ArrayList<Producto>> {
+        private Socket socket;
+        private BufferedReader in;
+        private PrintWriter out;
+        private String json;
+        private int idCategoria;
+        private ArrayList<Producto> p=new ArrayList<>();
+
+        PeticionProductosTask(int idCategoria) {
+            this.idCategoria=idCategoria;
         }
 
-    }
+        @Override
+        protected ArrayList<Producto> doInBackground(Void... params) {
 
-    private void actualizar(){
-        pedirCategorias();
-        pedirProductos(idCategoria);
+            socket=QueryUtils.getSocket();
+            try {
+                in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                out=new PrintWriter(socket.getOutputStream(),true);
+                out.println(Constants.PRODUCTOS_CATEGORIA_PETICION+Constants.SEPARATOR+QueryUtils.getUsuario().getId()+Constants.SEPARATOR+idCategoria);
+                String entrada=in.readLine();
+                if(entrada!=null && !entrada.isEmpty()){
+                    Log.e("respuesta",entrada.split(Constants.SEPARATOR)[1]);
+                    if(entrada.split(Constants.SEPARATOR)[0].equals(Constants.PRODUCTOS_CATEGORIA_RESPUESTA_CORRECTA)){
+                        json=entrada.split(Constants.SEPARATOR)[1];
+                        String nombreCategoria="";
+                        for (Categoria cat : Singleton.getInstance().getCategorias())
+                        {
+                            if(cat.getId()==idCategoria){
+                                nombreCategoria=cat.getNombre();
+                            }
+                        }
+                        p=QueryUtils.tipoProductosJson(json,nombreCategoria);
+                    }
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            return p;
+        }
+
+        @Override
+        protected void onPostExecute(final ArrayList<Producto> tipoProductos) {
+            if(!tipoProductos.isEmpty()){
+                if(!Singleton.getInstance().getUltimosProductos().containsKey(idCategoria)){
+                    Singleton.getInstance().añadirNuevosProductos(idCategoria,tipoProductos);
+                }
+                updateUI(tipoProductos);
+            }else{
+                mEmptyStateTextView.setVisibility(View.VISIBLE);
+            }
+            loadingIndicator.setVisibility(View.GONE);
+
+        }
+
+        @Override
+        protected void onCancelled() {
+        }
     }
 
 }

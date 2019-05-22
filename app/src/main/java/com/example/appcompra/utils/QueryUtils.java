@@ -21,6 +21,15 @@ import java.util.Collection;
 
 public class QueryUtils {
     private static Socket socket;
+    private static Usuario usuario;
+
+    public static Usuario getUsuario() {
+        return usuario;
+    }
+
+    public static void setUsuario(Usuario usuario) {
+        QueryUtils.usuario = usuario;
+    }
 
     public static ArrayList<Producto> tipoProductosJson(String entrada, String categoria){
         int id;
