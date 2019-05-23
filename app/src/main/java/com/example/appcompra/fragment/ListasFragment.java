@@ -44,17 +44,19 @@ import java.util.ArrayList;
 import static android.content.Context.CONNECTIVITY_SERVICE;
 
 public class ListasFragment extends Fragment {
+
     protected ArrayList<Lista> listas;
     protected RecyclerView recyclerView;
     protected ListaAdapter adapter;
-    ProgressBar loadingIndicator;
-    private Usuario usuario;
-    private Button addLista;
-    private ListasViewModel model;
-    private String nombreNuevaLista;
+    protected ProgressBar loadingIndicator;
+    protected Usuario usuario;
+    protected Button addLista;
+    protected ListasViewModel model;
+    protected String nombreNuevaLista;
     protected TextView mEmptyStateTextView;
     protected PeticionListasTask listasTask=null;
     protected PeticionNuevaListaTask nuevaListaTask=null;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

@@ -40,13 +40,15 @@ import java.util.LinkedList;
 import static android.content.Context.CONNECTIVITY_SERVICE;
 
 public class DespensaFragment extends Fragment {
+
     protected ArrayList<Producto> productos;
     protected RecyclerView recyclerView;
     protected DespensaAdapter adapter;
     protected DespensaViewModel model;
-    ProgressBar loadingIndicator;
+    protected ProgressBar loadingIndicator;
     protected TextView mEmptyStateTextView;
-    private Usuario usuario;
+    protected Usuario usuario;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -66,7 +68,6 @@ public class DespensaFragment extends Fragment {
         productos.add(new TipoProductoLista(2,"Hamburguesa","2 unidades",null,null,false,"https://image.flaticon.com/icons/png/512/93/93104.png"));
         productos.add(new TipoProductoLista(4,"Pepinos","5 unidades",null,null,false,"https://image.flaticon.com/icons/png/512/93/93104.png"));
         productos.add(new ProductoComercialLista(3,"Hamburguesa","500g",null,null,false,"mercadona","https://image.flaticon.com/icons/png/512/93/93104.png"));
-
     }
     private void updateEditTextFiltrar(View view){
         EditText editText=view.findViewById(R.id.editText);
@@ -99,6 +100,8 @@ public class DespensaFragment extends Fragment {
                 public void onChanged(@Nullable ArrayList<Producto> p) {
                     if(p!=null){
                         updateUI(p);
+                    }else{
+                        mEmptyStateTextView.setVisibility(View.VISIBLE);
                     }
                 }
             });

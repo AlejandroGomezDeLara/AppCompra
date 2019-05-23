@@ -43,11 +43,12 @@ import java.util.ArrayList;
 import static android.content.Context.CONNECTIVITY_SERVICE;
 
 public class InteriorListaFragment extends Fragment {
+
     protected ArrayList<Producto> productos;
     protected RecyclerView recyclerView;
-    ProgressBar loadingIndicator;
+    protected ProgressBar loadingIndicator;
     protected DespensaAdapter adapter;
-    private Usuario usuario;
+    protected Usuario usuario;
     protected String idLista;
     protected TextView mEmptyStateTextView;
     protected Button addProducto;

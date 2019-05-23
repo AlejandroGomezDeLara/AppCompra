@@ -49,9 +49,10 @@ import java.util.List;
 import static android.content.Context.CONNECTIVITY_SERVICE;
 
 public class ProductosFragment extends Fragment {
+
     protected ArrayList<Producto> productos;
     protected ArrayList<Categoria> categorias;
-    private Usuario usuario;
+    protected Usuario usuario;
     protected RecyclerView recyclerView;
     protected ProductoAdapter adapter;
     protected ProgressBar loadingIndicator;
@@ -63,7 +64,7 @@ public class ProductosFragment extends Fragment {
     protected PeticionProductosTask peticionTask = null;
     protected Button addProductoListaButton;
     protected Spinner listasSpinner;
-    QueryUtils q;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
