@@ -2,6 +2,7 @@ package com.example.appcompra.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 
 import com.example.appcompra.R;
 import com.example.appcompra.clases.Lista;
+import com.example.appcompra.fragment.InteriorListaFragment;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -57,7 +59,15 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull final ListaAdapter.ViewHolder viewHolder,final int i) {
         final Lista lista=listas.get(i);
         viewHolder.titulo.setText(lista.getTitulo());
-
+        viewHolder.linearLista.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i=new Intent(activity,InteriorListaFragment.class);
+                i.putExtra("id",lista.getId()+"");
+                activity.startActivity(i);
+                activity.finish();
+            }
+        });
         if(lista.getNumeroUsuarios()==0){
             viewHolder.usuario1.setVisibility(View.GONE);
             viewHolder.usuario2.setVisibility(View.GONE);

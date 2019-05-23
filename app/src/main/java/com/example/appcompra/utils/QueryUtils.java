@@ -6,7 +6,9 @@ import android.util.Log;
 import com.example.appcompra.clases.Categoria;
 import com.example.appcompra.clases.Lista;
 import com.example.appcompra.clases.Producto;
+import com.example.appcompra.clases.ProductoComercialLista;
 import com.example.appcompra.clases.TipoProducto;
+import com.example.appcompra.clases.TipoProductoLista;
 import com.example.appcompra.clases.Usuario;
 
 import org.json.JSONArray;
@@ -31,7 +33,7 @@ public class QueryUtils {
         QueryUtils.usuario = usuario;
     }
 
-    public static ArrayList<Producto> tipoProductosJson(String entrada, String categoria){
+    public static ArrayList<Producto> tipoProductosJson(String entrada){
         int id;
         String nombre;
         String urlImagen;
@@ -45,7 +47,7 @@ public class QueryUtils {
                 id=productoActual.getInt("id");
                 nombre=productoActual.getString("nombre");
                 urlImagen=productoActual.getString("urlimagen");
-                TipoProducto p=new TipoProducto(id,nombre,categoria,urlImagen);
+                TipoProducto p=new TipoProducto(id,nombre,urlImagen);
                 productos.add(p);
             }
 
@@ -120,6 +122,56 @@ public class QueryUtils {
         }
 
         return listas;
+    }
+
+    public static ArrayList<Producto> productosLista(String json){
+        int id;
+        String nombre;
+        String urlImagen;
+        String marca;
+        int cantidad;
+        String receta;
+        String cadena;
+        boolean comprado;
+        ArrayList<Producto> productos =new ArrayList<>();
+
+        try{
+            JSONObject raiz=new JSONObject(json);
+            JSONArray tipos=raiz.getJSONArray("tipos");
+            JSONArray comerciales=raiz.getJSONArray("comerciales");
+            JSONObject productoActual;
+
+            for (int i=0;i<tipos.length();i++){
+                productoActual=tipos.getJSONObject(i);
+                id=productoActual.getInt("id");
+                nombre=productoActual.getString("nombre");
+                cantidad=productoActual.getInt("cantidad");
+                receta=productoActual.getString("receta");
+                cadena=productoActual.getString("cadena");
+                comprado=productoActual.getBoolean("comprado");
+                urlImagen=productoActual.getString("urlimagen");
+                TipoProductoLista p=new TipoProductoLista(id,nombre,cantidad,receta,cadena,comprado,urlImagen);
+                productos.add(p);
+            }
+            for (int i=0;i<comerciales.length();i++){
+                productoActual=tipos.getJSONObject(i);
+                id=productoActual.getInt("id");
+                nombre=productoActual.getString("nombre");
+                cantidad=productoActual.getInt("cantidad");
+                receta=productoActual.getString("receta");
+                cadena=productoActual.getString("cadena");
+                comprado=productoActual.getBoolean("comprado");
+                urlImagen=productoActual.getString("urlimagen");
+                marca=productoActual.getString("marca");
+                ProductoComercialLista p=new ProductoComercialLista(id,nombre,cantidad,receta,cadena,comprado,marca,urlImagen);
+                productos.add(p);
+            }
+
+        }catch (JSONException e){
+            Log.e("JSONException ","JSON mal formado "+e.getMessage());
+        }
+
+        return productos;
     }
 
 }

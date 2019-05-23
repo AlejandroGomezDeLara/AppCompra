@@ -1,4 +1,4 @@
-package com.example.appcompra.clases;
+package com.example.appcompra.models;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.appcompra.Constants;
+import com.example.appcompra.clases.Categoria;
 import com.example.appcompra.utils.QueryUtils;
 
 import java.io.BufferedReader;

@@ -1,4 +1,4 @@
-package com.example.appcompra.clases;
+package com.example.appcompra.models;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.appcompra.Constants;
+import com.example.appcompra.clases.Lista;
 import com.example.appcompra.utils.QueryUtils;
 
 import java.io.BufferedReader;
@@ -21,26 +22,26 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-public class ProductoViewModel extends AndroidViewModel {
-    private MutableLiveData<ArrayList<Producto>> productos;
+public class ListasViewModel extends AndroidViewModel {
+    private MutableLiveData<ArrayList<Lista>> listas;
     private Application application;
 
-    public ProductoViewModel(@NonNull Application application) {
+    public ListasViewModel(@NonNull Application application) {
         super(application);
         this.application=application;
     }
 
-    public LiveData<ArrayList<Producto>> getProductos(){
-        if(productos==null){
-            productos=new MutableLiveData<>();
+    public LiveData<ArrayList<Lista>> getListas(){
+        if(listas==null){
+            listas=new MutableLiveData<>();
         }
 
-        return productos;
+        return listas;
     }
 
 
-    public void setProductos(MutableLiveData<ArrayList<Producto>> productos) {
-        this.productos = productos;
+    public void setListas(MutableLiveData<ArrayList<Lista>> listas) {
+        this.listas = listas;
     }
 
 

@@ -29,10 +29,10 @@ import android.widget.Toast;
 import com.example.appcompra.Constants;
 import com.example.appcompra.R;
 import com.example.appcompra.clases.Categoria;
-import com.example.appcompra.clases.CategoriaViewModel;
+import com.example.appcompra.models.CategoriaViewModel;
 import com.example.appcompra.clases.Lista;
 import com.example.appcompra.clases.Producto;
-import com.example.appcompra.clases.ProductoViewModel;
+import com.example.appcompra.models.ProductoViewModel;
 import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.adapters.ProductoAdapter;
 import com.example.appcompra.clases.Usuario;
@@ -78,6 +78,8 @@ public class ProductosFragment extends Fragment {
         productos=new ArrayList<>();
         categorias=new ArrayList<>();
         updateSpinnerCategorias(categorias);
+        if(Singleton.getInstance().existenListas())
+            updateSpinnerListas(Singleton.getInstance().getListas());
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -191,14 +193,7 @@ public class ProductosFragment extends Fragment {
                     Log.e("respuesta",entrada.split(Constants.SEPARATOR)[1]);
                     if(entrada.split(Constants.SEPARATOR)[0].equals(Constants.PRODUCTOS_CATEGORIA_RESPUESTA_CORRECTA)){
                         json=entrada.split(Constants.SEPARATOR)[1];
-                        String nombreCategoria="";
-                        for (Categoria cat : Singleton.getInstance().getCategorias())
-                        {
-                            if(cat.getId()==idCategoria){
-                                nombreCategoria=cat.getNombre();
-                            }
-                        }
-                        p=QueryUtils.tipoProductosJson(json,nombreCategoria);
+                        p=QueryUtils.tipoProductosJson(json);
                     }
                 }
 
@@ -267,12 +262,15 @@ public class ProductosFragment extends Fragment {
                 public void onChanged(@Nullable ArrayList<Producto> p) {
                     if (p != null) {
                         updateUI(p);
+                    }else{
+                        mEmptyStateTextView.setVisibility(View.VISIBLE);
                     }
                 }
             });
 
         }else{
             loadingIndicator.setVisibility(View.GONE);
+            mEmptyStateTextView.setVisibility(View.VISIBLE);
             mEmptyStateTextView.setText(R.string.no_internet);
         }
     }

@@ -1,6 +1,7 @@
 package com.example.appcompra.fragment;
 
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -25,11 +26,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.appcompra.Constants;
-import com.example.appcompra.MainActivity;
 import com.example.appcompra.R;
 import com.example.appcompra.adapters.ListaAdapter;
 import com.example.appcompra.clases.Lista;
-import com.example.appcompra.clases.ListasViewModel;
+import com.example.appcompra.models.ListasViewModel;
 import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.Usuario;
 import com.example.appcompra.utils.QueryUtils;
@@ -52,7 +52,6 @@ public class ListasFragment extends Fragment {
     private Button addLista;
     private ListasViewModel model;
     private String nombreNuevaLista;
-    private String urlImagenNuevaLista;
     protected TextView mEmptyStateTextView;
     protected PeticionListasTask listasTask=null;
     protected PeticionNuevaListaTask nuevaListaTask=null;
@@ -75,7 +74,6 @@ public class ListasFragment extends Fragment {
         }
         //updateEditTextFiltrar(view);
         addLista=view.findViewById(R.id.añadir_boton);
-
         addLista.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -163,7 +161,6 @@ public class ListasFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 nombreNuevaLista=editText.getText().toString();
-                urlImagenNuevaLista="";
                 nuevaListaTask=new PeticionNuevaListaTask();
                 nuevaListaTask.execute((Void) null);
                 dialog.dismiss();
@@ -243,12 +240,12 @@ public class ListasFragment extends Fragment {
             try {
                 in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out=new PrintWriter(socket.getOutputStream(),true);
-                out.println(Constants.CREACION_NUEVA_LISTA+Constants.SEPARATOR+usuario.getId()+Constants.SEPARATOR+nombreNuevaLista+Constants.SEPARATOR+urlImagenNuevaLista);
+                out.println(Constants.CREACION_NUEVA_LISTA+Constants.SEPARATOR+usuario.getId()+Constants.SEPARATOR+nombreNuevaLista+Constants.SEPARATOR);
                 String entrada=in.readLine();
                 Log.e("respuesta",entrada.split(Constants.SEPARATOR)[1]);
                 if(entrada.split(Constants.SEPARATOR)[0].equals(Constants.CREACION_NUEVA_LISTA_CORRECTA)){
                     json=entrada.split(Constants.SEPARATOR)[1];
-                    lista=new Lista(Integer.parseInt(entrada.split(Constants.SEPARATOR)[1]),nombreNuevaLista,urlImagenNuevaLista);
+                    lista=new Lista(Integer.parseInt(entrada.split(Constants.SEPARATOR)[1]),nombreNuevaLista);
                     Singleton.getInstance().añadirNuevaLista(lista);
                 }else{
                     listaCreada=false;

@@ -5,7 +5,6 @@ import android.content.Context;
 public class Producto {
     public int id;
     public String nombre;
-    public String categoria;
     public String url;
     public boolean seleccionado;
 
@@ -17,11 +16,10 @@ public class Producto {
         this.seleccionado = seleccionado;
     }
 
-    public Producto(int id,String nombre, String categoria,String url) {
+    public Producto(int id,String nombre,String url) {
         this.id=id;
         this.url=url;
         this.nombre = corregirNombre(nombre);
-        this.categoria = categoria;
         this.seleccionado=false;
     }
 
@@ -47,14 +45,6 @@ public class Producto {
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    public String getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
     }
 
     public String corregirNombre(String nombre){
