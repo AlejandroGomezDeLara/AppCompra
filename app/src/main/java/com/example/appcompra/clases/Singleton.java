@@ -71,4 +71,8 @@ public class Singleton {
     public int getPosicionSpinner() {
         return posicionSpinner;
     }
+
+    public void añadirNuevaLista(Lista lista) {
+        listas.add(lista);
+    }
 }

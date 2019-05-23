@@ -62,6 +62,7 @@
                 android:layout_centerVertical="true"
                 android:textColor="@color/colorProducto"
                 android:text="No hay productos"
+                android:textSize="18dp"
                 />
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView"

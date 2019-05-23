@@ -19,4 +19,8 @@ public class Constants {
     public static final String LISTAS_PETICION="LL";
     public static final String PRODUCTOS_LISTA="PL";
     public static final String LISTAS_RESPUESTA_CORRECTA ="LLC";
+    public static final String CREACION_NUEVA_LISTA="CL";
+    public static final String CREACION_NUEVA_LISTA_CORRECTA="CLC";
+    public static final String CREACION_NUEVA_LISTA_FALLIDA="CLF";
+
 }

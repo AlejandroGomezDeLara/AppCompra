@@ -1,10 +1,15 @@
 package com.example.appcompra.fragment;
 
+import android.arch.lifecycle.Observer;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,8 +19,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.appcompra.Constants;
@@ -24,6 +33,7 @@ import com.example.appcompra.R;
 import com.example.appcompra.adapters.ListaAdapter;
 import com.example.appcompra.clases.Categoria;
 import com.example.appcompra.clases.Lista;
+import com.example.appcompra.clases.ListasViewModel;
 import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.TipoProducto;
 import com.example.appcompra.adapters.ProductoAdapter;
@@ -38,19 +48,30 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import static android.content.Context.CONNECTIVITY_SERVICE;
+
 public class ListasFragment extends Fragment {
     protected ArrayList<Lista> listas;
     protected RecyclerView recyclerView;
     protected ListaAdapter adapter;
     ProgressBar loadingIndicator;
     private Usuario usuario;
+    private Button addLista;
+    private ListasViewModel model;
+    private String nombreNuevaLista;
+    private String urlImagenNuevaLista;
+    protected TextView mEmptyStateTextView;
     protected PeticionListasTask listasTask=null;
+    protected PeticionNuevaListaTask nuevaListaTask=null;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_listas, container, false);
         loadingIndicator = view.findViewById(R.id.loading_indicator);
+        loadingIndicator.setVisibility(View.VISIBLE);
         recyclerView=view.findViewById(R.id.recyclerView);
+        mEmptyStateTextView=view.findViewById(R.id.emptyStateView);
+        model= ViewModelProviders.of(getActivity()).get(ListasViewModel.class);
         listas=new ArrayList<>();
         usuario=((MainActivity)this.getActivity()).getUsuario();
         if(!Singleton.getInstance().existenListas()){
@@ -60,6 +81,14 @@ public class ListasFragment extends Fragment {
             updateUI(Singleton.getInstance().getListas());
         }
         //updateEditTextFiltrar(view);
+        addLista=view.findViewById(R.id.añadir_boton);
+
+        addLista.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                crearNuevaListaPopup();
+            }
+        });
         return view;
     }
 
@@ -85,6 +114,25 @@ public class ListasFragment extends Fragment {
 
     public void onResume() {
         super.onResume();
+        ConnectivityManager manager=(ConnectivityManager)getActivity().getSystemService(CONNECTIVITY_SERVICE);
+        final NetworkInfo info=manager.getActiveNetworkInfo();
+        boolean isConnected=info!=null && info.isConnected();
+        if(isConnected) {
+            model.getListas().observe(getActivity(), new Observer<ArrayList<Lista>>() {
+                @Override
+                public void onChanged(@Nullable ArrayList<Lista> listas) {
+                    if(listas!=null){
+                        updateUI(listas);
+                    }else{
+                        mEmptyStateTextView.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+        }else{
+            loadingIndicator.setVisibility(View.GONE);
+            mEmptyStateTextView.setText(R.string.no_internet);
+            mEmptyStateTextView.setVisibility(View.VISIBLE);
+        }
     }
 
     private void filtrar(String contenidoEditText){
@@ -108,6 +156,29 @@ public class ListasFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
+
+    public void crearNuevaListaPopup(){
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.crear_lista_popup, null);
+        final AutoCompleteTextView editText=view.findViewById(R.id.crear_lista_editText);
+        AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
+        builder.setView(view);
+        final AlertDialog dialog=builder.create();
+        dialog.show();
+        Button botonAceptarPopUp=view.findViewById(R.id.botonAceptarPopup);
+
+        botonAceptarPopUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                nombreNuevaLista=editText.getText().toString();
+                urlImagenNuevaLista="";
+                nuevaListaTask=new PeticionNuevaListaTask();
+                nuevaListaTask.execute((Void) null);
+                dialog.dismiss();
+            }
+        });
+    }
+
+
 
     public class PeticionListasTask extends AsyncTask<Void, Void, ArrayList<Lista>> {
         private Socket socket;
@@ -148,6 +219,61 @@ public class ListasFragment extends Fragment {
                 Toast.makeText(getContext(), "No hay listas", Toast.LENGTH_LONG).show();
             }else{
                 updateUI(listas);
+            }
+            loadingIndicator.setVisibility(View.GONE);
+        }
+
+        @Override
+        protected void onCancelled() {
+
+        }
+
+
+    }
+
+
+    public class PeticionNuevaListaTask extends AsyncTask<Void, Void, Boolean> {
+        private Socket socket;
+        private BufferedReader in;
+        private PrintWriter out;
+        private String json;
+        private Lista lista;
+        private Boolean listaCreada;
+
+        PeticionNuevaListaTask() {
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+
+            socket= QueryUtils.getSocket();
+            try {
+                in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                out=new PrintWriter(socket.getOutputStream(),true);
+                out.println(Constants.CREACION_NUEVA_LISTA+Constants.SEPARATOR+usuario.getId()+Constants.SEPARATOR+nombreNuevaLista+Constants.SEPARATOR+urlImagenNuevaLista);
+                String entrada=in.readLine();
+                Log.e("respuesta",entrada.split(Constants.SEPARATOR)[1]);
+                if(entrada.split(Constants.SEPARATOR)[0].equals(Constants.CREACION_NUEVA_LISTA_CORRECTA)){
+                    json=entrada.split(Constants.SEPARATOR)[1];
+                    lista=new Lista(Integer.parseInt(entrada.split(Constants.SEPARATOR)[1]),nombreNuevaLista,urlImagenNuevaLista);
+                    Singleton.getInstance().añadirNuevaLista(lista);
+                }else{
+                    listaCreada=false;
+                }
+
+            } catch (IOException e) {
+                Log.e("errorIO",e.getMessage());
+            }
+
+            return listaCreada;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean creada) {
+            if(creada)
+                updateUI(Singleton.getInstance().getListas());
+            else{
+                Toast.makeText(getContext(), "No se ha podido crear la lista", Toast.LENGTH_LONG).show();
             }
         }
 

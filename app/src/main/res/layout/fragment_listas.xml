@@ -38,6 +38,16 @@
                 android:indeterminateTint="@color/navMenuBackgroundColor"
                 android:layout_centerInParent="true"
                 android:visibility="gone"/>
+            <TextView
+                android:id="@+id/emptyStateView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:textColor="@color/colorProducto"
+                android:text="Empieza a añadir tus listas!"
+                android:textSize="24dp"
+                />
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
