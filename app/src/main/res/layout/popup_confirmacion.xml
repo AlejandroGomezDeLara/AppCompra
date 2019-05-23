@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="250dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingVertical="32dp"
+    android:background="@drawable/background_popup"
+    android:paddingHorizontal="18dp">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Seguro que quieres borrar la lista?"
+        android:layout_gravity="center_horizontal"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:textSize="22dp"
+        android:textColor="@color/colorProducto"
+        android:layout_marginBottom="12dp"/>
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_marginVertical="8dp"
+        android:orientation="horizontal">
+    <Button
+        android:id="@+id/botonCancelarPopup"
+        android:layout_weight="1"
+        android:layout_marginHorizontal="6dp"
+        android:layout_width="0dp"
+        android:layout_height="32dp"
+        android:background="@drawable/shape_naranja"
+        android:text="Cancelar"/>
+    <Button
+        android:id="@+id/botonAceptarPopup"
+        android:layout_weight="1"
+        android:layout_marginHorizontal="6dp"
+        android:layout_width="0dp"
+        android:layout_height="32dp"
+        android:background="@drawable/shape_naranja"
+        android:text="Aceptar"/>
+    </LinearLayout>
+</LinearLayout>

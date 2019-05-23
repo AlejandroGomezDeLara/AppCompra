@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="250dp"
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="300dp"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingVertical="28dp"
-    android:paddingHorizontal="28dp">
+    android:paddingVertical="42dp"
+    android:background="@drawable/background_popup"
+    android:paddingHorizontal="32dp">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Crear Lista"
         android:layout_gravity="center_horizontal"
         android:textStyle="bold"
-        android:textSize="24dp"
+        android:textSize="28dp"
+        android:textColor="@color/colorProducto"
         android:layout_marginBottom="12dp"/>
     <AutoCompleteTextView
         android:id="@+id/crear_lista_editText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Introduce el nombre"
+        android:textColorHint="@color/colorProducto"
+        android:textColor="@color/colorProducto"
         android:completionThreshold="1"
         android:textAlignment="center"
         android:backgroundTint="@color/colorProducto"
@@ -26,6 +30,6 @@
         android:id="@+id/botonAceptarPopup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/edit_text_background"
+        android:background="@drawable/shape_naranja"
         android:text="Aceptar"/>
 </LinearLayout>
