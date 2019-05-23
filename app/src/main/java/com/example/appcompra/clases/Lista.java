@@ -8,7 +8,6 @@ public class Lista {
     private int id;
     private String titulo;
     private ArrayList<Producto> productos;
-    private String urlImagen;
     private ArrayList<String> usuarios;
 
     public ArrayList<String> getUsuarios() {
@@ -27,8 +26,7 @@ public class Lista {
         return productos;
     }
 
-    public Lista(int id,String titulo, String urlImagen) {
-        this.urlImagen=urlImagen;
+    public Lista(int id,String titulo) {
         this.titulo = titulo;
         usuarios=new ArrayList<>();
         productos=new ArrayList<>();
@@ -55,14 +53,6 @@ public class Lista {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getUrlImagen() {
-        return urlImagen;
-    }
-
-    public void setUrlImagen(String urlImagen) {
-        this.urlImagen = urlImagen;
     }
 
     public int getNumeroUsuarios() {

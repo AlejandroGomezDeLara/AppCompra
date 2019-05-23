@@ -57,25 +57,7 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull final ListaAdapter.ViewHolder viewHolder,final int i) {
         final Lista lista=listas.get(i);
         viewHolder.titulo.setText(lista.getTitulo());
-        ImageView img=new ImageView(getContext());
-        Picasso.get().load(lista.getUrlImagen()).into(new Target() {
-            @Override
-            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    viewHolder.linearLista.setBackground(new BitmapDrawable(bitmap));
-                }
-            }
 
-            @Override
-            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-
-            }
-
-            @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-            }
-        });
         if(lista.getNumeroUsuarios()==0){
             viewHolder.usuario1.setVisibility(View.GONE);
             viewHolder.usuario2.setVisibility(View.GONE);
@@ -141,10 +123,6 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
         LinearLayout usuario2;
         LinearLayout usuario3;
         LinearLayout usuario4;
-        ImageView imagenUsuario1;
-        ImageView imagenUsuario2;
-        ImageView imagenUsuario3;
-        ImageView imagenUsuario4;
         TextView nombreUsuario1;
         TextView nombreUsuario2;
         TextView nombreUsuario3;
@@ -158,10 +136,6 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
             usuario3=itemView.findViewById(R.id.usuario3);
             usuario4=itemView.findViewById(R.id.usuario4);
             numeroPersonas=itemView.findViewById(R.id.numero_personas);
-            imagenUsuario1=itemView.findViewById(R.id.imagen_usuario1);
-            imagenUsuario2=itemView.findViewById(R.id.imagen_usuario2);
-            imagenUsuario3=itemView.findViewById(R.id.imagen_usuario3);
-            imagenUsuario4=itemView.findViewById(R.id.imagen_usuario4);
             nombreUsuario1=itemView.findViewById(R.id.nombre_usuario1);
             nombreUsuario2=itemView.findViewById(R.id.nombre_usuario2);
             nombreUsuario3=itemView.findViewById(R.id.nombre_usuario3);

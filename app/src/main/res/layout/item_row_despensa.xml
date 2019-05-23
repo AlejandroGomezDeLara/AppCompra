@@ -48,12 +48,13 @@
                 android:layout_height="wrap_content"
                 android:text="Panes en una bolsa"
                 android:ellipsize="marquee"
+                android:singleLine="true"
                 android:layout_alignParentTop="true"
                 android:gravity="center"
                 android:textColor="@android:color/white"
                 android:textStyle="bold"
                 android:textSize="18dp"
-                android:singleLine="true" />
+                 />
             <TextView
                 android:id="@+id/cantidad"
                 android:layout_width="match_parent"

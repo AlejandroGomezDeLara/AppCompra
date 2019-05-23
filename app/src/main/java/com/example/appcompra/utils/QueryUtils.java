@@ -90,7 +90,6 @@ public class QueryUtils {
     public static ArrayList<Lista> listasJson(String json) {
         int id;
         String nombre;
-        String url;
         ArrayList<Lista> listas=new ArrayList<>();
         ArrayList<String> usuariosLista;
         try{
@@ -102,7 +101,6 @@ public class QueryUtils {
                 listaActual=data.getJSONObject(i);
                 id=listaActual.getInt("id");
                 nombre=listaActual.getString("nombre");
-                url=listaActual.getString("url");
                 if(listaActual.getString("usuarios")!=null){
                     String usuarios=listaActual.getString("usuarios");
                     if(!usuarios.isEmpty()){
@@ -111,7 +109,7 @@ public class QueryUtils {
                         }
                     }
                 }
-                Lista c=new Lista(id,nombre,url);
+                Lista c=new Lista(id,nombre);
                 if(!usuariosLista.isEmpty())
                     c.setUsuarios(usuariosLista);
                 listas.add(c);

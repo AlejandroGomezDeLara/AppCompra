@@ -10,4 +10,5 @@
     <color name="colorProducto">#240041</color>
     <color name="backgroundProducto">#f1eff9</color>
     <color name="backgroundSpinner">#dfd9f7</color>
+    <color name="conectado">#1fe03f</color>
 </resources>

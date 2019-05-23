@@ -22,5 +22,6 @@ public class Constants {
     public static final String CREACION_NUEVA_LISTA="CL";
     public static final String CREACION_NUEVA_LISTA_CORRECTA="CLC";
     public static final String CREACION_NUEVA_LISTA_FALLIDA="CLF";
+    public static final String BORRAR_LISTA_PETICION="SL";
 
 }
