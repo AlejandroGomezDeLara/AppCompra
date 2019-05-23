@@ -129,7 +129,7 @@ public class QueryUtils {
         String nombre;
         String urlImagen;
         String marca;
-        int cantidad;
+        String cantidad;
         String receta;
         String cadena;
         boolean comprado;
@@ -145,7 +145,7 @@ public class QueryUtils {
                 productoActual=tipos.getJSONObject(i);
                 id=productoActual.getInt("id");
                 nombre=productoActual.getString("nombre");
-                cantidad=productoActual.getInt("cantidad");
+                cantidad=productoActual.getString("cantidad");
                 receta=productoActual.getString("receta");
                 cadena=productoActual.getString("cadena");
                 comprado=productoActual.getBoolean("comprado");
@@ -157,7 +157,7 @@ public class QueryUtils {
                 productoActual=tipos.getJSONObject(i);
                 id=productoActual.getInt("id");
                 nombre=productoActual.getString("nombre");
-                cantidad=productoActual.getInt("cantidad");
+                cantidad=productoActual.getString("cantidad");
                 receta=productoActual.getString("receta");
                 cadena=productoActual.getString("cadena");
                 comprado=productoActual.getBoolean("comprado");

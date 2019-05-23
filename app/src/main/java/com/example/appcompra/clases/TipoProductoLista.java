@@ -1,12 +1,12 @@
 package com.example.appcompra.clases;
 
 public class TipoProductoLista extends Producto {
-    private int cantidad;
+    private String cantidad;
     private String receta;
     private String cadena;
     private boolean comprado;
 
-    public TipoProductoLista(int id, String nombre, int cantidad, String receta, String cadena, boolean comprado, String url) {
+    public TipoProductoLista(int id, String nombre, String cantidad, String receta, String cadena, boolean comprado, String url) {
         super(id, nombre, url);
         this.cantidad=cantidad;
         this.receta=receta;
@@ -14,11 +14,11 @@ public class TipoProductoLista extends Producto {
         this.comprado=comprado;
     }
 
-    public int getCantidad() {
+    public String getCantidad() {
         return cantidad;
     }
 
-    public void setCantidad(int cantidad) {
+    public void setCantidad(String cantidad) {
         this.cantidad = cantidad;
     }
 

@@ -1,5 +1,9 @@
 package com.example.appcompra.fragment;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.example.appcompra.MainActivity;
 import com.example.appcompra.R;
@@ -21,19 +26,26 @@ import com.example.appcompra.adapters.DespensaAdapter;
 import com.example.appcompra.adapters.ListaAdapter;
 import com.example.appcompra.clases.Lista;
 import com.example.appcompra.clases.Producto;
+import com.example.appcompra.clases.ProductoComercialLista;
 import com.example.appcompra.clases.TipoProducto;
 import com.example.appcompra.adapters.ProductoAdapter;
+import com.example.appcompra.clases.TipoProductoLista;
 import com.example.appcompra.clases.Usuario;
+import com.example.appcompra.models.DespensaViewModel;
 import com.example.appcompra.utils.QueryUtils;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import static android.content.Context.CONNECTIVITY_SERVICE;
+
 public class DespensaFragment extends Fragment {
     protected ArrayList<Producto> productos;
     protected RecyclerView recyclerView;
     protected DespensaAdapter adapter;
+    protected DespensaViewModel model;
     ProgressBar loadingIndicator;
+    protected TextView mEmptyStateTextView;
     private Usuario usuario;
     @Nullable
     @Override
@@ -41,6 +53,8 @@ public class DespensaFragment extends Fragment {
         View view = inflater.inflate(R.layout.frament_despensa, container, false);
         loadingIndicator = view.findViewById(R.id.loading_indicator);
         recyclerView=view.findViewById(R.id.recyclerView);
+        model= ViewModelProviders.of(getActivity()).get(DespensaViewModel.class);
+        mEmptyStateTextView=view.findViewById(R.id.emptyStateView);
         productos=new ArrayList<>();
         usuario= QueryUtils.getUsuario();
         rellenarProductos();
@@ -49,9 +63,9 @@ public class DespensaFragment extends Fragment {
         return view;
     }
     public void rellenarProductos(){
-        productos.add(new TipoProducto(2,"Hamburguesa","Ingredientes","https://image.flaticon.com/icons/png/512/93/93104.png"));
-        productos.add(new TipoProducto(3,"Panes","Ingredientes","https://image.flaticon.com/icons/png/512/93/93104.png"));
-        productos.add(new TipoProducto(4,"Mas cosas","Ingredientes","https://image.flaticon.com/icons/png/512/93/93104.png"));
+        productos.add(new TipoProductoLista(2,"Hamburguesa","2 unidades",null,null,false,"https://image.flaticon.com/icons/png/512/93/93104.png"));
+        productos.add(new TipoProductoLista(4,"Pepinos","5 unidades",null,null,false,"https://image.flaticon.com/icons/png/512/93/93104.png"));
+        productos.add(new ProductoComercialLista(3,"Hamburguesa","500g",null,null,false,"mercadona","https://image.flaticon.com/icons/png/512/93/93104.png"));
 
     }
     private void updateEditTextFiltrar(View view){
@@ -76,6 +90,24 @@ public class DespensaFragment extends Fragment {
 
     public void onResume() {
         super.onResume();
+        ConnectivityManager manager=(ConnectivityManager)getActivity().getSystemService(CONNECTIVITY_SERVICE);
+        final NetworkInfo info=manager.getActiveNetworkInfo();
+        boolean isConnected=info!=null && info.isConnected();
+        if(isConnected) {
+            model.getProductosDespensa().observe(getActivity(), new Observer<ArrayList<Producto>>() {
+                @Override
+                public void onChanged(@Nullable ArrayList<Producto> p) {
+                    if(p!=null){
+                        updateUI(p);
+                    }
+                }
+            });
+
+        }else{
+            loadingIndicator.setVisibility(View.GONE);
+            mEmptyStateTextView.setVisibility(View.VISIBLE);
+            mEmptyStateTextView.setText(R.string.no_internet);
+        }
     }
 
     private void filtrar(String contenidoEditText){

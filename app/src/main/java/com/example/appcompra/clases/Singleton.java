@@ -7,10 +7,11 @@ public class Singleton {
 
     private ArrayList<Categoria> categorias;
     private TreeMap<Integer,ArrayList<Producto>> ultimosProductos;
+    private TreeMap<Integer,ArrayList<Producto>> productosLista;
+    private ArrayList<Producto> despensa;
     private int posicionSpinnerCategorias;
     private int posicionSpinnerListas;
     private ArrayList<Lista> listas;
-    private TreeMap<Integer,ArrayList<Producto>> productosLista;
     private static Singleton instance;
 
     public Singleton () {
@@ -20,6 +21,7 @@ public class Singleton {
         productosLista=new TreeMap<>();
         posicionSpinnerCategorias =0;
         posicionSpinnerListas=0;
+        despensa=new ArrayList<>();
     }
 
     public static Singleton getInstance () {
@@ -66,6 +68,10 @@ public class Singleton {
         return productosLista!=null && !productosLista.isEmpty();
     }
 
+    public boolean existenDespensa(){
+        return despensa!=null && !despensa.isEmpty();
+    }
+
     public void añadirNuevosProductos(int idCategoria,ArrayList<Producto> productos){
         ultimosProductos.put(idCategoria,productos);
     }
@@ -96,5 +102,13 @@ public class Singleton {
 
     public void setUltimosProductos(TreeMap<Integer, ArrayList<Producto>> ultimosProductos) {
         this.ultimosProductos = ultimosProductos;
+    }
+
+    public ArrayList<Producto> getDespensa() {
+        return despensa;
+    }
+
+    public void setDespensa(ArrayList<Producto> despensa) {
+        this.despensa = despensa;
     }
 }

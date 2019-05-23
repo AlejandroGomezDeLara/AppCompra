@@ -25,4 +25,7 @@ public class Constants {
     public static final String PRODUCTOS_LISTA_PETICION="PPL";
     public static final String PRODUCTOS_LISTA_CORRECTA="PPLC";
     public static final String PRODUCTOS_LISTA_FALLIDA="PPLF";
+    public static final String PRODUCTOS_DESPENSA_PETICION="";
+    public static final String PRODUCTOS_DESPENSA_FALLIDA="";
+    public static final String PRODUCTOS_DESPENSA_CORRECTA="";
 }

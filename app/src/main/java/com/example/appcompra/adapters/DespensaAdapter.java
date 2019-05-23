@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.example.appcompra.R;
 import com.example.appcompra.clases.Lista;
 import com.example.appcompra.clases.Producto;
+import com.example.appcompra.clases.TipoProductoLista;
 import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
@@ -51,8 +52,9 @@ public class DespensaAdapter extends RecyclerView.Adapter<DespensaAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull final DespensaAdapter.ViewHolder viewHolder,final int i) {
-        final Producto producto=productos.get(i);
+        final TipoProductoLista producto=(TipoProductoLista)productos.get(i);
         viewHolder.nombre.setText(producto.getNombre());
+        viewHolder.cantidad.setText(producto.getCantidad());
         Picasso.get().load(producto.getUrl()).into(viewHolder.imagen);
     }
 
@@ -70,15 +72,11 @@ public class DespensaAdapter extends RecyclerView.Adapter<DespensaAdapter.ViewHo
         TextView nombre;
         ImageView imagen;
         TextView cantidad;
-        TextView unidades;
-        Button opciones;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             nombre=itemView.findViewById(R.id.nombre_producto);
             imagen=itemView.findViewById(R.id.imagen_producto);
             cantidad=itemView.findViewById(R.id.cantidad);
-            unidades=itemView.findViewById(R.id.unidades);
-            opciones=itemView.findViewById(R.id.boton_opciones);
         }
     }
 
