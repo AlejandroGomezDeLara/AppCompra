@@ -49,6 +49,8 @@ public class DespensaFragment extends Fragment {
     }
     public void rellenarProductos(){
         productos.add(new TipoProducto(2,"Hamburguesa","Ingredientes","https://image.flaticon.com/icons/png/512/93/93104.png"));
+        productos.add(new TipoProducto(3,"Panes","Ingredientes","https://image.flaticon.com/icons/png/512/93/93104.png"));
+        productos.add(new TipoProducto(4,"Mas cosas","Ingredientes","https://image.flaticon.com/icons/png/512/93/93104.png"));
 
     }
     private void updateEditTextFiltrar(View view){
@@ -90,7 +92,7 @@ public class DespensaFragment extends Fragment {
         */
         adapter=new DespensaAdapter(m, getActivity(), R.layout.item_row_despensa, getActivity());
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }

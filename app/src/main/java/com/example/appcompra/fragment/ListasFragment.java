@@ -1,7 +1,6 @@
 package com.example.appcompra.fragment;
 
 import android.arch.lifecycle.Observer;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -10,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -19,7 +17,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,12 +28,9 @@ import com.example.appcompra.Constants;
 import com.example.appcompra.MainActivity;
 import com.example.appcompra.R;
 import com.example.appcompra.adapters.ListaAdapter;
-import com.example.appcompra.clases.Categoria;
 import com.example.appcompra.clases.Lista;
 import com.example.appcompra.clases.ListasViewModel;
 import com.example.appcompra.clases.Singleton;
-import com.example.appcompra.clases.TipoProducto;
-import com.example.appcompra.adapters.ProductoAdapter;
 import com.example.appcompra.clases.Usuario;
 import com.example.appcompra.utils.QueryUtils;
 
@@ -46,7 +40,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 
@@ -158,7 +151,7 @@ public class ListasFragment extends Fragment {
     }
 
     public void crearNuevaListaPopup(){
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.crear_lista_popup, null);
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.popup_crear_lista, null);
         final AutoCompleteTextView editText=view.findViewById(R.id.crear_lista_editText);
         AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
         builder.setView(view);
