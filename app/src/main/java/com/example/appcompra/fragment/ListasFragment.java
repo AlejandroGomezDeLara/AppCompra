@@ -66,7 +66,7 @@ public class ListasFragment extends Fragment {
         mEmptyStateTextView=view.findViewById(R.id.emptyStateView);
         model= ViewModelProviders.of(getActivity()).get(ListasViewModel.class);
         listas=new ArrayList<>();
-        usuario=((MainActivity)this.getActivity()).getUsuario();
+        usuario=QueryUtils.getUsuario();
         if(!Singleton.getInstance().existenListas()){
             listasTask=new PeticionListasTask();
             listasTask.execute((Void) null);

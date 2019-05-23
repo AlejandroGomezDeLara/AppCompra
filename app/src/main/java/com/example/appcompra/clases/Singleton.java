@@ -1,22 +1,14 @@
 package com.example.appcompra.clases;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.TreeMap;
 
 public class Singleton {
 
     private ArrayList<Categoria> categorias;
     private TreeMap<Integer,ArrayList<Producto>> ultimosProductos;
-    private int posicionSpinner;
-    public TreeMap<Integer, ArrayList<Producto>> getUltimosProductos() {
-        return ultimosProductos;
-    }
-
-    public void setUltimosProductos(TreeMap<Integer, ArrayList<Producto>> ultimosProductos) {
-        this.ultimosProductos = ultimosProductos;
-    }
-
+    private int posicionSpinnerCategorias;
+    private int posicionSpinnerListas;
     private ArrayList<Lista> listas;
 
     private static Singleton instance;
@@ -25,7 +17,8 @@ public class Singleton {
         categorias=new ArrayList<>();
         listas=new ArrayList<>();
         ultimosProductos=new TreeMap<>();
-        posicionSpinner=0;
+        posicionSpinnerCategorias =0;
+        posicionSpinnerListas=0;
     }
 
     public static Singleton getInstance () {
@@ -64,15 +57,31 @@ public class Singleton {
         ultimosProductos.put(idCategoria,productos);
     }
 
-    public void setPosicionSpinner(int pos){
-        this.posicionSpinner=pos;
+    public void setPosicionSpinnerCategorias(int pos){
+        this.posicionSpinnerCategorias =pos;
     }
 
-    public int getPosicionSpinner() {
-        return posicionSpinner;
+    public int getPosicionSpinnerCategorias() {
+        return posicionSpinnerCategorias;
     }
 
     public void añadirNuevaLista(Lista lista) {
         listas.add(lista);
+    }
+
+    public int getPosicionSpinnerListas() {
+        return posicionSpinnerListas;
+    }
+
+    public void setPosicionSpinnerListas(int posicionSpinnerListas) {
+        this.posicionSpinnerListas = posicionSpinnerListas;
+    }
+
+    public TreeMap<Integer, ArrayList<Producto>> getUltimosProductos() {
+        return ultimosProductos;
+    }
+
+    public void setUltimosProductos(TreeMap<Integer, ArrayList<Producto>> ultimosProductos) {
+        this.ultimosProductos = ultimosProductos;
     }
 }

@@ -1,10 +1,7 @@
 package com.example.appcompra.fragment;
 
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModel;
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -22,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -29,22 +27,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.appcompra.Constants;
-import com.example.appcompra.LoginActivity;
-import com.example.appcompra.MainActivity;
 import com.example.appcompra.R;
 import com.example.appcompra.clases.Categoria;
 import com.example.appcompra.clases.CategoriaViewModel;
+import com.example.appcompra.clases.Lista;
 import com.example.appcompra.clases.Producto;
 import com.example.appcompra.clases.ProductoViewModel;
 import com.example.appcompra.clases.Singleton;
-import com.example.appcompra.clases.TipoProducto;
 import com.example.appcompra.adapters.ProductoAdapter;
 import com.example.appcompra.clases.Usuario;
 import com.example.appcompra.utils.QueryUtils;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -53,7 +45,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeMap;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 
@@ -70,6 +61,8 @@ public class ProductosFragment extends Fragment {
     protected ProductoViewModel modelProductos;
     protected CategoriaViewModel categoriaViewModel;
     protected PeticionProductosTask peticionTask = null;
+    protected Button addProductoListaButton;
+    protected Spinner listasSpinner;
     QueryUtils q;
     @Nullable
     @Override
@@ -77,13 +70,14 @@ public class ProductosFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_productos, container, false);
         loadingIndicator=view.findViewById(R.id.loading_indicator);
         mEmptyStateTextView=view.findViewById(R.id.emptyStateView);
-        idCategoria=9;
-        q=new QueryUtils();
-        usuario=((MainActivity)this.getActivity()).getUsuario();
+        addProductoListaButton=view.findViewById(R.id.añadir_boton);
+        listasSpinner=view.findViewById(R.id.listasSpinner);
         categoriasSpinner=view.findViewById(R.id.spinner_categorias);
         recyclerView=view.findViewById(R.id.recyclerView);
+        usuario=QueryUtils.getUsuario();
         productos=new ArrayList<>();
         categorias=new ArrayList<>();
+        updateSpinnerCategorias(categorias);
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -103,7 +97,7 @@ public class ProductosFragment extends Fragment {
                 updateUI(new ArrayList<Producto>());
                 loadingIndicator.setVisibility(View.VISIBLE);
                 mEmptyStateTextView.setVisibility(View.GONE);
-                Singleton.getInstance().setPosicionSpinner(position);
+                Singleton.getInstance().setPosicionSpinnerCategorias(position);
                 if(!Singleton.getInstance().getUltimosProductos().containsKey(idCategoria)){
                     pedirProductos(idCategoria);
                 }else{
@@ -111,7 +105,6 @@ public class ProductosFragment extends Fragment {
                     updateUI(Singleton.getInstance().getUltimosProductos().get(idCategoria));
                 }
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
             }
@@ -121,61 +114,7 @@ public class ProductosFragment extends Fragment {
 
         return view;
     }
-    private void updateEditTextFiltrar(View view){
-        EditText editText=view.findViewById(R.id.editText);
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-            @Override
-            public void afterTextChanged(Editable s) {
-                filtrar(s.toString());
-            }
-        });
-    }
-
-    public void onResume() {
-        super.onResume();
-        ConnectivityManager manager=(ConnectivityManager)getActivity().getSystemService(CONNECTIVITY_SERVICE);
-        final NetworkInfo info=manager.getActiveNetworkInfo();
-        boolean isConnected=info!=null && info.isConnected();
-        if(isConnected) {
-            categoriaViewModel.getCategorias().observe(getActivity(), new Observer<ArrayList<Categoria>>() {
-                @Override
-                public void onChanged(@Nullable ArrayList<Categoria> categorias) {
-                    if(categorias!=null){
-                        updateSpinner(categorias);
-                    }
-                }
-            });
-
-            modelProductos.getProductos().observe(getActivity(), new Observer<ArrayList<Producto>>() {
-                @Override
-                public void onChanged(@Nullable ArrayList<Producto> p) {
-                    if (p != null) {
-                        updateUI(p);
-                    }
-                }
-            });
-
-        }else{
-            loadingIndicator.setVisibility(View.GONE);
-            mEmptyStateTextView.setText(R.string.no_internet);
-        }
-    }
-
-    private void filtrar(String contenidoEditText){
-        ArrayList<Producto> lista=new ArrayList<>();
-        for (Producto item:productos){
-            if(item.getNombre().toLowerCase().contains(contenidoEditText.toLowerCase())){
-                lista.add(item);
-            }
-        }
-        adapter.filtrarLista(lista);
-    }
-
-    private void updateSpinner(ArrayList<Categoria> c) {
+    private void updateSpinnerCategorias(ArrayList<Categoria> c) {
         List<String> valoresSpinner=new ArrayList<>();
         for (int i=0;i<c.size();i++){
             valoresSpinner.add(c.get(i).getNombre());
@@ -192,9 +131,27 @@ public class ProductosFragment extends Fragment {
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         categoriasSpinner.setAdapter(adapter);
-        categoriasSpinner.setSelection(Singleton.getInstance().getPosicionSpinner());
+        categoriasSpinner.setSelection(Singleton.getInstance().getPosicionSpinnerCategorias());
     }
-
+    private void updateSpinnerListas(ArrayList<Lista> l) {
+        List<String> valoresSpinner=new ArrayList<>();
+        for (int i=0;i<l.size();i++){
+            valoresSpinner.add(l.get(i).getTitulo());
+        }
+        /*
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                getActivity(),
+                android.R.layout.simple_spinner_item,
+                valoresSpinner
+        );
+        */
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                getContext(),R.layout.spinner_item,valoresSpinner
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        listasSpinner.setAdapter(adapter);
+        listasSpinner.setSelection(Singleton.getInstance().getPosicionSpinnerListas());
+    }
     private void updateUI(ArrayList<Producto> m){
         /*productos.clear();
         productos.addAll(m);
@@ -210,7 +167,6 @@ public class ProductosFragment extends Fragment {
         peticionTask = new PeticionProductosTask(idCategoria);
         peticionTask.execute((Void) null);
     }
-
     public class PeticionProductosTask extends AsyncTask<Void, Void, ArrayList<Producto>> {
         private Socket socket;
         private BufferedReader in;
@@ -225,7 +181,6 @@ public class ProductosFragment extends Fragment {
 
         @Override
         protected ArrayList<Producto> doInBackground(Void... params) {
-
             socket=QueryUtils.getSocket();
             try {
                 in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -250,8 +205,6 @@ public class ProductosFragment extends Fragment {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-
             return p;
         }
 
@@ -268,9 +221,59 @@ public class ProductosFragment extends Fragment {
             loadingIndicator.setVisibility(View.GONE);
 
         }
-
         @Override
         protected void onCancelled() {
+        }
+    }
+    private void updateEditTextFiltrar(View view){
+        EditText editText=view.findViewById(R.id.editText);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                filtrar(s.toString());
+            }
+        });
+    }
+    private void filtrar(String contenidoEditText){
+        ArrayList<Producto> lista=new ArrayList<>();
+        for (Producto item:productos){
+            if(item.getNombre().toLowerCase().contains(contenidoEditText.toLowerCase())){
+                lista.add(item);
+            }
+        }
+        adapter.filtrarLista(lista);
+    }
+    public void onResume() {
+        super.onResume();
+        ConnectivityManager manager=(ConnectivityManager)getActivity().getSystemService(CONNECTIVITY_SERVICE);
+        final NetworkInfo info=manager.getActiveNetworkInfo();
+        boolean isConnected=info!=null && info.isConnected();
+        if(isConnected) {
+            categoriaViewModel.getCategorias().observe(getActivity(), new Observer<ArrayList<Categoria>>() {
+                @Override
+                public void onChanged(@Nullable ArrayList<Categoria> categorias) {
+                    if(categorias!=null){
+                        updateSpinnerCategorias(categorias);
+                    }
+                }
+            });
+
+            modelProductos.getProductos().observe(getActivity(), new Observer<ArrayList<Producto>>() {
+                @Override
+                public void onChanged(@Nullable ArrayList<Producto> p) {
+                    if (p != null) {
+                        updateUI(p);
+                    }
+                }
+            });
+
+        }else{
+            loadingIndicator.setVisibility(View.GONE);
+            mEmptyStateTextView.setText(R.string.no_internet);
         }
     }
 
