@@ -81,7 +81,7 @@ public class ListasFragment extends Fragment {
         //updateEditTextFiltrar(view);
         addLista=view.findViewById(R.id.añadir_boton);
         addLista.setVisibility(View.GONE);
-        addListaCentro=view.findViewById(R.id.añadir_boton);
+        addListaCentro=view.findViewById(R.id.añadir_boton_centro);
         addLista.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -163,10 +163,11 @@ public class ListasFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-        mEmptyStateTextView.setVisibility(View.GONE);
-        loadingIndicator.setVisibility(View.GONE);
         addListaCentro.setVisibility(View.GONE);
         addLista.setVisibility(View.VISIBLE);
+        mEmptyStateTextView.setVisibility(View.GONE);
+        loadingIndicator.setVisibility(View.GONE);
+
     }
 
     public void crearNuevaListaPopup(){
