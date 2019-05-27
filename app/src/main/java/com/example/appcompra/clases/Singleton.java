@@ -111,4 +111,8 @@ public class Singleton {
     public void setDespensa(ArrayList<Producto> despensa) {
         this.despensa = despensa;
     }
+
+    public void borrarLista(Lista l) {
+        listas.remove(l);
+    }
 }
