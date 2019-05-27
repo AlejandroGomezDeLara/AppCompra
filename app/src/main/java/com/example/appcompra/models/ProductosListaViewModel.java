@@ -33,7 +33,7 @@ public class ProductosListaViewModel extends AndroidViewModel {
         this.application=application;
     }
 
-    public LiveData<ArrayList<Producto>> getProductosLista(String idLista){
+    public LiveData<ArrayList<Producto>> getProductosLista(int idLista){
         if(productos==null){
             productos=new MutableLiveData<>();
             pedirProductos(idLista);
@@ -51,10 +51,10 @@ public class ProductosListaViewModel extends AndroidViewModel {
         private BufferedReader in;
         private PrintWriter out;
         private String json;
-        private String idLista;
+        private int idLista;
         private ArrayList<Producto> p=new ArrayList<>();
 
-        PeticionProductosTask(String idLista) {
+        PeticionProductosTask(int idLista) {
             this.idLista=idLista;
         }
 
@@ -90,7 +90,7 @@ public class ProductosListaViewModel extends AndroidViewModel {
         }
     }
 
-    public void pedirProductos(String idLista) {
+    public void pedirProductos(int idLista) {
         peticionProductosTask = new PeticionProductosTask(idLista);
         peticionProductosTask.execute((Void) null);
     }

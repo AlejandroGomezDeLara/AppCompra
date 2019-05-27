@@ -86,10 +86,11 @@ public class DespensaFragment extends Fragment {
         return view;
     }
     public void intentProductos(){
-        Singleton.getInstance().setPosicionSpinnerListas(0);
-        Intent i=new Intent(getActivity(),ProductosFragment.class);
-        getActivity().finish();
-        startActivity(i);
+        ProductosFragment myFragment = new ProductosFragment();
+        Bundle arguments=new Bundle();
+        arguments.putInt("posLista",0);
+        myFragment.setArguments(arguments);
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.contenedor_fragment, myFragment).addToBackStack(null).commit();
     }
     public void rellenarProductos(){
         productos.add(new TipoProductoLista(2,"Hamburguesa","2 unidades",null,null,false,"https://image.flaticon.com/icons/png/512/93/93104.png"));

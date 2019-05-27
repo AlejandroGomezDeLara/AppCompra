@@ -64,7 +64,7 @@ public class ProductosFragment extends Fragment {
     protected PeticionProductosTask peticionTask = null;
     protected Button addProductoListaButton;
     protected Spinner listasSpinner;
-
+    protected int posLista;
 
     @Nullable
     @Override
@@ -79,6 +79,11 @@ public class ProductosFragment extends Fragment {
         usuario=QueryUtils.getUsuario();
         productos=new ArrayList<>();
         categorias=new ArrayList<>();
+        posLista=0;
+        Bundle arguments = getArguments();
+        if(arguments!=null) {
+            posLista = arguments.getInt("posLista");
+        }
         updateSpinnerCategorias(categorias);
         if(Singleton.getInstance().existenListas())
             updateSpinnerListas(Singleton.getInstance().getListas());
@@ -148,7 +153,7 @@ public class ProductosFragment extends Fragment {
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         listasSpinner.setAdapter(adapter);
-        listasSpinner.setSelection(Singleton.getInstance().getPosicionSpinnerListas());
+        listasSpinner.setSelection(posLista);
     }
     private void updateUI(ArrayList<Producto> m){
         /*productos.clear();

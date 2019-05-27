@@ -8,9 +8,12 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.ImageViewCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,11 +67,13 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
         viewHolder.linearLista.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i=new Intent(activity,InteriorListaFragment.class);
-                i.putExtra("id",lista.getId()+"");
-                i.putExtra("posLista",i);
-                activity.startActivity(i);
-                activity.finish();
+                AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                InteriorListaFragment myFragment = new InteriorListaFragment();
+                Bundle arguments=new Bundle();
+                arguments.putInt("id",lista.getId());
+                arguments.putInt("posLista",i);
+                myFragment.setArguments(arguments);
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.contenedor_fragment, myFragment).addToBackStack(null).commit();
             }
         });
         if(lista.getNumeroUsuarios()==0){

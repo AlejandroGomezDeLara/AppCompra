@@ -50,7 +50,7 @@ public class InteriorListaFragment extends Fragment {
     protected ProgressBar loadingIndicator;
     protected DespensaAdapter adapter;
     protected Usuario usuario;
-    protected String idLista;
+    protected int idLista;
     protected int posLista;
     protected TextView mEmptyStateTextView;
     protected Button addProducto;
@@ -63,14 +63,18 @@ public class InteriorListaFragment extends Fragment {
         View view = inflater.inflate(R.layout.interior_lista, container, false);
         loadingIndicator = view.findViewById(R.id.loading_indicator);
         recyclerView = view.findViewById(R.id.recyclerView);
-        posLista=getActivity().getIntent().getExtras().getInt("posLista");
         mEmptyStateTextView = view.findViewById(R.id.emptyStateView);
-        mEmptyStateTextView.setVisibility(View.GONE);
+        mEmptyStateTextView.setVisibility(View.VISIBLE);
         addProducto = view.findViewById(R.id.añadir_boton);
         addProductoCentro = view.findViewById(R.id.añadir_boton_centro);
-        idLista=getActivity().getIntent().getStringExtra("id");
+        Bundle arguments=getArguments();
+        if(arguments!=null){
+            posLista=arguments.getInt("posLista");
+            idLista=arguments.getInt("id");
+        }
         model= ViewModelProviders.of(getActivity()).get(ProductosListaViewModel.class);
-        addProductoCentro.setVisibility(View.GONE);
+        addProductoCentro.setVisibility(View.VISIBLE);
+        addProducto.setVisibility(View.GONE);
         productos = new ArrayList<>();
         usuario = QueryUtils.getUsuario();
         addProducto.setOnClickListener(new View.OnClickListener() {
@@ -89,10 +93,11 @@ public class InteriorListaFragment extends Fragment {
         return view;
     }
     public void intentProductos(){
-        Singleton.getInstance().setPosicionSpinnerListas(posLista);
-        Intent i=new Intent(getActivity(),ProductosFragment.class);
-        getActivity().finish();
-        startActivity(i);
+        ProductosFragment myFragment = new ProductosFragment();
+        Bundle arguments=new Bundle();
+        arguments.putInt("posLista",posLista);
+        myFragment.setArguments(arguments);
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.contenedor_fragment, myFragment).addToBackStack(null).commit();
     }
     private void updateEditTextFiltrar(View view) {
         EditText editText = view.findViewById(R.id.editText);
@@ -133,6 +138,11 @@ public class InteriorListaFragment extends Fragment {
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+        addProducto.setVisibility(View.VISIBLE);
+        addProductoCentro.setVisibility(View.GONE);
+        loadingIndicator.setVisibility(View.GONE);
+        mEmptyStateTextView.setVisibility(View.GONE);
+
     }
 
 
