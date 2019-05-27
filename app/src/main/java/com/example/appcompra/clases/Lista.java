@@ -28,6 +28,7 @@ public class Lista {
 
     public Lista(int id,String titulo) {
         this.titulo = titulo;
+        this.id=id;
         usuarios=new ArrayList<>();
         productos=new ArrayList<>();
     }

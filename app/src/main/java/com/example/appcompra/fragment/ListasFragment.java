@@ -65,10 +65,8 @@ public class ListasFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_listas, container, false);
         loadingIndicator = view.findViewById(R.id.loading_indicator);
-        loadingIndicator.setVisibility(View.VISIBLE);
         recyclerView=view.findViewById(R.id.recyclerView);
         mEmptyStateTextView=view.findViewById(R.id.emptyStateView);
-        mEmptyStateTextView.setVisibility(View.VISIBLE);
         model= ViewModelProviders.of(getActivity()).get(ListasViewModel.class);
         listas=new ArrayList<>();
         usuario=QueryUtils.getUsuario();
@@ -78,9 +76,9 @@ public class ListasFragment extends Fragment {
         }else{
             updateUI(Singleton.getInstance().getListas());
         }
+
         //updateEditTextFiltrar(view);
         addLista=view.findViewById(R.id.añadir_boton);
-        addLista.setVisibility(View.GONE);
         addListaCentro=view.findViewById(R.id.añadir_boton_centro);
         addLista.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,6 +86,9 @@ public class ListasFragment extends Fragment {
                 crearNuevaListaPopup();
             }
         });
+        addListaCentro.setVisibility(View.GONE);
+        addLista.setVisibility(View.GONE);
+        mEmptyStateTextView.setVisibility(View.GONE);
         addListaCentro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,15 +123,22 @@ public class ListasFragment extends Fragment {
         ConnectivityManager manager=(ConnectivityManager)getActivity().getSystemService(CONNECTIVITY_SERVICE);
         final NetworkInfo info=manager.getActiveNetworkInfo();
         boolean isConnected=info!=null && info.isConnected();
+        if(listas==null){
+            mEmptyStateTextView.setVisibility(View.VISIBLE);
+            addListaCentro.setVisibility(View.VISIBLE);
+            addLista.setVisibility(View.GONE);
+
+        }else{
+            mEmptyStateTextView.setVisibility(View.GONE);
+            addListaCentro.setVisibility(View.GONE);
+            addLista.setVisibility(View.VISIBLE);
+        }
         if(isConnected) {
             model.getListas().observe(getActivity(), new Observer<ArrayList<Lista>>() {
                 @Override
-                public void onChanged(@Nullable ArrayList<Lista> listas) {
-                    if(listas!=null){
-                        updateUI(listas);
-
-                    }else{
-                        mEmptyStateTextView.setVisibility(View.VISIBLE);
+                public void onChanged(@Nullable ArrayList<Lista> l) {
+                    if(l!=null){
+                        updateUI(l);
                     }
                 }
             });
@@ -163,10 +171,6 @@ public class ListasFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-        addListaCentro.setVisibility(View.GONE);
-        addLista.setVisibility(View.VISIBLE);
-        mEmptyStateTextView.setVisibility(View.GONE);
-        loadingIndicator.setVisibility(View.GONE);
 
     }
 
@@ -249,12 +253,12 @@ public class ListasFragment extends Fragment {
 
         @Override
         protected void onPostExecute(final ArrayList<Lista> listas) {
-            if(!Singleton.getInstance().existenListas()){
-                Toast.makeText(getContext(), "No hay listas", Toast.LENGTH_LONG).show();
-            }else{
+            if(!listas.isEmpty()){
+                if(!Singleton.getInstance().existenListas()){
+                    Singleton.getInstance().setListas(listas);
+                }
                 updateUI(listas);
             }
-            loadingIndicator.setVisibility(View.GONE);
         }
 
         @Override

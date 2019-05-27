@@ -68,6 +68,10 @@ public class Constants {
 
     //tests
 
-    public static final String DUMMY_LOGIN="LC;2;pepe";
+    public static final String DUMMY_LOGIN="LC;2;nombre";
+    public static final String DUMMY_PRODUCTOS_CATEGORIA="LC;2;nombre";
+    public static final String DUMMY_CATEGORIAS="LC;2;nombre";
+    public static final String DUMMY_LISTAS="LC;2;nombre";
+    public static final String DUMMY_="LC;2;nombre";
 
 }

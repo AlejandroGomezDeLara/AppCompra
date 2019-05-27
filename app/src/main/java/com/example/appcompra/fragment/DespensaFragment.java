@@ -93,9 +93,9 @@ public class DespensaFragment extends Fragment {
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.contenedor_fragment, myFragment).addToBackStack(null).commit();
     }
     public void rellenarProductos(){
-        productos.add(new TipoProductoLista(2,"Hamburguesa","2 unidades",null,null,false,"https://image.flaticon.com/icons/png/512/93/93104.png"));
-        productos.add(new TipoProductoLista(4,"Pepinos","5 unidades",null,null,false,"https://image.flaticon.com/icons/png/512/93/93104.png"));
-        productos.add(new ProductoComercialLista(3,"Hamburguesa","500g",null,null,false,"mercadona","https://image.flaticon.com/icons/png/512/93/93104.png","4"));
+        productos.add(new TipoProductoLista(2,"Hamburguesa",2,null,null,false,"https://image.flaticon.com/icons/png/512/93/93104.png"));
+        productos.add(new TipoProductoLista(4,"Pepinos",3,null,null,false,"https://image.flaticon.com/icons/png/512/93/93104.png"));
+        productos.add(new ProductoComercialLista(3,"Hamburguesa",4,null,null,false,"mercadona","https://image.flaticon.com/icons/png/512/93/93104.png","4"));
     }
     private void updateEditTextFiltrar(View view){
         EditText editText=view.findViewById(R.id.editText);

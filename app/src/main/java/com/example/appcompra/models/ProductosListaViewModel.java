@@ -67,7 +67,7 @@ public class ProductosListaViewModel extends AndroidViewModel {
                 out.println(Constants.PRODUCTOS_LISTA_PETICION+Constants.SEPARATOR+QueryUtils.getUsuario().getId()+Constants.SEPARATOR+idLista);
                 String entrada=in.readLine();
                 if(entrada!=null && !entrada.isEmpty()){
-                    Log.e("respuesta",entrada.split(Constants.SEPARATOR)[1]);
+                    Log.e("rp",entrada.split(Constants.SEPARATOR)[1]);
                     if(entrada.split(Constants.SEPARATOR)[0].equals(Constants.PRODUCTOS_LISTA_CORRECTA)){
                         json=entrada.split(Constants.SEPARATOR)[1];
                         p=QueryUtils.productosLista(json);

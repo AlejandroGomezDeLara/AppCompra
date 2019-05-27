@@ -11,10 +11,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.ImageViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,13 +69,16 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
         viewHolder.linearLista.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AppCompatActivity activity = (AppCompatActivity) v.getContext();
                 InteriorListaFragment myFragment = new InteriorListaFragment();
                 Bundle arguments=new Bundle();
                 arguments.putInt("id",lista.getId());
                 arguments.putInt("posLista",i);
+                Log.e("pincha","Lista id: "+lista.getId()+" posLista: "+i+" nombre "+lista.getTitulo());
                 myFragment.setArguments(arguments);
-                activity.getSupportFragmentManager().beginTransaction().replace(R.id.contenedor_fragment, myFragment).addToBackStack(null).commit();
+                FragmentTransaction transaction = ((AppCompatActivity)activity).getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.contenedor_fragment, myFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
             }
         });
         if(lista.getNumeroUsuarios()==0){

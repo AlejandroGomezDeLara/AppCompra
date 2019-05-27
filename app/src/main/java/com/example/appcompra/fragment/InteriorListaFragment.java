@@ -72,6 +72,7 @@ public class InteriorListaFragment extends Fragment {
             posLista=arguments.getInt("posLista");
             idLista=arguments.getInt("id");
         }
+        Log.e("interior",""+idLista+" "+posLista);
         model= ViewModelProviders.of(getActivity()).get(ProductosListaViewModel.class);
         addProductoCentro.setVisibility(View.VISIBLE);
         addProducto.setVisibility(View.GONE);

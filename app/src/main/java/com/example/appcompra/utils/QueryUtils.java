@@ -132,7 +132,7 @@ public class QueryUtils {
         String receta;
         String cadena;
         String cantidad;
-        String unidades;
+        int unidades;
         boolean comprado;
         ArrayList<Producto> productos =new ArrayList<>();
 
@@ -148,7 +148,7 @@ public class QueryUtils {
                 nombre=productoActual.getString("nombre");
                 receta=productoActual.getString("receta");
                 cadena=productoActual.getString("cadena");
-                unidades=productoActual.getString("unidades");
+                unidades=productoActual.getInt("unidades");
                 comprado=productoActual.getBoolean("comprado");
                 urlImagen=productoActual.getString("urlimagen");
                 TipoProductoLista p=new TipoProductoLista(id,nombre,unidades,receta,cadena,comprado,urlImagen);
@@ -159,7 +159,7 @@ public class QueryUtils {
                 id=productoActual.getInt("id");
                 nombre=productoActual.getString("nombre");
                 cantidad=productoActual.getString("cantidad");
-                unidades=productoActual.getString("unidades");
+                unidades=productoActual.getInt("unidades");
                 receta=productoActual.getString("receta");
                 cadena=productoActual.getString("cadena");
                 comprado=productoActual.getBoolean("comprado");

@@ -46,7 +46,7 @@ public class DespensaAdapter extends RecyclerView.Adapter<DespensaAdapter.ViewHo
     public void onBindViewHolder(@NonNull final DespensaAdapter.ViewHolder viewHolder,final int i) {
         final TipoProductoLista producto=(TipoProductoLista)productos.get(i);
         viewHolder.nombre.setText(producto.getNombre());
-        viewHolder.unidades.setText(producto.getUnidades());
+        viewHolder.unidades.setText(producto.getUnidades()+"");
         if(producto.getUrl()!=null)
             Picasso.get().load(producto.getUrl()).into(viewHolder.imagen);
     }

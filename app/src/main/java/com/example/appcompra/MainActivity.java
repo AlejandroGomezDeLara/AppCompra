@@ -2,7 +2,6 @@ package com.example.appcompra;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.internal.BottomNavigationMenuView;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -86,6 +85,7 @@ public class MainActivity extends AppCompatActivity
 
         viewPager.setCurrentItem(2);
     }
+
     BottomNavigationView.OnNavigationItemSelectedListener navListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
                 @Override
@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity
                             break;
                         case R.id.menu_recetas:
                             viewPager.setCurrentItem(4);
+
                             break;
                     }
                     return false;
@@ -173,10 +174,5 @@ public class MainActivity extends AppCompatActivity
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
-    }
-
-    public void cambiarFragment(String datos,int pos){
-        menu.getMenu().getItem(pos).setChecked(true);
-
     }
 }
