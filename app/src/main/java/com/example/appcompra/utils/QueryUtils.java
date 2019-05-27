@@ -129,9 +129,10 @@ public class QueryUtils {
         String nombre;
         String urlImagen;
         String marca;
-        String cantidad;
         String receta;
         String cadena;
+        String cantidad;
+        String unidades;
         boolean comprado;
         ArrayList<Producto> productos =new ArrayList<>();
 
@@ -145,12 +146,12 @@ public class QueryUtils {
                 productoActual=tipos.getJSONObject(i);
                 id=productoActual.getInt("id");
                 nombre=productoActual.getString("nombre");
-                cantidad=productoActual.getString("cantidad");
                 receta=productoActual.getString("receta");
                 cadena=productoActual.getString("cadena");
+                unidades=productoActual.getString("unidades");
                 comprado=productoActual.getBoolean("comprado");
                 urlImagen=productoActual.getString("urlimagen");
-                TipoProductoLista p=new TipoProductoLista(id,nombre,cantidad,receta,cadena,comprado,urlImagen);
+                TipoProductoLista p=new TipoProductoLista(id,nombre,unidades,receta,cadena,comprado,urlImagen);
                 productos.add(p);
             }
             for (int i=0;i<comerciales.length();i++){
@@ -158,12 +159,13 @@ public class QueryUtils {
                 id=productoActual.getInt("id");
                 nombre=productoActual.getString("nombre");
                 cantidad=productoActual.getString("cantidad");
+                unidades=productoActual.getString("unidades");
                 receta=productoActual.getString("receta");
                 cadena=productoActual.getString("cadena");
                 comprado=productoActual.getBoolean("comprado");
                 urlImagen=productoActual.getString("urlimagen");
                 marca=productoActual.getString("marca");
-                ProductoComercialLista p=new ProductoComercialLista(id,nombre,cantidad,receta,cadena,comprado,marca,urlImagen);
+                ProductoComercialLista p=new ProductoComercialLista(id,nombre,unidades,receta,cadena,comprado,marca,urlImagen,cantidad);
                 productos.add(p);
             }
 

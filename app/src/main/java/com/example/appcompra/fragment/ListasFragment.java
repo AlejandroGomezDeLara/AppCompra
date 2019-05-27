@@ -51,6 +51,7 @@ public class ListasFragment extends Fragment {
     protected ProgressBar loadingIndicator;
     protected Usuario usuario;
     protected Button addLista;
+    protected Button addListaCentro;
     protected ListasViewModel model;
     protected String nombreNuevaLista;
     protected TextView mEmptyStateTextView;
@@ -67,6 +68,7 @@ public class ListasFragment extends Fragment {
         loadingIndicator.setVisibility(View.VISIBLE);
         recyclerView=view.findViewById(R.id.recyclerView);
         mEmptyStateTextView=view.findViewById(R.id.emptyStateView);
+        mEmptyStateTextView.setVisibility(View.VISIBLE);
         model= ViewModelProviders.of(getActivity()).get(ListasViewModel.class);
         listas=new ArrayList<>();
         usuario=QueryUtils.getUsuario();
@@ -78,7 +80,14 @@ public class ListasFragment extends Fragment {
         }
         //updateEditTextFiltrar(view);
         addLista=view.findViewById(R.id.añadir_boton);
+        addListaCentro=view.findViewById(R.id.añadir_boton);
         addLista.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                crearNuevaListaPopup();
+            }
+        });
+        addListaCentro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 crearNuevaListaPopup();
@@ -118,6 +127,7 @@ public class ListasFragment extends Fragment {
                 public void onChanged(@Nullable ArrayList<Lista> listas) {
                     if(listas!=null){
                         updateUI(listas);
+
                     }else{
                         mEmptyStateTextView.setVisibility(View.VISIBLE);
                     }
@@ -152,6 +162,10 @@ public class ListasFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+        mEmptyStateTextView.setVisibility(View.GONE);
+        loadingIndicator.setVisibility(View.GONE);
+        addListaCentro.setVisibility(View.GONE);
+        addLista.setVisibility(View.VISIBLE);
     }
 
     public void crearNuevaListaPopup(){
@@ -174,7 +188,7 @@ public class ListasFragment extends Fragment {
         });
     }
     public void borrarListaPopup(){
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.popup_crear_lista, null);
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.popup_confirmacion, null);
         final AutoCompleteTextView editText=view.findViewById(R.id.crear_lista_editText);
         AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
         builder.setView(view);

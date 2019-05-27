@@ -11,8 +11,8 @@
         android:orientation="horizontal"
         >
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_weight="0.75"
+            android:layout_width="0dp"
+            android:layout_weight="6"
             android:layout_height="match_parent"
             android:orientation="vertical">
         <TextView
@@ -20,7 +20,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="Esta es la fiesta de Adri"
+            android:text="Esta es la fiesta del adria"
+            android:ellipsize="marquee"
+            android:singleLine="true"
             android:textStyle="bold"
             android:textColor="@android:color/white"
             android:textSize="32dp"/>

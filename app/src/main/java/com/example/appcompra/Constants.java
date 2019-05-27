@@ -2,7 +2,7 @@ package com.example.appcompra;
 
 public class Constants {
     //Constantes para la conexion
-    public static final String IP_SERVER="192.168.1.131";
+    public static final String IP_SERVER="192.168.1.136";
     public static final int PORT=7777;
 
     //Caracteres para el servidor
@@ -51,9 +51,23 @@ public class Constants {
     public static final String PRODUCTOS_DESPENSA_CORRECTA="DC";
     public static final String PRODUCTOS_DESPENSA_FALLIDA="DF";
 
+    //Editar listas
+    public static final String EDITAR_LISTAS="EL";
+    // EL;ID;IDLISTA;{tp:[
+    //                  {id,remove},
+    //                  {id,add},
+    //                  {id,mark}
+    //                ],
+    //                pc:[
+    //                  {id,remove},
+    //                  {id,add},
+    //                  {id,mark}
+    //                ]
+    //               }
+
+
     //tests
 
     public static final String DUMMY_LOGIN="LC;2;pepe";
-    public static final String DUMMY_PRODUCTOS="";
 
 }
