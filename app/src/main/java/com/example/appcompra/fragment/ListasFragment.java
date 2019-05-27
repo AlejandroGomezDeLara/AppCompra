@@ -80,6 +80,7 @@ public class ListasFragment extends Fragment {
         }
         //updateEditTextFiltrar(view);
         addLista=view.findViewById(R.id.añadir_boton);
+        addLista.setVisibility(View.GONE);
         addListaCentro=view.findViewById(R.id.añadir_boton);
         addLista.setOnClickListener(new View.OnClickListener() {
             @Override

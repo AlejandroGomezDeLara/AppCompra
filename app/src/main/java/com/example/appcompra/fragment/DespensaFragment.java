@@ -65,8 +65,10 @@ public class DespensaFragment extends Fragment {
         productos=new ArrayList<>();
         usuario= QueryUtils.getUsuario();
         addProductos=view.findViewById(R.id.añadir_boton);
+        addProductos.setVisibility(View.GONE);
         addProductosCentro=view.findViewById(R.id.añadir_boton_centro);
         rellenarProductos();
+        updateUI(productos);
         //updateEditTextFiltrar(view);
         return view;
     }
@@ -121,6 +123,7 @@ public class DespensaFragment extends Fragment {
                         updateUI(p);
                     }else{
                         mEmptyStateTextView.setVisibility(View.VISIBLE);
+                        addProductosCentro.setVisibility(View.VISIBLE);
                     }
                 }
             });
@@ -150,5 +153,9 @@ public class DespensaFragment extends Fragment {
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+        mEmptyStateTextView.setVisibility(View.GONE);
+        addProductosCentro.setVisibility(View.GONE);
+        loadingIndicator.setVisibility(View.GONE);
+        addProductos.setVisibility(View.VISIBLE);
     }
 }
