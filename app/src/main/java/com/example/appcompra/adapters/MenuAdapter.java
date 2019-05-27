@@ -12,19 +12,25 @@ import com.example.appcompra.fragment.ProductosFragment;
 import com.example.appcompra.fragment.RecetasFragment;
 
 public class MenuAdapter extends FragmentPagerAdapter {
+    final DespensaFragment despensaFragment=new DespensaFragment();
+    final ListasFragment listasFragment=new ListasFragment();
+    final PrincipalFragment principalFragment=new PrincipalFragment();
+    final ProductosFragment productosFragment=new ProductosFragment();
+    final RecetasFragment recetasFragment=new RecetasFragment();
+
     public MenuAdapter(FragmentManager fm){
         super(fm);
     }
     @Override
     public Fragment getItem(int i) {
         switch (i){
-            case 0: return new DespensaFragment();
-            case 1: return new ListasFragment();
-            case 2: return new PrincipalFragment();
-            case 3: return new ProductosFragment();
-            case 4: return new RecetasFragment();
+            case 0: return despensaFragment;
+            case 1: return listasFragment;
+            case 2: return principalFragment;
+            case 3: return productosFragment;
+            case 4: return recetasFragment;
         }
-        return new PrincipalFragment();
+        return principalFragment;
     }
     @Override
     public int getCount() {
