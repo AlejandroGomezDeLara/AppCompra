@@ -2,6 +2,7 @@ package com.example.appcompra.fragment;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -50,6 +51,7 @@ public class InteriorListaFragment extends Fragment {
     protected DespensaAdapter adapter;
     protected Usuario usuario;
     protected String idLista;
+    protected int posLista;
     protected TextView mEmptyStateTextView;
     protected Button addProducto;
     protected Button addProductoCentro;
@@ -61,6 +63,7 @@ public class InteriorListaFragment extends Fragment {
         View view = inflater.inflate(R.layout.interior_lista, container, false);
         loadingIndicator = view.findViewById(R.id.loading_indicator);
         recyclerView = view.findViewById(R.id.recyclerView);
+        posLista=getActivity().getIntent().getExtras().getInt("posLista");
         mEmptyStateTextView = view.findViewById(R.id.emptyStateView);
         mEmptyStateTextView.setVisibility(View.GONE);
         addProducto = view.findViewById(R.id.añadir_boton);
@@ -70,11 +73,27 @@ public class InteriorListaFragment extends Fragment {
         addProductoCentro.setVisibility(View.GONE);
         productos = new ArrayList<>();
         usuario = QueryUtils.getUsuario();
-        updateUI(productos);
+        addProducto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intentProductos();
+            }
+        });
+        addProductoCentro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intentProductos();
+            }
+        });
         updateEditTextFiltrar(view);
         return view;
     }
-
+    public void intentProductos(){
+        Singleton.getInstance().setPosicionSpinnerListas(posLista);
+        Intent i=new Intent(getActivity(),ProductosFragment.class);
+        getActivity().finish();
+        startActivity(i);
+    }
     private void updateEditTextFiltrar(View view) {
         EditText editText = view.findViewById(R.id.editText);
         editText.addTextChangedListener(new TextWatcher() {

@@ -65,6 +65,7 @@ public class ProductosFragment extends Fragment {
     protected Button addProductoListaButton;
     protected Spinner listasSpinner;
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -138,16 +139,10 @@ public class ProductosFragment extends Fragment {
     }
     private void updateSpinnerListas(ArrayList<Lista> l) {
         List<String> valoresSpinner=new ArrayList<>();
+        valoresSpinner.add("Despensa");
         for (int i=0;i<l.size();i++){
             valoresSpinner.add(l.get(i).getTitulo());
         }
-        /*
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                getActivity(),
-                android.R.layout.simple_spinner_item,
-                valoresSpinner
-        );
-        */
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 getContext(),R.layout.spinner_item,valoresSpinner
         );

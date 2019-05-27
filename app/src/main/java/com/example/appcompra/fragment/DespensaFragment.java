@@ -29,6 +29,7 @@ import com.example.appcompra.adapters.ListaAdapter;
 import com.example.appcompra.clases.Lista;
 import com.example.appcompra.clases.Producto;
 import com.example.appcompra.clases.ProductoComercialLista;
+import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.TipoProducto;
 import com.example.appcompra.adapters.ProductoAdapter;
 import com.example.appcompra.clases.TipoProductoLista;
@@ -67,23 +68,28 @@ public class DespensaFragment extends Fragment {
         addProductos=view.findViewById(R.id.añadir_boton);
         addProductos.setVisibility(View.GONE);
         addProductosCentro=view.findViewById(R.id.añadir_boton_centro);
+        addProductos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intentProductos();
+            }
+        });
+        addProductosCentro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intentProductos();
+            }
+        });
         rellenarProductos();
         updateUI(productos);
         //updateEditTextFiltrar(view);
         return view;
     }
     public void intentProductos(){
-        Bundle bundle = new Bundle();
-        bundle.putString("lista","despensa"); // Put anything what you want
-
-        ProductosFragment fragment = new ProductosFragment();
-        fragment.setArguments(bundle);
-
-        getFragmentManager()
-                .beginTransaction()
-                .replace(R.id.content, fragment)
-                .commit();
-
+        Singleton.getInstance().setPosicionSpinnerListas(0);
+        Intent i=new Intent(getActivity(),ProductosFragment.class);
+        getActivity().finish();
+        startActivity(i);
     }
     public void rellenarProductos(){
         productos.add(new TipoProductoLista(2,"Hamburguesa","2 unidades",null,null,false,"https://image.flaticon.com/icons/png/512/93/93104.png"));

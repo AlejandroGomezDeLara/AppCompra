@@ -66,6 +66,7 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
             public void onClick(View v) {
                 Intent i=new Intent(activity,InteriorListaFragment.class);
                 i.putExtra("id",lista.getId()+"");
+                i.putExtra("posLista",i);
                 activity.startActivity(i);
                 activity.finish();
             }
