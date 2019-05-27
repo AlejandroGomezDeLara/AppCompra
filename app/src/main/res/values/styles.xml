@@ -6,13 +6,16 @@
         <item name="colorAccent">@color/navMenuBackgroundColor</item>
         <item name="android:windowBackground">@color/backgroundColor</item>
         <item name="android:windowAnimationStyle">@android:anim/fade_in</item>
+        <item name="popupMenuStyle">@style/popupMenuStyle</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-
+    <style name="popupMenuStyle" parent="Widget.AppCompat.PopupMenu">
+        <item name="android:popupBackground">@color/popup_background</item>
+    </style>
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 

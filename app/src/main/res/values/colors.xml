@@ -11,4 +11,5 @@
     <color name="backgroundProducto">#f1eff9</color>
     <color name="backgroundSpinner">#dfd9f7</color>
     <color name="conectado">#1fe03f</color>
+    <color name="popup_background">#11000000</color>
 </resources>
