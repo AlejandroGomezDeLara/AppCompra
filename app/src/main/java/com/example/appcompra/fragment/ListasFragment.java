@@ -56,6 +56,8 @@ public class ListasFragment extends Fragment {
     protected TextView mEmptyStateTextView;
     protected PeticionListasTask listasTask=null;
     protected PeticionNuevaListaTask nuevaListaTask=null;
+    protected BorrarListaTask borrarListaTask=null;
+    protected Lista listaSeleccionada;
 
     @Nullable
     @Override
@@ -127,7 +129,6 @@ public class ListasFragment extends Fragment {
             mEmptyStateTextView.setVisibility(View.VISIBLE);
         }
     }
-
     private void filtrar(String contenidoEditText){
         ArrayList<Lista> listass=new ArrayList<>();
         for (Lista item:listas){
@@ -137,13 +138,16 @@ public class ListasFragment extends Fragment {
         }
         adapter.filtrarLista(listass);
     }
-
-
     private void updateUI(ArrayList<Lista> m){
         /*productos.clear();
         productos.addAll(m);
         */
-        adapter=new ListaAdapter(m, getActivity(), R.layout.item_row_listas, getActivity());
+        adapter=new ListaAdapter(m, getActivity(), R.layout.item_row_listas, getActivity(), new ListaAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Lista l) {
+                borrarListaPopup();
+            }
+        });
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
@@ -169,8 +173,30 @@ public class ListasFragment extends Fragment {
             }
         });
     }
-
-
+    public void borrarListaPopup(){
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.popup_crear_lista, null);
+        final AutoCompleteTextView editText=view.findViewById(R.id.crear_lista_editText);
+        AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
+        builder.setView(view);
+        final AlertDialog dialog=builder.create();
+        dialog.show();
+        Button botonAceptarPopUp=view.findViewById(R.id.botonAceptarPopup);
+        Button botonCancelarPopUp=view.findViewById(R.id.botonCancelarPopup);
+        botonAceptarPopUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                borrarListaTask=new BorrarListaTask();
+                borrarListaTask.execute((Void) null);
+                dialog.dismiss();
+            }
+        });
+        botonCancelarPopUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+    }
 
     public class PeticionListasTask extends AsyncTask<Void, Void, ArrayList<Lista>> {
         private Socket socket;
@@ -222,8 +248,6 @@ public class ListasFragment extends Fragment {
 
 
     }
-
-
     public class PeticionNuevaListaTask extends AsyncTask<Void, Void, Boolean> {
         private Socket socket;
         private BufferedReader in;
@@ -276,5 +300,45 @@ public class ListasFragment extends Fragment {
 
 
     }
+    public class BorrarListaTask extends AsyncTask<Void, Void, Boolean> {
+        private Socket socket;
+        private BufferedReader in;
+        private PrintWriter out;
+        private boolean peticion;
 
+        BorrarListaTask() {
+            peticion=true;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+
+            socket= QueryUtils.getSocket();
+            try {
+                in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                out=new PrintWriter(socket.getOutputStream(),true);
+                out.println(Constants.BORRAR_LISTA_PETICION);
+                Singleton.getInstance().borrarLista(listaSeleccionada);
+
+            } catch (IOException e) {
+                Log.e("errorIO",e.getMessage());
+            }
+
+            return peticion;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean creada) {
+            if(creada)
+                updateUI(Singleton.getInstance().getListas());
+            else{
+                Toast.makeText(getContext(), "No se ha podido borrar la lista", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+
+        }
+    }
 }

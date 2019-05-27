@@ -34,12 +34,14 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
     private Activity activity;
     private int layout;
     private Context context;
+    private OnItemClickListener listener;
 
-    public ListaAdapter(List<Lista> listas, Activity activity, int layout, Context context) {
+    public ListaAdapter(List<Lista> listas, Activity activity, int layout, Context context,OnItemClickListener listener) {
         this.listas = listas;
         this.activity = activity;
         this.layout = layout;
         this.context = context;
+        this.listener=listener;
     }
 
 
@@ -113,6 +115,12 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
         }else{
             viewHolder.numeroPersonas.setVisibility(View.GONE);
         }
+        viewHolder.borrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onItemClick(lista);
+            }
+        });
     }
 
 
@@ -137,8 +145,10 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
         TextView nombreUsuario2;
         TextView nombreUsuario3;
         TextView nombreUsuario4;
+        ImageView borrar;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            borrar=itemView.findViewById(R.id.borrar);
             titulo=itemView.findViewById(R.id.titulo);
             linearLista=itemView.findViewById(R.id.linearLista);
             usuario1=itemView.findViewById(R.id.usuario1);
@@ -151,6 +161,9 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
             nombreUsuario3=itemView.findViewById(R.id.nombre_usuario3);
             nombreUsuario4=itemView.findViewById(R.id.nombre_usuario4);
         }
+    }
+    public interface OnItemClickListener{
+        void onItemClick(Lista l);
     }
 
 }

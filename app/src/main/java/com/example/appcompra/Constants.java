@@ -51,5 +51,9 @@ public class Constants {
     public static final String PRODUCTOS_DESPENSA_CORRECTA="DC";
     public static final String PRODUCTOS_DESPENSA_FALLIDA="DF";
 
+    //tests
+
+    public static final String DUMMY_LOGIN="LC;2;pepe";
+    public static final String DUMMY_PRODUCTOS="";
 
 }
