@@ -1,6 +1,7 @@
 package com.example.appcompra.clases;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.TreeMap;
 
 public class Singleton {
@@ -11,6 +12,15 @@ public class Singleton {
     private ArrayList<Producto> despensa;
     private int posicionSpinnerCategorias;
     private int posicionSpinnerListas;
+    private int idListaSeleccionada;
+
+    public int getIdListaSeleccionada() {
+        return idListaSeleccionada;
+    }
+
+    public void setIdListaSeleccionada(int idListaSeleccionada) {
+        this.idListaSeleccionada = idListaSeleccionada;
+    }
 
     public int getPosicionSpinnerListas() {
         return posicionSpinnerListas;
@@ -29,6 +39,7 @@ public class Singleton {
         ultimosProductos=new TreeMap<>();
         productosLista=new TreeMap<>();
         posicionSpinnerCategorias =0;
+        idListaSeleccionada=0;
         despensa=new ArrayList<>();
     }
 
@@ -55,6 +66,11 @@ public class Singleton {
         this.listas = listas;
     }
 
+    public void añadirProductosLista(int idLista, LinkedList<ProductoLista> p){
+        if(productosLista.containsKey(idLista)){
+            productosLista.get(idLista).addAll(p);
+        }
+    }
 
     public ArrayList<Categoria> getCategorias() {
         return categorias;

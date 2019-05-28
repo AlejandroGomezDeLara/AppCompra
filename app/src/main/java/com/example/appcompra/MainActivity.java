@@ -6,6 +6,8 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -18,17 +20,24 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.appcompra.adapters.ListaAdapter;
 import com.example.appcompra.adapters.MenuAdapter;
+import com.example.appcompra.clases.Lista;
+import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.Usuario;
+import com.example.appcompra.utils.Cambios;
 import com.example.appcompra.utils.QueryUtils;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     ViewPager viewPager;
     MenuItem prevMenuItem;
     BottomNavigationView menu;
-
+    RecyclerView recyclerView;
+    ListaAdapter adapter;
     Usuario usuario;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +45,7 @@ public class MainActivity extends AppCompatActivity
         usuario= (Usuario)getIntent().getExtras().getSerializable("Usuario");
         QueryUtils.setUsuario(usuario);
         setContentView(R.layout.activity_main);
+        recyclerView=findViewById(R.id.recyclerView);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -46,7 +56,7 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        View headView=navigationView.getHeaderView(0);
+        View headView=findViewById(R.id.header);
         TextView nombreUsuario=headView.findViewById(R.id.drawer_nombre);
         nombreUsuario.setText(usuario.getNombre());
         TextView emailUsuario=headView.findViewById(R.id.drawer_email);
@@ -132,41 +142,12 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -181,5 +162,27 @@ public class MainActivity extends AppCompatActivity
 
     public ViewPager getViewPager() {
         return viewPager;
+    }
+
+    public void updateUI(ArrayList<Lista> m){
+        /*productos.clear();
+        productos.addAll(m);
+        */
+        adapter=new ListaAdapter(m, this, R.layout.item_row_listas, this, new ListaAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Lista l) {
+
+            }
+        });
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 }

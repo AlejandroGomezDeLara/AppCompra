@@ -12,20 +12,24 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.appcompra.MainActivity;
 import com.example.appcompra.R;
 import com.example.appcompra.adapters.MenuAdapter;
+import com.example.appcompra.clases.Singleton;
+import com.example.appcompra.utils.Cambios;
 
 public class PrincipalFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        Log.e("resume","empezado");
         return view;
     }
 
     public void onResume() {
-        Log.e("resume","resumido");
         super.onResume();
+        if(Cambios.getInstance().existenCambios())
+            Cambios.getInstance().enviarCambios();
+
     }
 }

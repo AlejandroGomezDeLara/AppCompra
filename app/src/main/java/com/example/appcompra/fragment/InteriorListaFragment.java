@@ -33,6 +33,7 @@ import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.TipoProducto;
 import com.example.appcompra.clases.Usuario;
 import com.example.appcompra.models.ProductosListaViewModel;
+import com.example.appcompra.utils.Cambios;
 import com.example.appcompra.utils.QueryUtils;
 
 import java.io.BufferedReader;
@@ -68,7 +69,7 @@ public class InteriorListaFragment extends Fragment {
         mEmptyStateTextView.setVisibility(View.VISIBLE);
         addProducto = view.findViewById(R.id.añadir_boton);
         addProductoCentro = view.findViewById(R.id.añadir_boton_centro);
-
+        idLista=Singleton.getInstance().getIdListaSeleccionada();
         model= ViewModelProviders.of(getActivity()).get(ProductosListaViewModel.class);
         addProductoCentro.setVisibility(View.VISIBLE);
         addProducto.setVisibility(View.GONE);
@@ -163,4 +164,10 @@ public class InteriorListaFragment extends Fragment {
             mEmptyStateTextView.setVisibility(View.VISIBLE);
         }
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
 }

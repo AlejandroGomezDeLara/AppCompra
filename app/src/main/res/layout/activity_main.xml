@@ -20,7 +20,26 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:itemTextColor="@color/navMenuBackgroundColor"
-        app:headerLayout="@layout/nav_header_main"
-        app:menu="@menu/bottom_menu" />
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <include android:id="@+id/header" layout="@layout/nav_header_main"/>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/header"
+           />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Crear nueva lista"
+            android:textAllCaps="false"
+            android:textSize="18dp"
+            android:background="@drawable/gradient"
+            android:layout_below="@+id/recyclerView"/>
+        </RelativeLayout>
+    </android.support.design.widget.NavigationView>
 
 </android.support.v4.widget.DrawerLayout>

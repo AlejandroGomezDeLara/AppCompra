@@ -26,12 +26,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.appcompra.Constants;
+import com.example.appcompra.MainActivity;
 import com.example.appcompra.R;
 import com.example.appcompra.adapters.ListaAdapter;
 import com.example.appcompra.clases.Lista;
 import com.example.appcompra.models.ListasViewModel;
 import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.Usuario;
+import com.example.appcompra.utils.Cambios;
 import com.example.appcompra.utils.QueryUtils;
 
 import java.io.BufferedReader;
@@ -176,7 +178,7 @@ public class ListasFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-
+        ((MainActivity)getActivity()).updateUI(m);
     }
 
     public void crearNuevaListaPopup(){
@@ -464,6 +466,7 @@ public class ListasFragment extends Fragment {
         @Override
         protected Boolean doInBackground(Void... params) {
             Singleton.getInstance().borrarLista(listaSeleccionada);
+            Cambios.getInstance().addCambioLS(listaSeleccionada.getId());
             return peticion;
         }
 
@@ -482,4 +485,12 @@ public class ListasFragment extends Fragment {
         }
     }
 
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if(Cambios.getInstance().existenCambios()){
+            Cambios.getInstance().enviarCambios();
+        }
+    }
 }

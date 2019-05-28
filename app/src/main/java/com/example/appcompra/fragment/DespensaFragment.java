@@ -27,6 +27,7 @@ import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.ProductoLista;
 import com.example.appcompra.clases.Usuario;
 import com.example.appcompra.models.DespensaViewModel;
+import com.example.appcompra.utils.Cambios;
 import com.example.appcompra.utils.QueryUtils;
 
 import java.util.ArrayList;
@@ -152,5 +153,10 @@ public class DespensaFragment extends Fragment {
         addProductosCentro.setVisibility(View.GONE);
         loadingIndicator.setVisibility(View.GONE);
         addProductos.setVisibility(View.VISIBLE);
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+
     }
 }

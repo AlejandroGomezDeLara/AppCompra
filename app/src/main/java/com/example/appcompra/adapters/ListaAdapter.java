@@ -72,6 +72,7 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
             @Override
             public void onClick(View v) {
                 Singleton.getInstance().setPosicionSpinnerListas(i+1);
+                Singleton.getInstance().setIdListaSeleccionada(lista.getId());
                 ((MainActivity)activity).getViewPager().setCurrentItem(5);
             }
         });

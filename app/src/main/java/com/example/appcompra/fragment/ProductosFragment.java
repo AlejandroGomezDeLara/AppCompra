@@ -27,8 +27,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.appcompra.Constants;
+import com.example.appcompra.MainActivity;
 import com.example.appcompra.R;
 import com.example.appcompra.clases.Categoria;
+import com.example.appcompra.clases.ProductoLista;
 import com.example.appcompra.models.CategoriaViewModel;
 import com.example.appcompra.clases.Lista;
 import com.example.appcompra.clases.Producto;
@@ -36,6 +38,7 @@ import com.example.appcompra.models.ProductoViewModel;
 import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.adapters.ProductoAdapter;
 import com.example.appcompra.clases.Usuario;
+import com.example.appcompra.utils.Cambios;
 import com.example.appcompra.utils.QueryUtils;
 
 import java.io.BufferedReader;
@@ -44,7 +47,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.crypto.Cipher;
 
@@ -67,6 +72,7 @@ public class ProductosFragment extends Fragment {
     protected PeticionProductosTaskTest peticionTaskTest = null;
     protected Button addProductoListaButton;
     protected Spinner listasSpinner;
+    protected ArrayList<Integer> idListas;
 
     @Nullable
     @Override
@@ -81,6 +87,7 @@ public class ProductosFragment extends Fragment {
         usuario=QueryUtils.getUsuario();
         productos=new ArrayList<>();
         categorias=new ArrayList<>();
+        idListas=new ArrayList<>();
         updateSpinnerCategorias(categorias);
         if(Singleton.getInstance().existenListas())
             updateSpinnerListas(Singleton.getInstance().getListas());
@@ -95,7 +102,17 @@ public class ProductosFragment extends Fragment {
         });
         categoriaViewModel= ViewModelProviders.of(getActivity()).get(CategoriaViewModel.class);
         modelProductos= ViewModelProviders.of(getActivity()).get(ProductoViewModel.class);
+        listasSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Singleton.getInstance().setIdListaSeleccionada(idListas.get(position));
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         categoriasSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, final long id) {
@@ -117,7 +134,24 @@ public class ProductosFragment extends Fragment {
 
         });
         //updateEditTextFiltrar(view);
-
+        addProductoListaButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LinkedList<ProductoLista> productosSeleccionados=new LinkedList<>();
+                for (Map.Entry<Integer, ArrayList<Producto>> entry : Singleton.getInstance().getUltimosProductos().entrySet()) {
+                    for (Producto p: entry.getValue()) {
+                        if(p.isSeleccionado())
+                            productosSeleccionados.add(new ProductoLista(p.getId(),p.getNombre(),0,null,null,false,p.getUrl(),null,null));
+                    }
+                }
+                for (int i=0;i<productosSeleccionados.size();i++){
+                    ProductoLista p=productosSeleccionados.get(i);
+                    Cambios.getInstance().addCambioTP(p.getId(),"add",Singleton.getInstance().getIdListaSeleccionada());
+                }
+                Singleton.getInstance().añadirProductosLista(Singleton.getInstance().getIdListaSeleccionada(),productosSeleccionados);
+                ((MainActivity)getActivity()).getViewPager().setCurrentItem(5);
+            }
+        });
         return view;
     }
     private void updateSpinnerCategorias(ArrayList<Categoria> c) {
@@ -141,9 +175,12 @@ public class ProductosFragment extends Fragment {
     }
     private void updateSpinnerListas(ArrayList<Lista> l) {
         List<String> valoresSpinner=new ArrayList<>();
+        idListas.clear();
         valoresSpinner.add("Despensa");
+        idListas.add(0);
         for (int i=0;i<l.size();i++){
             valoresSpinner.add(l.get(i).getTitulo());
+            idListas.add(l.get(i).getId());
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 getContext(),R.layout.spinner_item,valoresSpinner

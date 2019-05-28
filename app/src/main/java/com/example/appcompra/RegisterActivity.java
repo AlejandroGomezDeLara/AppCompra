@@ -305,15 +305,15 @@ public class RegisterActivity extends AppCompatActivity implements Serializable,
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if(respuesta.split("\\|")[0].equals(Constants.REGISTER_RESPUESTA_CORRECTA)) {
+            if(respuesta.split(Constants.SEPARATOR)[0].equals(Constants.REGISTER_RESPUESTA_CORRECTA)) {
                 try {
                     out.println(Constants.LOGIN_RESPUESTA_CORRECTA +Constants.SEPARATOR+mEmail+Constants.SEPARATOR+mPassword);
                     respuesta=in.readLine();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                if(respuesta.split("\\|")[0].equals(Constants.LOGIN_RESPUESTA_CORRECTA)) {
-                    usuario=new Usuario(Integer.parseInt(respuesta.split("\\|")[1]),respuesta.split("\\|")[2],mEmail,respuesta.split("\\|")[3]);
+                if(respuesta.split(Constants.SEPARATOR)[0].equals(Constants.LOGIN_RESPUESTA_CORRECTA)) {
+                    usuario=new Usuario(Integer.parseInt(respuesta.split(Constants.SEPARATOR)[1]),respuesta.split(Constants.SEPARATOR)[2],mEmail,respuesta.split(Constants.SEPARATOR)[3]);
                     try {
                         in.close();
                         out.close();
