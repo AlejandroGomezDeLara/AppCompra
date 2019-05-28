@@ -58,7 +58,9 @@ public class ListasFragment extends Fragment {
     protected PeticionListasTask listasTask=null;
     protected PeticionListasTaskTest test=null;
     protected PeticionNuevaListaTask nuevaListaTask=null;
+    protected PeticionNuevaListaTaskTest nuevaListaTaskTest=null;
     protected BorrarListaTask borrarListaTask=null;
+    protected BorrarListaTaskTest borrarListaTaskTest=null;
     protected Lista listaSeleccionada;
 
     @Nullable
@@ -167,7 +169,7 @@ public class ListasFragment extends Fragment {
         adapter=new ListaAdapter(m, getActivity(), R.layout.item_row_listas, getActivity(), new ListaAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Lista l) {
-                borrarListaPopup();
+                borrarListaPopup(l);
             }
         });
         recyclerView.setHasFixedSize(true);
@@ -191,17 +193,34 @@ public class ListasFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 nombreNuevaLista=editText.getText().toString();
-                nuevaListaTask=new PeticionNuevaListaTask();
-                nuevaListaTask.execute((Void) null);
+                //peticionNuevaLista();
+                peticionNuevaListaTest();
                 dialog.dismiss();
             }
         });
     }
-    public void borrarListaPopup(){
+    public void peticionNuevaLista(){
+        nuevaListaTask=new PeticionNuevaListaTask();
+        nuevaListaTask.execute((Void) null);
+    }
+    public void peticionNuevaListaTest(){
+        nuevaListaTaskTest=new PeticionNuevaListaTaskTest();
+        nuevaListaTaskTest.execute((Void) null);
+    }
+    public void peticionBorrarLista(){
+        borrarListaTask=new BorrarListaTask();
+        borrarListaTask.execute((Void) null);
+    }
+    public void peticionBorrarListaTest(){
+        borrarListaTaskTest=new BorrarListaTaskTest();
+        borrarListaTaskTest.execute((Void) null);
+    }
+    public void borrarListaPopup( Lista l){
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.popup_confirmacion, null);
         AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
         builder.setView(view);
         final AlertDialog dialog=builder.create();
+        listaSeleccionada=l;
         dialog.show();
         dialog.getWindow().setBackgroundDrawableResource(R.color.backgroundColor);
         Button botonAceptarPopUp=view.findViewById(R.id.botonAceptarPopup);
@@ -209,8 +228,8 @@ public class ListasFragment extends Fragment {
         botonAceptarPopUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                borrarListaTask=new BorrarListaTask();
-                borrarListaTask.execute((Void) null);
+                //peticionBorrarLista();
+                peticionBorrarListaTest();
                 dialog.dismiss();
             }
         });
@@ -358,6 +377,41 @@ public class ListasFragment extends Fragment {
 
 
     }
+    public class PeticionNuevaListaTaskTest extends AsyncTask<Void, Void, Boolean> {
+        private String json;
+        private Lista lista;
+        private Boolean listaCreada;
+
+        PeticionNuevaListaTaskTest() {
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+
+                String entrada=Constants.DUMMY_LISTA_ACEPTADA;
+                lista=new Lista(Integer.parseInt(entrada.split(Constants.SEPARATOR)[1]),nombreNuevaLista);
+                Singleton.getInstance().añadirNuevaLista(lista);
+                listaCreada=true;
+                return listaCreada;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean creada) {
+            if(creada)
+                updateUI(Singleton.getInstance().getListas());
+            else{
+                Toast.makeText(getContext(), "No se ha podido crear la lista", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+
+        }
+
+
+    }
+
     public class BorrarListaTask extends AsyncTask<Void, Void, Boolean> {
         private Socket socket;
         private BufferedReader in;
@@ -399,4 +453,33 @@ public class ListasFragment extends Fragment {
 
         }
     }
+    public class BorrarListaTaskTest extends AsyncTask<Void, Void, Boolean> {
+
+        private boolean peticion;
+
+        BorrarListaTaskTest() {
+            peticion=true;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            Singleton.getInstance().borrarLista(listaSeleccionada);
+            return peticion;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean borrada) {
+            if(borrada)
+                updateUI(Singleton.getInstance().getListas());
+            else{
+                Toast.makeText(getContext(), "No se ha podido borrar la lista", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+
+        }
+    }
+
 }

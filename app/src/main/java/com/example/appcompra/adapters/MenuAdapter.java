@@ -13,6 +13,7 @@ import com.example.appcompra.fragment.ProductosFragment;
 import com.example.appcompra.fragment.RecetasFragment;
 
 public class MenuAdapter extends FragmentPagerAdapter {
+
     final DespensaFragment despensaFragment=new DespensaFragment();
     final ListasFragment listasFragment=new ListasFragment();
     final PrincipalFragment principalFragment=new PrincipalFragment();
@@ -39,4 +40,5 @@ public class MenuAdapter extends FragmentPagerAdapter {
     public int getCount() {
         return 6;
     }
+
 }

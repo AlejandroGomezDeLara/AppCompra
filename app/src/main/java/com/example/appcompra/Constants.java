@@ -2,7 +2,6 @@ package com.example.appcompra;
 
 public class Constants {
     //Constantes para la conexion
-    public static final String IP_SERVER="192.168.1.136";
     public static final int PORT=7777;
 
     //Caracteres para el servidor
@@ -52,17 +51,22 @@ public class Constants {
     public static final String PRODUCTOS_DESPENSA_FALLIDA="DF";
 
     //Editar listas
-    public static final String EDITAR_LISTAS="EL";
-    // EL;ID;IDLISTA;{tp:[
-    //                  {id,remove},
-    //                  {id,add},
-    //                  {id,mark}
+    public static final String ENVIAR_NOTIFICACIONES="N";
+    // idLista=0 si es despensa
+    // N;ID;{        tp:[
+    //                  {id,remove,idlista},
+    //                  {id,add,idlista},
+    //                  {id,mark,idlista}
     //                ],
     //                pc:[
-    //                  {id,remove},
-    //                  {id,add},
-    //                  {id,mark}
-    //                ]
+    //                  {id,remove,idlista},
+    //                  {id,add,idlista},
+    //                  {id,mark,idlista}
+    //                ],
+    //                ls:[
+    //                  {id,remove,idLista},
+    //                  {id,add,idLista}
+    //                  ]
     //               }
 
 
@@ -73,5 +77,7 @@ public class Constants {
     public static final String DUMMY_CATEGORIAS="{\"categorias\":[{\"id\": \"1\", \"nombre\" : \"Aceite, especias y salsas\" },{\"id\": \"2\", \"nombre\" : \"Agua y refrescos\" },{\"id\": \"3\", \"nombre\" : \"Aperitivos\" },{\"id\": \"4\", \"nombre\" : \"Arroz, legumbres y pasta\" },{\"id\": \"5\", \"nombre\" : \"Azúcar, caramelos y chocolate\" },{\"id\": \"6\", \"nombre\" : \"Bebé\" },{\"id\": \"7\", \"nombre\" : \"Bodega\" },{\"id\": \"8\", \"nombre\" : \"Cacao, café e infusiones\" },{\"id\": \"9\", \"nombre\" : \"Carne\" },{\"id\": \"10\", \"nombre\" : \"Cereales y galletas\" },{\"id\": \"11\", \"nombre\" : \"Charcutería y quesos\" },{\"id\": \"12\", \"nombre\" : \"Congelados\" },{\"id\": \"13\", \"nombre\" : \"Conservas, caldos y cremas\" },{\"id\": \"14\", \"nombre\" : \"Cuidado del cabello\" },{\"id\": \"15\", \"nombre\" : \"Fitoteria y parafarma\" },{\"id\": \"16\", \"nombre\" : \"Fruta y verdura\" },{\"id\": \"17\", \"nombre\" : \"Huevos,leche y mantequilla\" },{\"id\": \"18\", \"nombre\" : \"Limpieza y hogar\" },{\"id\": \"19\", \"nombre\" : \"Maquillaje\" },{\"id\": \"20\", \"nombre\" : \"Marisco y pescado\" },{\"id\": \"21\", \"nombre\" : \"Mascotas\" },{\"id\": \"22\", \"nombre\" : \"Panadería y pastelería\" },{\"id\": \"23\", \"nombre\" : \"Pizzas y platos preparados\" },{\"id\": \"24\", \"nombre\" : \"Postres y yogures\" },{\"id\": \"25\", \"nombre\" : \"Zumos\" }]}";
     public static final String DUMMY_LISTAS="{\"listas\":[{\"id\":\"1\", \"nombre\" : \"lista1\", \"usuarios\":\"test,nombre,usuario,\",\"url\":\"https://cdn.mos.cms.futurecdn.net/CRkvVQz7XZVMvRkwHGd5DM-768-80.jpg \"},{\"id\":\"2\", \"nombre\" : \"lista2\", \"usuarios\":\"test,nombre,\",\"url\":\"https://cdn.mos.cms.futurecdn.net/CRkvVQz7XZVMvRkwHGd5DM-768-80.jpg \"}]}";
     public static final String DUMMY_PRODUCTO_LISTA_1="{\"tipos\":[{ \"id\":18, \"nombre\" : \"cafe\" , \"unidades\" : \"999\" , \"marca\" : \"null\", \"cadena\" : \"mercadona\" , \"comprado\" : \"true\" , \"receta\": \"null\", \"urlimagen\": \"https://image.flaticon.com/icons/png/512/128/128985.png\", \"cantidad\": \"null\" }],\"comerciales\":[{ \"id\":1, \"nombre\" : \"Estrella Galicia Especial\" , \"unidades\" : \"3\" , \"marca\" : \"Estrella Galicia\", \"cadena\" : \"mercadona\" , \"comprado\" : \"false\" , \"receta\": \"null\", \"urlimagen\": \"null\", \"cantidad\": \"330ml\" },{ \"id\":2, \"nombre\" : \"Salchichas Frankfurt\" , \"unidades\" : \"1\" , \"marca\" : \"Campofrio\", \"cadena\" : \"dia\" , \"comprado\" : \"false\" , \"receta\": \"null\", \"urlimagen\": \"null\", \"cantidad\": \"560gr\" }]}";
+    public static final String DUMMY_LISTA_ACEPTADA="CLC;4";
+
 
 }

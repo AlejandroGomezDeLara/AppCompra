@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
@@ -19,6 +20,7 @@ import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -57,7 +59,7 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
         setContentView(R.layout.login);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-
+        pedirIpPopup();
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -90,6 +92,24 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
     }
 
 
+    public void pedirIpPopup(){
+        View view = LayoutInflater.from(this).inflate(R.layout.popup_pedir_ip, null);
+        final AutoCompleteTextView editText=view.findViewById(R.id.editText);
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setView(view);
+        final AlertDialog dialog=builder.create();
+        dialog.show();
+        dialog.getWindow().setBackgroundDrawableResource(R.color.backgroundColor);
+        Button botonAceptarPopUp=view.findViewById(R.id.botonAceptarPopup);
+
+        botonAceptarPopUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                QueryUtils.setIP(editText.getText().toString());
+                dialog.dismiss();
+            }
+        });
+    }
     private void attemptLogin() {
         if (mAuthTask != null) {
             return;
@@ -253,7 +273,7 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
 
             try {
                 if(QueryUtils.getSocket()==null)
-                    socket=new Socket(Constants.IP_SERVER,Constants.PORT);
+                    socket=new Socket(QueryUtils.getIP(),Constants.PORT);
                 else
                     socket=QueryUtils.getSocket();
                 in=new BufferedReader(new InputStreamReader(socket.getInputStream()));

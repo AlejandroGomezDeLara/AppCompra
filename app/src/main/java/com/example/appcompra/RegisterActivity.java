@@ -291,7 +291,7 @@ public class RegisterActivity extends AppCompatActivity implements Serializable,
 
             try {
                 if(QueryUtils.getSocket()==null)
-                    socket=new Socket(Constants.IP_SERVER,Constants.PORT);
+                    socket=new Socket(QueryUtils.getIP(),Constants.PORT);
                 else
                     socket=QueryUtils.getSocket();
 

@@ -19,6 +19,15 @@ import java.util.ArrayList;
 public class QueryUtils {
     private static Socket socket;
     private static Usuario usuario;
+    private static String IP;
+
+    public static String getIP() {
+        return IP;
+    }
+
+    public static void setIP(String IP) {
+        QueryUtils.IP = IP;
+    }
 
     public static Usuario getUsuario() {
         return usuario;
