@@ -10,7 +10,8 @@
         android:layout_marginTop="?attr/actionBarSize"
         android:id="@+id/contenedor_fragment"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="0dp"
+        android:layout_weight="0"
         android:layout_above="@+id/menu_bottom">
 
     </FrameLayout>

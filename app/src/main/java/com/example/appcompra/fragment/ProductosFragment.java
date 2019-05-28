@@ -46,6 +46,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.crypto.Cipher;
+
 import static android.content.Context.CONNECTIVITY_SERVICE;
 
 public class ProductosFragment extends Fragment {
@@ -62,9 +64,9 @@ public class ProductosFragment extends Fragment {
     protected ProductoViewModel modelProductos;
     protected CategoriaViewModel categoriaViewModel;
     protected PeticionProductosTask peticionTask = null;
+    protected PeticionProductosTaskTest peticionTaskTest = null;
     protected Button addProductoListaButton;
     protected Spinner listasSpinner;
-    protected int posLista;
 
     @Nullable
     @Override
@@ -79,11 +81,6 @@ public class ProductosFragment extends Fragment {
         usuario=QueryUtils.getUsuario();
         productos=new ArrayList<>();
         categorias=new ArrayList<>();
-        posLista=0;
-        Bundle arguments = getArguments();
-        if(arguments!=null) {
-            posLista = arguments.getInt("posLista");
-        }
         updateSpinnerCategorias(categorias);
         if(Singleton.getInstance().existenListas())
             updateSpinnerListas(Singleton.getInstance().getListas());
@@ -153,7 +150,7 @@ public class ProductosFragment extends Fragment {
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         listasSpinner.setAdapter(adapter);
-        listasSpinner.setSelection(posLista);
+        listasSpinner.setSelection(Singleton.getInstance().getPosicionSpinnerListas());
     }
     private void updateUI(ArrayList<Producto> m){
         /*productos.clear();
@@ -167,8 +164,11 @@ public class ProductosFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
     public void pedirProductos(int idCategoria) {
+        peticionTaskTest = new PeticionProductosTaskTest(idCategoria);
+        peticionTaskTest.execute((Void) null);
+        /*
         peticionTask = new PeticionProductosTask(idCategoria);
-        peticionTask.execute((Void) null);
+        peticionTask.execute((Void) null);*/
     }
     public class PeticionProductosTask extends AsyncTask<Void, Void, ArrayList<Producto>> {
         private Socket socket;
@@ -221,6 +221,41 @@ public class ProductosFragment extends Fragment {
         protected void onCancelled() {
         }
     }
+    public class PeticionProductosTaskTest extends AsyncTask<Void, Void, ArrayList<Producto>> {
+
+        private String json;
+        private int idCategoria;
+        private ArrayList<Producto> p=new ArrayList<>();
+
+        PeticionProductosTaskTest(int idCategoria) {
+            this.idCategoria=idCategoria;
+        }
+
+        @Override
+        protected ArrayList<Producto> doInBackground(Void... params) {
+            json= Constants.DUMMY_PRODUCTOS_CATEGORIA_BODEGA;
+            p=QueryUtils.tipoProductosJson(json);
+            return p;
+        }
+
+        @Override
+        protected void onPostExecute(final ArrayList<Producto> tipoProductos) {
+            if(!tipoProductos.isEmpty()){
+                if(!Singleton.getInstance().getUltimosProductos().containsKey(idCategoria)){
+                    Singleton.getInstance().añadirNuevosProductos(idCategoria,tipoProductos);
+                }
+                updateUI(tipoProductos);
+            }else{
+                mEmptyStateTextView.setVisibility(View.VISIBLE);
+            }
+            loadingIndicator.setVisibility(View.GONE);
+
+        }
+        @Override
+        protected void onCancelled() {
+        }
+    }
+
     private void updateEditTextFiltrar(View view){
         EditText editText=view.findViewById(R.id.editText);
         editText.addTextChangedListener(new TextWatcher() {
@@ -248,6 +283,7 @@ public class ProductosFragment extends Fragment {
         ConnectivityManager manager=(ConnectivityManager)getActivity().getSystemService(CONNECTIVITY_SERVICE);
         final NetworkInfo info=manager.getActiveNetworkInfo();
         boolean isConnected=info!=null && info.isConnected();
+        updateSpinnerListas(Singleton.getInstance().getListas());
         if(isConnected) {
             categoriaViewModel.getCategorias().observe(getActivity(), new Observer<ArrayList<Categoria>>() {
                 @Override

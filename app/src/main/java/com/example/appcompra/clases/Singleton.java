@@ -10,6 +10,16 @@ public class Singleton {
     private TreeMap<Integer,ArrayList<Producto>> productosLista;
     private ArrayList<Producto> despensa;
     private int posicionSpinnerCategorias;
+    private int posicionSpinnerListas;
+
+    public int getPosicionSpinnerListas() {
+        return posicionSpinnerListas;
+    }
+
+    public void setPosicionSpinnerListas(int posicionSpinnerListas) {
+        this.posicionSpinnerListas = posicionSpinnerListas;
+    }
+
     private ArrayList<Lista> listas;
     private static Singleton instance;
 

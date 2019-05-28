@@ -26,6 +26,7 @@ public class ProductosListaViewModel extends AndroidViewModel {
     private MutableLiveData<ArrayList<Producto>> productos;
     private Application application;
     protected PeticionProductosTask peticionProductosTask=null;
+    protected PeticionProductosTaskTest peticionProductosTaskTest=null;
 
 
     public ProductosListaViewModel(@NonNull Application application) {
@@ -65,7 +66,7 @@ public class ProductosListaViewModel extends AndroidViewModel {
                 in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out=new PrintWriter(socket.getOutputStream(),true);
                 out.println(Constants.PRODUCTOS_LISTA_PETICION+Constants.SEPARATOR+QueryUtils.getUsuario().getId()+Constants.SEPARATOR+idLista);
-                String entrada=in.readLine();
+                String entrada=Constants.DUMMY_PRODUCTO_LISTA_1;
                 if(entrada!=null && !entrada.isEmpty()){
                     Log.e("rp",entrada.split(Constants.SEPARATOR)[1]);
                     if(entrada.split(Constants.SEPARATOR)[0].equals(Constants.PRODUCTOS_LISTA_CORRECTA)){
@@ -89,9 +90,39 @@ public class ProductosListaViewModel extends AndroidViewModel {
         protected void onCancelled() {
         }
     }
+    public class PeticionProductosTaskTest extends AsyncTask<Void, Void, ArrayList<Producto>> {
+
+        private String json;
+        private int idLista;
+        private ArrayList<Producto> p=new ArrayList<>();
+
+        PeticionProductosTaskTest(int idLista) {
+            this.idLista=idLista;
+        }
+
+        @Override
+        protected ArrayList<Producto> doInBackground(Void... params) {
+
+            json=Constants.DUMMY_PRODUCTO_LISTA_1;
+            p=QueryUtils.productosLista(json);
+
+            return p;
+        }
+
+        @Override
+        protected void onPostExecute(final ArrayList<Producto> p) {
+            productos.setValue(p);
+        }
+
+        @Override
+        protected void onCancelled() {
+        }
+    }
 
     public void pedirProductos(int idLista) {
-        peticionProductosTask = new PeticionProductosTask(idLista);
-        peticionProductosTask.execute((Void) null);
+        peticionProductosTaskTest = new PeticionProductosTaskTest(idLista);
+        peticionProductosTaskTest.execute((Void) null);
+        /*peticionProductosTask = new PeticionProductosTask(idLista);
+        peticionProductosTask.execute((Void) null);*/
     }
 }

@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.example.appcompra.R;
 import com.example.appcompra.clases.Producto;
-import com.example.appcompra.clases.TipoProductoLista;
+import com.example.appcompra.clases.ProductoLista;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -44,9 +44,14 @@ public class DespensaAdapter extends RecyclerView.Adapter<DespensaAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull final DespensaAdapter.ViewHolder viewHolder,final int i) {
-        final TipoProductoLista producto=(TipoProductoLista)productos.get(i);
+        final ProductoLista producto=(ProductoLista)productos.get(i);
         viewHolder.nombre.setText(producto.getNombre());
-        viewHolder.unidades.setText(producto.getUnidades()+"");
+        viewHolder.unidades.setText(producto.getUnidades()+" u");
+        if(producto.getCantidad()==null){
+            viewHolder.cantidad.setVisibility(View.GONE);
+        }else {
+            viewHolder.cantidad.setText(producto.getCantidad());
+        }
         if(producto.getUrl()!=null)
             Picasso.get().load(producto.getUrl()).into(viewHolder.imagen);
     }

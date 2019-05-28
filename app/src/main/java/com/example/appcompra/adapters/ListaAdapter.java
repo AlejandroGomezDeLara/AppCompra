@@ -24,8 +24,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.appcompra.MainActivity;
 import com.example.appcompra.R;
 import com.example.appcompra.clases.Lista;
+import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.fragment.InteriorListaFragment;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -69,16 +71,8 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
         viewHolder.linearLista.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                InteriorListaFragment myFragment = new InteriorListaFragment();
-                Bundle arguments=new Bundle();
-                arguments.putInt("id",lista.getId());
-                arguments.putInt("posLista",i);
-                Log.e("pincha","Lista id: "+lista.getId()+" posLista: "+i+" nombre "+lista.getTitulo());
-                myFragment.setArguments(arguments);
-                FragmentTransaction transaction = ((AppCompatActivity)activity).getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.contenedor_fragment, myFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                Singleton.getInstance().setPosicionSpinnerListas(i+1);
+                ((MainActivity)activity).getViewPager().setCurrentItem(5);
             }
         });
         if(lista.getNumeroUsuarios()==0){

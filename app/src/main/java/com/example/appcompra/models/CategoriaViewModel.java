@@ -25,6 +25,7 @@ public class CategoriaViewModel extends AndroidViewModel {
     private MutableLiveData<ArrayList<Categoria>> categorias;
     private Application application;
     protected PeticionCategoriasTask peticionTask = null;
+    protected PeticionCategoriasTaskTest peticionTaskTest = null;
 
     public CategoriaViewModel(@NonNull Application application) {
         super(application);
@@ -40,8 +41,10 @@ public class CategoriaViewModel extends AndroidViewModel {
     }
 
     public void loadCategorias() {
-        peticionTask = new PeticionCategoriasTask();
-        peticionTask.execute((Void) null);
+        /*peticionTask = new PeticionCategoriasTask();
+        peticionTask.execute((Void) null);*/
+        peticionTaskTest = new PeticionCategoriasTaskTest();
+        peticionTaskTest.execute((Void) null);
     }
 
     public void setCategorias(MutableLiveData<ArrayList<Categoria>> categorias) {
@@ -77,6 +80,29 @@ public class CategoriaViewModel extends AndroidViewModel {
             } catch (IOException e) {
                 Log.e("errorIO",e.getMessage());
             }
+            return c;
+        }
+
+        @Override
+        protected void onPostExecute(final ArrayList<Categoria> ca) {
+            categorias.setValue(ca);
+        }
+
+        @Override
+        protected void onCancelled() {
+
+        }
+    }
+    public class PeticionCategoriasTaskTest extends AsyncTask<Void, Void, ArrayList<Categoria>> {
+        private String json;
+        private ArrayList<Categoria> c=new ArrayList<>();
+        PeticionCategoriasTaskTest() {
+        }
+
+        @Override
+        protected ArrayList<Categoria> doInBackground(Void... params) {
+            json = Constants.DUMMY_CATEGORIAS;
+            c = QueryUtils.categoriasJson(json);
             return c;
         }
 

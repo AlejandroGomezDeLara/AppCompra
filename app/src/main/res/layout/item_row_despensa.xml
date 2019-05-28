@@ -8,7 +8,7 @@
 
 
     <RelativeLayout
-        android:layout_width="124dp"
+        android:layout_width="132dp"
         android:layout_height="132dp"
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
@@ -55,7 +55,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="200g"
+                android:text=""
                 android:gravity="center"
                 android:textColor="@android:color/white"
                 android:layout_gravity="center_vertical"
@@ -68,6 +68,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="3u"
+                    android:textAlignment="center"
                     android:gravity="center"
                     android:textColor="@android:color/white"
                     android:layout_gravity="center_vertical"

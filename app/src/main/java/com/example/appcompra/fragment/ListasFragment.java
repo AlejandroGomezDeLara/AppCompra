@@ -56,6 +56,7 @@ public class ListasFragment extends Fragment {
     protected String nombreNuevaLista;
     protected TextView mEmptyStateTextView;
     protected PeticionListasTask listasTask=null;
+    protected PeticionListasTaskTest test=null;
     protected PeticionNuevaListaTask nuevaListaTask=null;
     protected BorrarListaTask borrarListaTask=null;
     protected Lista listaSeleccionada;
@@ -71,8 +72,10 @@ public class ListasFragment extends Fragment {
         listas=new ArrayList<>();
         usuario=QueryUtils.getUsuario();
         if(!Singleton.getInstance().existenListas()){
-            listasTask=new PeticionListasTask();
-            listasTask.execute((Void) null);
+            /*listasTask=new PeticionListasTask();
+            listasTask.execute((Void) null);*/
+            test=new PeticionListasTaskTest();
+            test.execute((Void) null);
         }else{
             updateUI(Singleton.getInstance().getListas());
         }
@@ -181,6 +184,7 @@ public class ListasFragment extends Fragment {
         builder.setView(view);
         final AlertDialog dialog=builder.create();
         dialog.show();
+        dialog.getWindow().setBackgroundDrawableResource(R.color.backgroundColor);
         Button botonAceptarPopUp=view.findViewById(R.id.botonAceptarPopup);
 
         botonAceptarPopUp.setOnClickListener(new View.OnClickListener() {
@@ -195,11 +199,11 @@ public class ListasFragment extends Fragment {
     }
     public void borrarListaPopup(){
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.popup_confirmacion, null);
-        final AutoCompleteTextView editText=view.findViewById(R.id.crear_lista_editText);
         AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
         builder.setView(view);
         final AlertDialog dialog=builder.create();
         dialog.show();
+        dialog.getWindow().setBackgroundDrawableResource(R.color.backgroundColor);
         Button botonAceptarPopUp=view.findViewById(R.id.botonAceptarPopup);
         Button botonCancelarPopUp=view.findViewById(R.id.botonCancelarPopup);
         botonAceptarPopUp.setOnClickListener(new View.OnClickListener() {
@@ -268,6 +272,40 @@ public class ListasFragment extends Fragment {
 
 
     }
+    public class PeticionListasTaskTest extends AsyncTask<Void, Void, ArrayList<Lista>> {
+
+        private String json;
+        private ArrayList<Lista> listas=new ArrayList<>();
+
+        PeticionListasTaskTest() {
+        }
+
+        @Override
+        protected ArrayList<Lista> doInBackground(Void... params) {
+            json=Constants.DUMMY_LISTAS;
+            listas=QueryUtils.listasJson(json);
+            Singleton.getInstance().setListas(listas);
+            return listas;
+        }
+
+        @Override
+        protected void onPostExecute(final ArrayList<Lista> listas) {
+            if(!listas.isEmpty()){
+                if(!Singleton.getInstance().existenListas()){
+                    Singleton.getInstance().setListas(listas);
+                }
+                updateUI(listas);
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+
+        }
+
+
+    }
+
     public class PeticionNuevaListaTask extends AsyncTask<Void, Void, Boolean> {
         private Socket socket;
         private BufferedReader in;

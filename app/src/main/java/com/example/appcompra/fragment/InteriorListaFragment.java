@@ -24,6 +24,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.appcompra.Constants;
+import com.example.appcompra.MainActivity;
 import com.example.appcompra.R;
 import com.example.appcompra.adapters.DespensaAdapter;
 import com.example.appcompra.clases.Categoria;
@@ -67,12 +68,7 @@ public class InteriorListaFragment extends Fragment {
         mEmptyStateTextView.setVisibility(View.VISIBLE);
         addProducto = view.findViewById(R.id.añadir_boton);
         addProductoCentro = view.findViewById(R.id.añadir_boton_centro);
-        Bundle arguments=getArguments();
-        if(arguments!=null){
-            posLista=arguments.getInt("posLista");
-            idLista=arguments.getInt("id");
-        }
-        Log.e("interior",""+idLista+" "+posLista);
+
         model= ViewModelProviders.of(getActivity()).get(ProductosListaViewModel.class);
         addProductoCentro.setVisibility(View.VISIBLE);
         addProducto.setVisibility(View.GONE);
@@ -94,11 +90,8 @@ public class InteriorListaFragment extends Fragment {
         return view;
     }
     public void intentProductos(){
-        ProductosFragment myFragment = new ProductosFragment();
-        Bundle arguments=new Bundle();
-        arguments.putInt("posLista",posLista);
-        myFragment.setArguments(arguments);
-        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.contenedor_fragment, myFragment).addToBackStack(null).commit();
+        Singleton.getInstance().setPosicionSpinnerListas(Singleton.getInstance().getPosicionSpinnerListas());
+        ((MainActivity)getActivity()).getViewPager().setCurrentItem(3);
     }
     private void updateEditTextFiltrar(View view) {
         EditText editText = view.findViewById(R.id.editText);

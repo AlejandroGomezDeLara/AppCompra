@@ -1,25 +1,20 @@
 package com.example.appcompra.utils;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.example.appcompra.clases.Categoria;
 import com.example.appcompra.clases.Lista;
 import com.example.appcompra.clases.Producto;
-import com.example.appcompra.clases.ProductoComercialLista;
 import com.example.appcompra.clases.TipoProducto;
-import com.example.appcompra.clases.TipoProductoLista;
+import com.example.appcompra.clases.ProductoLista;
 import com.example.appcompra.clases.Usuario;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 
 public class QueryUtils {
     private static Socket socket;
@@ -151,11 +146,12 @@ public class QueryUtils {
                 unidades=productoActual.getInt("unidades");
                 comprado=productoActual.getBoolean("comprado");
                 urlImagen=productoActual.getString("urlimagen");
-                TipoProductoLista p=new TipoProductoLista(id,nombre,unidades,receta,cadena,comprado,urlImagen);
+                ProductoLista p=new ProductoLista(id,nombre,unidades,receta,cadena,comprado,urlImagen,null,null);
                 productos.add(p);
             }
+
             for (int i=0;i<comerciales.length();i++){
-                productoActual=tipos.getJSONObject(i);
+                productoActual=comerciales.getJSONObject(i);
                 id=productoActual.getInt("id");
                 nombre=productoActual.getString("nombre");
                 cantidad=productoActual.getString("cantidad");
@@ -165,7 +161,7 @@ public class QueryUtils {
                 comprado=productoActual.getBoolean("comprado");
                 urlImagen=productoActual.getString("urlimagen");
                 marca=productoActual.getString("marca");
-                ProductoComercialLista p=new ProductoComercialLista(id,nombre,unidades,receta,cadena,comprado,marca,urlImagen,cantidad);
+                ProductoLista p=new ProductoLista(id,nombre,unidades,receta,cadena,comprado,urlImagen,marca,cantidad);
                 productos.add(p);
             }
 

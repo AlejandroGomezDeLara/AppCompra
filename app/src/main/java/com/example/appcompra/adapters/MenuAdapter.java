@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.example.appcompra.fragment.DespensaFragment;
+import com.example.appcompra.fragment.InteriorListaFragment;
 import com.example.appcompra.fragment.ListasFragment;
 import com.example.appcompra.fragment.PrincipalFragment;
 import com.example.appcompra.fragment.ProductosFragment;
@@ -17,6 +18,7 @@ public class MenuAdapter extends FragmentPagerAdapter {
     final PrincipalFragment principalFragment=new PrincipalFragment();
     final ProductosFragment productosFragment=new ProductosFragment();
     final RecetasFragment recetasFragment=new RecetasFragment();
+    final InteriorListaFragment interiorListaFragment=new InteriorListaFragment();
 
     public MenuAdapter(FragmentManager fm){
         super(fm);
@@ -29,11 +31,12 @@ public class MenuAdapter extends FragmentPagerAdapter {
             case 2: return principalFragment;
             case 3: return productosFragment;
             case 4: return recetasFragment;
+            case 5: return interiorListaFragment;
         }
         return principalFragment;
     }
     @Override
     public int getCount() {
-        return 5;
+        return 6;
     }
 }

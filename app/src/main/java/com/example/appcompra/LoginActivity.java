@@ -43,7 +43,7 @@ import java.util.List;
 
 
 public class LoginActivity extends AppCompatActivity implements Serializable,LoaderCallbacks<Cursor> {
-    private UserLoginTask mAuthTask = null;
+    private UserLoginTaskTest mAuthTask = null;
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
@@ -130,7 +130,7 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
         } else {
             // Muestra el spinner del progreso, crea el async task y lo ejecutamos
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
+            mAuthTask = new UserLoginTaskTest(email, password);
             mAuthTask.execute((Void) null);
         }
     }
@@ -272,6 +272,56 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
                 return true;
             }else
                 return false;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            showProgress(false);
+
+            if (success) {
+                Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("Usuario", usuario);
+                intent.putExtras(bundle);
+                finish();
+                startActivity(intent);
+            } else {
+                finish();
+                startActivity(getIntent());
+                mPasswordView.setError("Email o contraseña incorrectos");
+                mPasswordView.requestFocus();
+
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            mAuthTask = null;
+            showProgress(false);
+        }
+    }
+
+    public class UserLoginTaskTest extends AsyncTask<Void, Void, Boolean> {
+
+        private final String mEmail;
+        private final String mPassword;
+        private String respuesta;
+        public boolean terminado;
+
+        UserLoginTaskTest(String email, String password) {
+            mEmail = email;
+            mPassword = password;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+
+
+            respuesta = Constants.DUMMY_LOGIN;
+            Log.e("xd", respuesta);
+
+            usuario = new Usuario(Integer.parseInt(respuesta.split(Constants.SEPARATOR)[1]), respuesta.split(Constants.SEPARATOR)[2], mEmail, "https://cdn.computerhoy.com/sites/navi.axelspringer.es/public/styles/480/public/media/image/2018/08/fotos-perfil-whatsapp_16.jpg?itok=aqeTumbO");
+            return true;
         }
 
         @Override

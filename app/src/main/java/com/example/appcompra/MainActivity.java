@@ -73,8 +73,11 @@ public class MainActivity extends AppCompatActivity
                 } else {
                     menu.getMenu().getItem(0).setChecked(false);
                 }
-                menu.getMenu().getItem(position).setChecked(true);
-                prevMenuItem = menu.getMenu().getItem(position);
+                if(position!=5){
+                    menu.getMenu().getItem(position).setChecked(true);
+                    prevMenuItem = menu.getMenu().getItem(position);
+                }
+
 
             }
 
@@ -174,5 +177,9 @@ public class MainActivity extends AppCompatActivity
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+    }
+
+    public ViewPager getViewPager() {
+        return viewPager;
     }
 }
