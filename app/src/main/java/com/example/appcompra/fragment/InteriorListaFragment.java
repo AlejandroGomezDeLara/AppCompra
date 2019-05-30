@@ -2,19 +2,20 @@ package com.example.appcompra.fragment;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,24 +24,16 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.example.appcompra.Constants;
 import com.example.appcompra.MainActivity;
 import com.example.appcompra.R;
 import com.example.appcompra.adapters.DespensaAdapter;
-import com.example.appcompra.clases.Categoria;
+import com.example.appcompra.clases.Lista;
 import com.example.appcompra.clases.Producto;
 import com.example.appcompra.clases.Singleton;
-import com.example.appcompra.clases.TipoProducto;
 import com.example.appcompra.clases.Usuario;
 import com.example.appcompra.models.ProductosListaViewModel;
-import com.example.appcompra.utils.Cambios;
 import com.example.appcompra.utils.QueryUtils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
 import java.util.ArrayList;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
@@ -59,6 +52,7 @@ public class InteriorListaFragment extends Fragment {
     protected Button addProductoCentro;
     protected ProductosListaViewModel model;
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -87,6 +81,29 @@ public class InteriorListaFragment extends Fragment {
                 intentProductos();
             }
         });
+        String usuarios="";
+        Lista listaActual=null;
+        for (int i=0;i<Singleton.getInstance().getListas().size();i++){
+            if(Singleton.getInstance().getListas().get(i).getId()==idLista) {
+                listaActual = Singleton.getInstance().getListas().get(i);
+            }
+        }
+        if(listaActual!=null){
+            ArrayList<String> usuariosLista=listaActual.getUsuarios();
+            for (int i=0;i<usuariosLista.size();i++) {
+                if(i==usuariosLista.size()-1){
+                   usuarios+=usuariosLista.get(i);
+                }else{
+                    usuarios+=usuariosLista.get(i)+", ";
+                }
+            }
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(listaActual.getTitulo());
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(usuarios);
+
+
+
+
+        }
         updateEditTextFiltrar(view);
         return view;
     }
@@ -146,6 +163,7 @@ public class InteriorListaFragment extends Fragment {
         ConnectivityManager manager=(ConnectivityManager)getActivity().getSystemService(CONNECTIVITY_SERVICE);
         final NetworkInfo info=manager.getActiveNetworkInfo();
         boolean isConnected=info!=null && info.isConnected();
+
         if(isConnected) {
             model.getProductosLista(idLista).observe(getActivity(), new Observer<ArrayList<Producto>>() {
                 @Override

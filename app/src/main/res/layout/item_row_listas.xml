@@ -19,19 +19,26 @@
             android:layout_weight="6"
             android:layout_height="match_parent"
             android:orientation="vertical">
-        <TextView
-            android:id="@+id/titulo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="Esta es la fiesta del adria"
-            android:ellipsize="marquee"
-            android:singleLine="true"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:textSize="32dp"/>
 
+            <TextView
+                android:id="@+id/titulo"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="0.5"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:ellipsize="marquee"
+                android:singleLine="true"
+                android:text="Esta es la fiesta del adria"
+                android:textColor="@android:color/white"
+                android:textSize="32dp"
+                android:textStyle="bold" />
+    <LinearLayout
+        android:id="@+id/usuarios"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.75"
+        android:orientation="vertical">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -171,17 +178,26 @@
             android:textStyle="bold"
             android:text="y 3 más"/>
     </LinearLayout>
-        <RelativeLayout
+    </LinearLayout>
+        <LinearLayout
             android:layout_weight="0.75"
             android:layout_width="0dp"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center">
+            <ImageView
+                android:id="@+id/compartir"
+                android:layout_gravity="center"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:tint="@android:color/white"
+                android:src="@drawable/share"/>
             <ImageView
                 android:id="@+id/borrar"
-                android:layout_centerInParent="true"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_gravity="center"                android:layout_width="42dp"
+                android:layout_height="42dp"
                 android:tint="@android:color/white"
                 android:src="@drawable/ic_delete_black_24dp"/>
-        </RelativeLayout>
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

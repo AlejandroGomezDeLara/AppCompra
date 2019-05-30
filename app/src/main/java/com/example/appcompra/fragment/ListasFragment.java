@@ -10,18 +10,23 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +47,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 
@@ -63,6 +69,8 @@ public class ListasFragment extends Fragment {
     protected PeticionNuevaListaTaskTest nuevaListaTaskTest=null;
     protected BorrarListaTask borrarListaTask=null;
     protected BorrarListaTaskTest borrarListaTaskTest=null;
+    protected CompartirListaTask compartirListaTask=null;
+    protected CompartirListaTaskTest compartirListaTaskTest=null;
     protected Lista listaSeleccionada;
 
     @Nullable
@@ -164,21 +172,26 @@ public class ListasFragment extends Fragment {
         }
         adapter.filtrarLista(listass);
     }
-    private void updateUI(ArrayList<Lista> m){
+
+    public void updateUI(ArrayList<Lista> m){
         /*productos.clear();
         productos.addAll(m);
         */
         adapter=new ListaAdapter(m, getActivity(), R.layout.item_row_listas, getActivity(), new ListaAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(Lista l) {
+            public void onBorrarLista(Lista l) {
                 borrarListaPopup(l);
+            }
+
+            @Override
+            public void onCompartirLista(Lista l) {
+                compartirListaPopup(l);
             }
         });
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-        ((MainActivity)getActivity()).updateUI(m);
     }
 
     public void crearNuevaListaPopup(){
@@ -190,32 +203,19 @@ public class ListasFragment extends Fragment {
         dialog.show();
         dialog.getWindow().setBackgroundDrawableResource(R.color.backgroundColor);
         Button botonAceptarPopUp=view.findViewById(R.id.botonAceptarPopup);
-
         botonAceptarPopUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 nombreNuevaLista=editText.getText().toString();
-                //peticionNuevaLista();
-                peticionNuevaListaTest();
-                dialog.dismiss();
+                if(!nombreNuevaLista.isEmpty()){
+                    //peticionNuevaLista();
+                    peticionNuevaListaTest();
+                    dialog.dismiss();
+                }else {
+                    Toast.makeText(getContext(),"Introduce un nombre para la lista",Toast.LENGTH_LONG).show();
+                }
             }
         });
-    }
-    public void peticionNuevaLista(){
-        nuevaListaTask=new PeticionNuevaListaTask();
-        nuevaListaTask.execute((Void) null);
-    }
-    public void peticionNuevaListaTest(){
-        nuevaListaTaskTest=new PeticionNuevaListaTaskTest();
-        nuevaListaTaskTest.execute((Void) null);
-    }
-    public void peticionBorrarLista(){
-        borrarListaTask=new BorrarListaTask();
-        borrarListaTask.execute((Void) null);
-    }
-    public void peticionBorrarListaTest(){
-        borrarListaTaskTest=new BorrarListaTaskTest();
-        borrarListaTaskTest.execute((Void) null);
     }
     public void borrarListaPopup( Lista l){
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.popup_confirmacion, null);
@@ -241,6 +241,76 @@ public class ListasFragment extends Fragment {
                 dialog.dismiss();
             }
         });
+    }
+    public void compartirListaPopup( Lista l){
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.popup_compartir, null);
+        AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
+        final AutoCompleteTextView editText=view.findViewById(R.id.editText);
+        final Spinner spinnerRoles=view.findViewById(R.id.spinnerRoles);
+        List<String> valoresSpinner=new ArrayList<>();
+        valoresSpinner.add("Ninguno");
+        valoresSpinner.add("Administrador");
+        valoresSpinner.add("Participante");
+        valoresSpinner.add("Espectador");
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                getContext(),R.layout.spinner_item,valoresSpinner
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerRoles.setAdapter(adapter);
+        builder.setView(view);
+        final AlertDialog dialog=builder.create();
+        listaSeleccionada=l;
+        dialog.show();
+        dialog.getWindow().setBackgroundDrawableResource(R.color.backgroundColor);
+        Button botonAceptarPopUp=view.findViewById(R.id.botonAceptarPopup);
+        Button botonCancelarPopUp=view.findViewById(R.id.botonCancelarPopup);
+        botonAceptarPopUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String rolElegido=spinnerRoles.getSelectedItem().toString();
+                String nombreUsuario=editText.getText().toString();
+                if(!nombreUsuario.isEmpty()){
+                    if(!rolElegido.equals("Ninguno") && !nombreUsuario.isEmpty()) {
+                        peticionCompartirListaTest(nombreUsuario,rolElegido);
+                        dialog.dismiss();
+                    }else{
+                        Toast.makeText(getContext(),"Elige un rol para el usuario",Toast.LENGTH_LONG).show();
+                    }
+                }else{
+                    Toast.makeText(getContext(),"Introduce algún nombre",Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+        botonCancelarPopUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+    }
+    public void peticionNuevaLista(){
+        nuevaListaTask=new PeticionNuevaListaTask();
+        nuevaListaTask.execute((Void) null);
+    }
+    public void peticionNuevaListaTest(){
+        nuevaListaTaskTest=new PeticionNuevaListaTaskTest();
+        nuevaListaTaskTest.execute((Void) null);
+    }
+    public void peticionCompartirLista(String usuario,String rol){
+        compartirListaTask=new CompartirListaTask(usuario,rol);
+        compartirListaTask.execute((Void) null);
+    }
+    public void peticionCompartirListaTest(String usuario,String rol){
+        compartirListaTaskTest=new CompartirListaTaskTest(usuario,rol);
+        compartirListaTaskTest.execute((Void) null);
+    }
+    public void peticionBorrarLista(){
+        borrarListaTask=new BorrarListaTask();
+        borrarListaTask.execute((Void) null);
+    }
+    public void peticionBorrarListaTest(){
+        borrarListaTaskTest=new BorrarListaTaskTest();
+        borrarListaTaskTest.execute((Void) null);
     }
 
     public class PeticionListasTask extends AsyncTask<Void, Void, ArrayList<Lista>> {
@@ -282,7 +352,7 @@ public class ListasFragment extends Fragment {
                 if(!Singleton.getInstance().existenListas()){
                     Singleton.getInstance().setListas(listas);
                 }
-                updateUI(listas);
+                ((MainActivity)getActivity()).actualizarListas();
             }
         }
 
@@ -315,7 +385,7 @@ public class ListasFragment extends Fragment {
                 if(!Singleton.getInstance().existenListas()){
                     Singleton.getInstance().setListas(listas);
                 }
-                updateUI(listas);
+                ((MainActivity)getActivity()).actualizarListas();
             }
         }
 
@@ -326,7 +396,6 @@ public class ListasFragment extends Fragment {
 
 
     }
-
     public class PeticionNuevaListaTask extends AsyncTask<Void, Void, Boolean> {
         private Socket socket;
         private BufferedReader in;
@@ -366,7 +435,7 @@ public class ListasFragment extends Fragment {
         @Override
         protected void onPostExecute(final Boolean creada) {
             if(creada)
-                updateUI(Singleton.getInstance().getListas());
+                ((MainActivity)getActivity()).actualizarListas();
             else{
                 Toast.makeText(getContext(), "No se ha podido crear la lista", Toast.LENGTH_LONG).show();
             }
@@ -400,7 +469,7 @@ public class ListasFragment extends Fragment {
         @Override
         protected void onPostExecute(final Boolean creada) {
             if(creada)
-                updateUI(Singleton.getInstance().getListas());
+                ((MainActivity)getActivity()).actualizarListas();
             else{
                 Toast.makeText(getContext(), "No se ha podido crear la lista", Toast.LENGTH_LONG).show();
             }
@@ -413,7 +482,6 @@ public class ListasFragment extends Fragment {
 
 
     }
-
     public class BorrarListaTask extends AsyncTask<Void, Void, Boolean> {
         private Socket socket;
         private BufferedReader in;
@@ -444,7 +512,7 @@ public class ListasFragment extends Fragment {
         @Override
         protected void onPostExecute(final Boolean creada) {
             if(creada)
-                updateUI(Singleton.getInstance().getListas());
+                ((MainActivity)getActivity()).actualizarListas();
             else{
                 Toast.makeText(getContext(), "No se ha podido borrar la lista", Toast.LENGTH_LONG).show();
             }
@@ -473,7 +541,7 @@ public class ListasFragment extends Fragment {
         @Override
         protected void onPostExecute(final Boolean borrada) {
             if(borrada)
-                updateUI(Singleton.getInstance().getListas());
+                ((MainActivity)getActivity()).actualizarListas();
             else{
                 Toast.makeText(getContext(), "No se ha podido borrar la lista", Toast.LENGTH_LONG).show();
             }
@@ -484,7 +552,98 @@ public class ListasFragment extends Fragment {
 
         }
     }
+    public class CompartirListaTask extends AsyncTask<Void, Void, Boolean> {
+        private Socket socket;
+        private BufferedReader in;
+        private PrintWriter out;
+        private boolean peticion;
+        private String usuario;
+        private String rol;
+        CompartirListaTask(String usuario,String rol)
+        {
+            this.usuario=usuario;
+            this.rol=rol;
+            peticion=true;
+        }
 
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            socket = QueryUtils.getSocket();
+            try {
+                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                out = new PrintWriter(socket.getOutputStream(), true);
+                String salida = Constants.COMPARTIR_LISTA_PETICION + Constants.SEPARATOR + QueryUtils.getUsuario().getId() + Constants.SEPARATOR + listaSeleccionada.getId() + Constants.SEPARATOR + usuario + Constants.SEPARATOR + rol;
+                out.println(salida);
+                String entrada = in.readLine();
+                if (entrada.split(Constants.SEPARATOR)[1] != null) {
+                    if (entrada.split(Constants.SEPARATOR)[1].equals(Constants.COMPARTIR_LISTA_CORRECTA)) {
+                        peticion = true;
+                    } else {
+                        peticion = false;
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return peticion;
+        }
+
+            @Override
+        protected void onPostExecute(final Boolean aceptada) {
+            if(aceptada){
+                listaSeleccionada.añadirUsuario(usuario);
+            }else{
+                Toast.makeText(getContext(), "No se ha podido compartir la lista", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+
+        }
+    }
+    public class CompartirListaTaskTest extends AsyncTask<Void, Void, Boolean> {
+
+        private boolean peticion;
+        private String usuario;
+        private String rol;
+        CompartirListaTaskTest(String usuario,String rol)
+        {
+            this.usuario=usuario;
+            this.rol=rol;
+            peticion=true;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            String salida=Constants.COMPARTIR_LISTA_PETICION+Constants.SEPARATOR+QueryUtils.getUsuario().getId()+Constants.SEPARATOR+listaSeleccionada.getId()+Constants.SEPARATOR+usuario+Constants.SEPARATOR+rol;
+            String entrada=Constants.DUMMY_COMPARTIR_LISTA_ACEPTADA;
+            if(entrada!=null) {
+                if(entrada.equals(Constants.COMPARTIR_LISTA_FALLIDA)){
+                    peticion=true;
+                }else{
+                    peticion=false;
+                }
+            }
+
+            return peticion;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean aceptada) {
+            if(aceptada){
+                listaSeleccionada.añadirUsuario(usuario);
+                ((MainActivity)getActivity()).actualizarListas();
+            }else{
+                Toast.makeText(getContext(), "No existe ese usuario", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+
+        }
+    }
 
     @Override
     public void onStop() {

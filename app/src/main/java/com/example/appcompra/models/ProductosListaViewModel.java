@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.example.appcompra.Constants;
 import com.example.appcompra.clases.Producto;
+import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.utils.QueryUtils;
 
 import java.io.BufferedReader;
@@ -39,7 +40,8 @@ public class ProductosListaViewModel extends AndroidViewModel {
             productos=new MutableLiveData<>();
             pedirProductos(idLista);
         }
-
+        if(!Singleton.getInstance().getProductosLista().containsKey(idLista))
+            pedirProductos(idLista);
         return productos;
     }
 
@@ -102,8 +104,12 @@ public class ProductosListaViewModel extends AndroidViewModel {
 
         @Override
         protected ArrayList<Producto> doInBackground(Void... params) {
-
-            json=Constants.DUMMY_PRODUCTO_LISTA_1;
+            if(idLista==1){
+                json=Constants.DUMMY_PRODUCTO_LISTA_1;
+            }else{
+                json=Constants.DUMMY_PRODUCTO_LISTA_2;
+            }
+            Log.e("respuesta",json);
             p=QueryUtils.productosLista(json);
 
             return p;

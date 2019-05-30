@@ -2,21 +2,8 @@ package com.example.appcompra.adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.ImageViewCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,9 +15,6 @@ import com.example.appcompra.MainActivity;
 import com.example.appcompra.R;
 import com.example.appcompra.clases.Lista;
 import com.example.appcompra.clases.Singleton;
-import com.example.appcompra.fragment.InteriorListaFragment;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,6 +61,7 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
             }
         });
         if(lista.getNumeroUsuarios()==0){
+            viewHolder.usuarios.setVisibility(View.GONE);
             viewHolder.usuario1.setVisibility(View.GONE);
             viewHolder.usuario2.setVisibility(View.GONE);
             viewHolder.usuario3.setVisibility(View.GONE);
@@ -124,7 +109,13 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
         viewHolder.borrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onItemClick(lista);
+                listener.onBorrarLista(lista);
+            }
+        });
+        viewHolder.compartir.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onCompartirLista(lista);
             }
         });
     }
@@ -152,9 +143,13 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
         TextView nombreUsuario3;
         TextView nombreUsuario4;
         ImageView borrar;
+        ImageView compartir;
+        LinearLayout usuarios;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            usuarios=itemView.findViewById(R.id.usuarios);
             borrar=itemView.findViewById(R.id.borrar);
+            compartir=itemView.findViewById(R.id.compartir);
             titulo=itemView.findViewById(R.id.titulo);
             linearLista=itemView.findViewById(R.id.linearLista);
             usuario1=itemView.findViewById(R.id.usuario1);
@@ -169,7 +164,8 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
         }
     }
     public interface OnItemClickListener{
-        void onItemClick(Lista l);
+        void onBorrarLista(Lista l);
+        void onCompartirLista(Lista l);
     }
 
 }

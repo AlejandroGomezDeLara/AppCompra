@@ -26,15 +26,28 @@ public class MenuAdapter extends FragmentPagerAdapter {
     }
     @Override
     public Fragment getItem(int i) {
+        Fragment fragment = principalFragment;
         switch (i){
-            case 0: return despensaFragment;
-            case 1: return listasFragment;
-            case 2: return principalFragment;
-            case 3: return productosFragment;
-            case 4: return recetasFragment;
-            case 5: return interiorListaFragment;
+            case 0:
+                fragment=despensaFragment;
+            break;
+            case 1:
+                fragment=listasFragment;
+            break;
+            case 2:
+                fragment=principalFragment;
+            break;
+            case 3:
+                fragment=productosFragment;
+            break;
+            case 4:
+                fragment=recetasFragment;
+                break;
+            case 5:
+                fragment=interiorListaFragment;
+                break;
         }
-        return principalFragment;
+        return fragment;
     }
     @Override
     public int getCount() {
