@@ -151,7 +151,10 @@ public class ProductosFragment extends Fragment {
                     Cambios.getInstance().addCambioTP(p.getId(),"add",Singleton.getInstance().getIdListaSeleccionada());
                 }
                 Singleton.getInstance().añadirProductosLista(Singleton.getInstance().getIdListaSeleccionada(),productosSeleccionados);
-                ((MainActivity)getActivity()).getViewPager().setCurrentItem(5);
+                if(Singleton.getInstance().getIdListaSeleccionada()==0)
+                    ((MainActivity)getActivity()).getViewPager().setCurrentItem(0);
+                else
+                    ((MainActivity)getActivity()).getViewPager().setCurrentItem(5);
             }
         });
         return view;
