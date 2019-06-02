@@ -615,9 +615,10 @@ public class ListasFragment extends Fragment {
         @Override
         protected Boolean doInBackground(Void... params) {
             String salida=Constants.COMPARTIR_LISTA_PETICION+Constants.SEPARATOR+QueryUtils.getUsuario().getId()+Constants.SEPARATOR+listaSeleccionada.getId()+Constants.SEPARATOR+usuario+Constants.SEPARATOR+rol;
+            Log.e("salida",salida);
             String entrada=Constants.DUMMY_COMPARTIR_LISTA_ACEPTADA;
             if(entrada!=null) {
-                if(entrada.equals(Constants.COMPARTIR_LISTA_FALLIDA)){
+                if(entrada.equals(Constants.COMPARTIR_LISTA_CORRECTA)){
                     peticion=true;
                 }else{
                     peticion=false;

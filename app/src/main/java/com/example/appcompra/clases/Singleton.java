@@ -57,7 +57,7 @@ public class Singleton {
         roles.add("Ninguno");
         roles.add("Administrador");
         roles.add("Participante");
-        roles.add("Observador");
+        roles.add("Espectador");
     }
 
     public static Singleton getInstance () {

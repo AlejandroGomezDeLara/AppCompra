@@ -10,6 +10,8 @@
     <color name="colorProducto">#3c1053</color>
     <color name="backgroundProducto">#f1eff9</color>
     <color name="backgroundSpinner">#dfd9f7</color>
-    <color name="conectado">#1fe03f</color>
+    <color name="participante">#1fe03f</color>
+    <color name="espectador">#4776E6</color>
+    <color name="administrador">#c471ed</color>
     <color name="popup_background">#11000000</color>
 </resources>

@@ -65,7 +65,7 @@
                 android:layout_margin="2dp"
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/shape_naranja"
-                android:tint="@color/conectado" />
+                android:tint="@color/participante" />
 
             <TextView
                 android:id="@+id/nombre_usuario1"
@@ -94,7 +94,7 @@
                 android:layout_height="14dp"
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/shape_naranja"
-                android:tint="@color/conectado" />
+                android:tint="@color/participante" />
 
             <TextView
                 android:id="@+id/nombre_usuario2"
@@ -125,7 +125,7 @@
                 android:layout_margin="2dp"
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/shape_naranja"
-                android:tint="@color/conectado" />
+                android:tint="@color/participante" />
 
             <TextView
                 android:id="@+id/nombre_usuario3"
@@ -155,7 +155,7 @@
                 android:layout_margin="2dp"
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/shape_naranja"
-                android:tint="@color/conectado" />
+                android:tint="@color/participante" />
 
             <TextView
                 android:id="@+id/nombre_usuario4"

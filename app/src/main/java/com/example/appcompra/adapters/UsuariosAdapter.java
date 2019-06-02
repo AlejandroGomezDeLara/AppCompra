@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -18,10 +19,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.appcompra.R;
+import com.example.appcompra.clases.Lista;
 import com.example.appcompra.clases.Producto;
 import com.example.appcompra.clases.ProductoLista;
 import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.Usuario;
+import com.example.appcompra.utils.Cambios;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -35,8 +38,9 @@ public class UsuariosAdapter extends RecyclerView.Adapter<UsuariosAdapter.ViewHo
     private Context context;
     private Spinner rolesSpinner;
     private OnItemClickListener listener;
-
-    public UsuariosAdapter(List<Usuario> usuarios, Activity activity, int layout, Context context,OnItemClickListener listener) {
+    private Lista listaActual;
+    public UsuariosAdapter(Lista listaActual, List<Usuario> usuarios, Activity activity, int layout, Context context, OnItemClickListener listener) {
+        this.listaActual=listaActual;
         this.usuarios = usuarios;
         this.listener=listener;
         this.activity = activity;
@@ -62,18 +66,61 @@ public class UsuariosAdapter extends RecyclerView.Adapter<UsuariosAdapter.ViewHo
         final Usuario usuario=usuarios.get(i);
         viewHolder.nombre.setText(usuario.getNombre());
         rolesSpinner=viewHolder.roles;
-        updateSpinnerRoles(Singleton.getInstance().getRoles());
         switch (usuario.getRol().toLowerCase()){
             case "administrador":
                 viewHolder.linearUsuario.setBackground(ContextCompat.getDrawable(context,R.drawable.gradient_lista_admin));
+                viewHolder.textoRol.setText("Administrador");
                 break;
             case "participante":
                 viewHolder.linearUsuario.setBackground(ContextCompat.getDrawable(context,R.drawable.gradient_lista_participante));
-
+                viewHolder.textoRol.setText("Participante");
                 break;
             case "espectador":
                 viewHolder.linearUsuario.setBackground(ContextCompat.getDrawable(context,R.drawable.gradient_lista_espectador));
+                viewHolder.textoRol.setText("Espectador");
                 break;
+        }
+        if(listaActual.getRol().toLowerCase().equals("administrador")){
+            viewHolder.textoRol.setVisibility(View.GONE);
+            updateSpinnerRoles(Singleton.getInstance().getRoles());
+            switch (usuario.getRol().toLowerCase()){
+                case "administrador":
+                    rolesSpinner.setSelection(1,false);
+                    break;
+                case "participante":
+                    rolesSpinner.setSelection(2,false);
+                    break;
+                case "espectador":
+                    rolesSpinner.setSelection(3,false);
+                    break;
+            }
+            rolesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    usuario.setRol(Singleton.getInstance().getRoles().get(position));
+                    Cambios.getInstance().addCambioUS(usuario.getNombre(),"change",usuario.getRol(),listaActual.getId());
+                    switch (usuario.getRol().toLowerCase()){
+                        case "administrador":
+                            viewHolder.linearUsuario.setBackground(ContextCompat.getDrawable(context,R.drawable.gradient_lista_admin));
+                            break;
+                        case "participante":
+                            viewHolder.linearUsuario.setBackground(ContextCompat.getDrawable(context,R.drawable.gradient_lista_participante));
+                            break;
+                        case "espectador":
+                            viewHolder.linearUsuario.setBackground(ContextCompat.getDrawable(context,R.drawable.gradient_lista_espectador));
+                            break;
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+        }else{
+            viewHolder.roles.setVisibility(View.GONE);
+            viewHolder.borrar.setVisibility(View.GONE);
+            viewHolder.textoRol.setVisibility(View.VISIBLE);
         }
         viewHolder.borrar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,8 +141,10 @@ public class UsuariosAdapter extends RecyclerView.Adapter<UsuariosAdapter.ViewHo
         Spinner roles;
         ImageView borrar;
         LinearLayout linearUsuario;
+        TextView textoRol;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            textoRol=itemView.findViewById(R.id.texto_rol);
             nombre=itemView.findViewById(R.id.nombre_usuario);
             roles=itemView.findViewById(R.id.roles);
             borrar=itemView.findViewById(R.id.borrar);

@@ -203,11 +203,11 @@ public class InteriorListaFragment extends Fragment {
         dialog.show();
         dialog.getWindow().setBackgroundDrawableResource(R.color.backgroundColor);
         usuariosRecyclerView=view.findViewById(R.id.recyclerView);
-        usuariosAdapter=new UsuariosAdapter(listaActual.getUsuarios(), getActivity(), R.layout.item_row_popup_usuarios, getContext(), new UsuariosAdapter.OnItemClickListener() {
+        usuariosAdapter=new UsuariosAdapter(listaActual,listaActual.getUsuarios(), getActivity(), R.layout.item_row_popup_usuarios, getContext(), new UsuariosAdapter.OnItemClickListener() {
             @Override
             public void onBorrarUsuario(Usuario u) {
                 listaActual.borrarUsuario(u);
-                Cambios.getInstance().addCambioUS(u.getNombre(),"delete",idLista);
+                Cambios.getInstance().addCambioUS(u.getNombre(),"delete",null,idLista);
                 usuariosRecyclerView.setAdapter(usuariosAdapter);
                 usuariosAdapter.notifyDataSetChanged();
             }

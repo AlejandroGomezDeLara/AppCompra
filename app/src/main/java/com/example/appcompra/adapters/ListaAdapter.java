@@ -1,7 +1,9 @@
 package com.example.appcompra.adapters;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.media.Image;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -18,6 +20,7 @@ import com.example.appcompra.MainActivity;
 import com.example.appcompra.R;
 import com.example.appcompra.clases.Lista;
 import com.example.appcompra.clases.Singleton;
+import com.example.appcompra.clases.Usuario;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +54,7 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
         this.listas=listas;
         notifyDataSetChanged();
     }
+    @SuppressLint("ResourceAsColor")
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onBindViewHolder(@NonNull final ListaAdapter.ViewHolder viewHolder,final int i) {
@@ -62,11 +66,21 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
                 break;
             case "participante":
                 viewHolder.linearLista.setBackground(ContextCompat.getDrawable(context,R.drawable.gradient_lista_participante));
-
                 break;
             case "espectador":
                 viewHolder.linearLista.setBackground(ContextCompat.getDrawable(context,R.drawable.gradient_lista_espectador));
                 break;
+        }
+        if(!lista.getRol().toLowerCase().equals("administrador")){
+            viewHolder.compartir.setVisibility(View.GONE);
+        }else{
+            viewHolder.compartir.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onCompartirLista(lista);
+                }
+            });
+            viewHolder.compartir.setVisibility(View.VISIBLE);
         }
         viewHolder.linearLista.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,6 +103,18 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
             viewHolder.usuario3.setVisibility(View.GONE);
             viewHolder.usuario4.setVisibility(View.GONE);
             viewHolder.nombreUsuario1.setText(lista.getUsuarios().get(0).getNombre());
+            switch (lista.getUsuarios().get(0).getRol().toLowerCase()) {
+                case "administrador":
+                    viewHolder.imagenUsuario1.setColorFilter(ContextCompat.getColor(context, R.color.administrador));
+                    break;
+                case "participante":
+                    viewHolder.imagenUsuario1.setColorFilter(ContextCompat.getColor(context, R.color.participante));
+                    break;
+                case "espectador":
+                    viewHolder.imagenUsuario1.setColorFilter(ContextCompat.getColor(context, R.color.espectador));
+                    break;
+            }
+
         }
         if(lista.getNumeroUsuarios()==2){
             viewHolder.usuario1.setVisibility(View.VISIBLE);
@@ -97,6 +123,29 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
             viewHolder.usuario4.setVisibility(View.GONE);
             viewHolder.nombreUsuario1.setText(lista.getUsuarios().get(0).getNombre());
             viewHolder.nombreUsuario2.setText(lista.getUsuarios().get(1).getNombre());
+            switch (lista.getUsuarios().get(0).getRol().toLowerCase()) {
+                case "administrador":
+                    viewHolder.imagenUsuario1.setColorFilter(ContextCompat.getColor(context, R.color.administrador));
+                    break;
+                case "participante":
+                    viewHolder.imagenUsuario1.setColorFilter(ContextCompat.getColor(context, R.color.participante));
+                    break;
+                case "espectador":
+                    viewHolder.imagenUsuario1.setColorFilter(ContextCompat.getColor(context, R.color.espectador));
+                    break;
+
+            }
+            switch (lista.getUsuarios().get(1).getRol().toLowerCase()) {
+                case "administrador":
+                    viewHolder.imagenUsuario2.setColorFilter(ContextCompat.getColor(context, R.color.administrador));
+                    break;
+                case "participante":
+                    viewHolder.imagenUsuario2.setColorFilter(ContextCompat.getColor(context, R.color.participante));
+                    break;
+                case "espectador":
+                    viewHolder.imagenUsuario2.setColorFilter(ContextCompat.getColor(context, R.color.espectador));
+                    break;
+            }
         }
         if(lista.getNumeroUsuarios()==3){
             viewHolder.usuario1.setVisibility(View.VISIBLE);
@@ -106,6 +155,39 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
             viewHolder.nombreUsuario1.setText(lista.getUsuarios().get(0).getNombre());
             viewHolder.nombreUsuario2.setText(lista.getUsuarios().get(1).getNombre());
             viewHolder.nombreUsuario3.setText(lista.getUsuarios().get(2).getNombre());
+            switch (lista.getUsuarios().get(0).getRol().toLowerCase()) {
+                case "administrador":
+                    viewHolder.imagenUsuario1.setColorFilter(ContextCompat.getColor(context, R.color.administrador));
+                    break;
+                case "participante":
+                    viewHolder.imagenUsuario1.setColorFilter(ContextCompat.getColor(context, R.color.participante));
+                    break;
+                case "espectador":
+                    viewHolder.imagenUsuario1.setColorFilter(ContextCompat.getColor(context, R.color.espectador));
+                    break;
+            }
+            switch (lista.getUsuarios().get(1).getRol().toLowerCase()) {
+                case "administrador":
+                    viewHolder.imagenUsuario2.setColorFilter(ContextCompat.getColor(context, R.color.administrador));
+                    break;
+                case "participante":
+                    viewHolder.imagenUsuario2.setColorFilter(ContextCompat.getColor(context, R.color.participante));
+                    break;
+                case "espectador":
+                    viewHolder.imagenUsuario2.setColorFilter(ContextCompat.getColor(context, R.color.espectador));
+                    break;
+            }
+            switch (lista.getUsuarios().get(2).getRol().toLowerCase()) {
+                case "administrador":
+                    viewHolder.imagenUsuario3.setColorFilter(ContextCompat.getColor(context, R.color.administrador));
+                    break;
+                case "participante":
+                    viewHolder.imagenUsuario3.setColorFilter(ContextCompat.getColor(context, R.color.participante));
+                    break;
+                case "espectador":
+                    viewHolder.imagenUsuario3.setColorFilter(ContextCompat.getColor(context, R.color.espectador));
+                    break;
+            }
         }
         if(lista.getNumeroUsuarios()>=4){
             viewHolder.usuario1.setVisibility(View.VISIBLE);
@@ -116,6 +198,50 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
             viewHolder.nombreUsuario2.setText(lista.getUsuarios().get(1).getNombre());
             viewHolder.nombreUsuario3.setText(lista.getUsuarios().get(2).getNombre());
             viewHolder.nombreUsuario4.setText(lista.getUsuarios().get(3).getNombre());
+            switch (lista.getUsuarios().get(0).getRol().toLowerCase()) {
+                case "administrador":
+                    viewHolder.imagenUsuario1.setColorFilter(ContextCompat.getColor(context, R.color.administrador));
+                    break;
+                case "participante":
+                    viewHolder.imagenUsuario1.setColorFilter(ContextCompat.getColor(context, R.color.participante));
+                    break;
+                case "espectador":
+                    viewHolder.imagenUsuario1.setColorFilter(ContextCompat.getColor(context, R.color.espectador));
+                    break;
+            }
+            switch (lista.getUsuarios().get(1).getRol().toLowerCase()) {
+                case "administrador":
+                    viewHolder.imagenUsuario2.setColorFilter(ContextCompat.getColor(context, R.color.administrador));
+                    break;
+                case "participante":
+                    viewHolder.imagenUsuario2.setColorFilter(ContextCompat.getColor(context, R.color.participante));
+                    break;
+                case "espectador":
+                    viewHolder.imagenUsuario2.setColorFilter(ContextCompat.getColor(context, R.color.espectador));
+                    break;
+            }
+            switch (lista.getUsuarios().get(2).getRol().toLowerCase()) {
+                case "administrador":
+                    viewHolder.imagenUsuario3.setColorFilter(ContextCompat.getColor(context, R.color.administrador));
+                    break;
+                case "participante":
+                    viewHolder.imagenUsuario3.setColorFilter(ContextCompat.getColor(context, R.color.participante));
+                    break;
+                case "espectador":
+                    viewHolder.imagenUsuario3.setColorFilter(ContextCompat.getColor(context, R.color.espectador));
+                    break;
+            }
+            switch (lista.getUsuarios().get(3).getRol().toLowerCase()) {
+                case "administrador":
+                    viewHolder.imagenUsuario4.setColorFilter(ContextCompat.getColor(context, R.color.administrador));
+                    break;
+                case "participante":
+                    viewHolder.imagenUsuario4.setColorFilter(ContextCompat.getColor(context, R.color.participante));
+                    break;
+                case "espectador":
+                    viewHolder.imagenUsuario4.setColorFilter(ContextCompat.getColor(context, R.color.espectador));
+                    break;
+            }
         }
         if(lista.getNumeroUsuarios()>4){
             viewHolder.numeroPersonas.setText("y "+(lista.getNumeroUsuarios()-4)+" más");
@@ -128,12 +254,7 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
                 listener.onBorrarLista(lista);
             }
         });
-        viewHolder.compartir.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onCompartirLista(lista);
-            }
-        });
+
     }
 
     public ListaAdapter() {
@@ -156,6 +277,10 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
         LinearLayout usuario2;
         LinearLayout usuario3;
         LinearLayout usuario4;
+        ImageView imagenUsuario1;
+        ImageView imagenUsuario2;
+        ImageView imagenUsuario3;
+        ImageView imagenUsuario4;
         TextView nombreUsuario1;
         TextView nombreUsuario2;
         TextView nombreUsuario3;
@@ -174,6 +299,10 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
             usuario2=itemView.findViewById(R.id.usuario2);
             usuario3=itemView.findViewById(R.id.usuario3);
             usuario4=itemView.findViewById(R.id.usuario4);
+            imagenUsuario1=itemView.findViewById(R.id.imagen_usuario1);
+            imagenUsuario2=itemView.findViewById(R.id.imagen_usuario2);
+            imagenUsuario3=itemView.findViewById(R.id.imagen_usuario3);
+            imagenUsuario4=itemView.findViewById(R.id.imagen_usuario4);
             numeroPersonas=itemView.findViewById(R.id.numero_personas);
             nombreUsuario1=itemView.findViewById(R.id.nombre_usuario1);
             nombreUsuario2=itemView.findViewById(R.id.nombre_usuario2);

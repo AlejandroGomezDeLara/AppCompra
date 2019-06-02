@@ -104,8 +104,8 @@ public class Cambios {
         cambiosListas.add(idLista);
     }
 
-    public void addCambioUS(String nombre,String operacion,int idLista){
-        cambiosUsuarios.add(new CambiosUS(nombre,operacion,idLista));
+    public void addCambioUS(String nombre,String operacion,String rol,int idLista){
+        cambiosUsuarios.add(new CambiosUS(nombre,operacion,rol,idLista));
     }
 
     public boolean existenCambios(){
@@ -160,7 +160,7 @@ public class Cambios {
         //Procesar usuarios
         for (int i=0;i<cambiosUsuarios.size();i++){
             CambiosUS c=cambiosUsuarios.get(i);
-            json+="{nombre:"+c.getNombreUsuario()+",operacion:"+c.getOperacion()+",idLista:"+c.getIdLista();
+            json+="{nombre:"+c.getNombreUsuario()+",operacion:"+c.getOperacion()+",rol:"+c.getRol()+",idLista:"+c.getIdLista();
             if(i==cambiosUsuarios.size()-1){
                 json+="}";
             }else{
