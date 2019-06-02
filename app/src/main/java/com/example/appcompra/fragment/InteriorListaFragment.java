@@ -11,8 +11,10 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -27,11 +29,13 @@ import android.widget.TextView;
 import com.example.appcompra.MainActivity;
 import com.example.appcompra.R;
 import com.example.appcompra.adapters.DespensaAdapter;
+import com.example.appcompra.adapters.UsuariosAdapter;
 import com.example.appcompra.clases.Lista;
 import com.example.appcompra.clases.Producto;
 import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.Usuario;
 import com.example.appcompra.models.ProductosListaViewModel;
+import com.example.appcompra.utils.Cambios;
 import com.example.appcompra.utils.QueryUtils;
 
 import java.util.ArrayList;
@@ -44,6 +48,7 @@ public class InteriorListaFragment extends Fragment {
     protected RecyclerView recyclerView;
     protected ProgressBar loadingIndicator;
     protected DespensaAdapter adapter;
+    protected UsuariosAdapter usuariosAdapter;
     protected Usuario usuario;
     protected int idLista;
     protected int posLista;
@@ -51,7 +56,8 @@ public class InteriorListaFragment extends Fragment {
     protected Button addProducto;
     protected Button addProductoCentro;
     protected ProductosListaViewModel model;
-
+    protected RecyclerView usuariosRecyclerView;
+    protected Lista listaActual;
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Nullable
     @Override
@@ -82,19 +88,18 @@ public class InteriorListaFragment extends Fragment {
             }
         });
         String usuarios="";
-        Lista listaActual=null;
         for (int i=0;i<Singleton.getInstance().getListas().size();i++){
             if(Singleton.getInstance().getListas().get(i).getId()==idLista) {
                 listaActual = Singleton.getInstance().getListas().get(i);
             }
         }
         if(listaActual!=null){
-            ArrayList<String> usuariosLista=listaActual.getUsuarios();
-            for (int i=0;i<usuariosLista.size();i++) {
-                if(i==usuariosLista.size()-1){
-                   usuarios+=usuariosLista.get(i);
+            for (int i=0;i<listaActual.getUsuarios().size();i++) {
+                Usuario usuarioActual=listaActual.getUsuarios().get(i);
+                if(i==listaActual.getUsuarios().size()-1){
+                   usuarios+=usuarioActual.getNombre();
                 }else{
-                    usuarios+=usuariosLista.get(i)+", ";
+                    usuarios+=usuarioActual.getNombre()+", ";
                 }
             }
             ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(listaActual.getTitulo());
@@ -102,8 +107,10 @@ public class InteriorListaFragment extends Fragment {
 
 
 
-
         }
+        usuariosPopup();
+
+        adapter=new DespensaAdapter();
         updateEditTextFiltrar(view);
         return view;
     }
@@ -188,4 +195,26 @@ public class InteriorListaFragment extends Fragment {
         super.onPause();
     }
 
+    public void usuariosPopup(){
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.popup_usuarios, null);
+        AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
+        builder.setView(view);
+        final AlertDialog dialog=builder.create();
+        dialog.show();
+        dialog.getWindow().setBackgroundDrawableResource(R.color.backgroundColor);
+        usuariosRecyclerView=view.findViewById(R.id.recyclerView);
+        usuariosAdapter=new UsuariosAdapter(listaActual.getUsuarios(), getActivity(), R.layout.item_row_popup_usuarios, getContext(), new UsuariosAdapter.OnItemClickListener() {
+            @Override
+            public void onBorrarUsuario(Usuario u) {
+                listaActual.borrarUsuario(u);
+                Cambios.getInstance().addCambioUS(u.getNombre(),"delete",idLista);
+                usuariosRecyclerView.setAdapter(usuariosAdapter);
+                usuariosAdapter.notifyDataSetChanged();
+            }
+        });
+        usuariosRecyclerView.setHasFixedSize(true);
+        usuariosRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        usuariosRecyclerView.setAdapter(usuariosAdapter);
+        usuariosAdapter.notifyDataSetChanged();
+    }
 }

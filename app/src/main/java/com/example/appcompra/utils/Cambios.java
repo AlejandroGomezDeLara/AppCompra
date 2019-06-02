@@ -160,7 +160,7 @@ public class Cambios {
         //Procesar usuarios
         for (int i=0;i<cambiosUsuarios.size();i++){
             CambiosUS c=cambiosUsuarios.get(i);
-            json+="{id:"+c.getNombreUsuario()+",operacion:"+c.getOperacion()+",idLista:"+c.getIdLista();
+            json+="{nombre:"+c.getNombreUsuario()+",operacion:"+c.getOperacion()+",idLista:"+c.getIdLista();
             if(i==cambiosUsuarios.size()-1){
                 json+="}";
             }else{

@@ -157,6 +157,8 @@ public class ProductosFragment extends Fragment {
                     ((MainActivity)getActivity()).getViewPager().setCurrentItem(5);
             }
         });
+        adapter=new ProductoAdapter();
+        updateEditTextFiltrar(view);
         return view;
     }
     private void updateSpinnerCategorias(ArrayList<Categoria> c) {

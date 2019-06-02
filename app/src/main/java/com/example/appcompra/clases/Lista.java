@@ -8,9 +8,10 @@ public class Lista {
     private int id;
     private String titulo;
     private ArrayList<Producto> productos;
-    private ArrayList<String> usuarios;
+    private ArrayList<Usuario> usuarios;
+    private String rol;
 
-    public ArrayList<String> getUsuarios() {
+    public ArrayList<Usuario> getUsuarios() {
         return usuarios;
     }
 
@@ -18,7 +19,7 @@ public class Lista {
         this.productos = productos;
     }
 
-    public void setUsuarios(ArrayList<String> usuarios) {
+    public void setUsuarios(ArrayList<Usuario> usuarios) {
         this.usuarios = usuarios;
     }
 
@@ -26,15 +27,23 @@ public class Lista {
         return productos;
     }
 
-    public Lista(int id,String titulo) {
+    public Lista(int id,String titulo,String rol) {
         this.titulo = titulo;
         this.id=id;
+        this.rol=rol;
         usuarios=new ArrayList<>();
         productos=new ArrayList<>();
     }
 
+    public String getRol() {
+        return rol;
+    }
 
-    public void añadirUsuario(String u){
+    public void setRol(String rol) {
+        this.rol = rol;
+    }
+
+    public void añadirUsuario(Usuario u){
         usuarios.add(u);
     }
     public void añadirProducto(Producto p){
@@ -60,4 +69,9 @@ public class Lista {
         return usuarios.size();
     }
 
+
+    public void borrarUsuario(Usuario u) {
+        if(usuarios.contains(u))
+            usuarios.remove(u);
+    }
 }

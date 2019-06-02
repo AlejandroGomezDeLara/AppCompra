@@ -8,20 +8,29 @@ import java.net.Socket;
 public class Usuario implements Serializable {
     private Socket socket;
     private int id;
+    private String rol;
     private String email;
     private String nombre;
     private String urlImagenPerfil;
 
-    public Usuario(int id,String nombre,String email,String urlImagenPerfil) {
+    public String getRol() {
+        return rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
+    }
+
+    public Usuario(int id, String nombre, String email, String urlImagenPerfil) {
         this.id=id;
         this.nombre = nombre;
         this.email=email;
         this.urlImagenPerfil=urlImagenPerfil;
     }
 
-    public Usuario(String nombre,String urlImagenPerfil) {
+    public Usuario(String nombre,String rol) {
         this.nombre = nombre;
-        this.urlImagenPerfil=urlImagenPerfil;
+        this.rol=rol;
     }
 
     public Socket getSocket() {

@@ -32,6 +32,8 @@ public class DespensaAdapter extends RecyclerView.Adapter<DespensaAdapter.ViewHo
         this.context = context;
     }
 
+    public DespensaAdapter() {
+    }
 
     private Context getContext(){return context;}
     @NonNull

@@ -13,6 +13,18 @@ public class Singleton {
     private int posicionSpinnerCategorias;
     private int posicionSpinnerListas;
     private int idListaSeleccionada;
+    private ArrayList<String> roles;
+
+    public ArrayList<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(ArrayList<String> roles) {
+        this.roles = roles;
+    }
+    public void addRol(String rol){
+        roles.add(rol);
+    }
 
     public int getIdListaSeleccionada() {
         return idListaSeleccionada;
@@ -41,6 +53,11 @@ public class Singleton {
         posicionSpinnerCategorias =0;
         idListaSeleccionada=0;
         despensa=new ArrayList<>();
+        roles=new ArrayList<>();
+        roles.add("Ninguno");
+        roles.add("Administrador");
+        roles.add("Participante");
+        roles.add("Observador");
     }
 
     public static Singleton getInstance () {

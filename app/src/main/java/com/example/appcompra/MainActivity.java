@@ -373,7 +373,7 @@ public class MainActivity extends AppCompatActivity
                 Log.e("respuesta",entrada.split(Constants.SEPARATOR)[1]);
                 if(entrada.split(Constants.SEPARATOR)[0].equals(Constants.CREACION_NUEVA_LISTA_CORRECTA)){
                     json=entrada.split(Constants.SEPARATOR)[1];
-                    lista=new Lista(Integer.parseInt(entrada.split(Constants.SEPARATOR)[1]),nombreNuevaLista);
+                    lista=new Lista(Integer.parseInt(entrada.split(Constants.SEPARATOR)[1]),nombreNuevaLista,"Administrador");
                     Singleton.getInstance().añadirNuevaLista(lista);
                 }else{
                     listaCreada=false;
@@ -414,7 +414,7 @@ public class MainActivity extends AppCompatActivity
         protected Boolean doInBackground(Void... params) {
 
             String entrada=Constants.DUMMY_LISTA_ACEPTADA;
-            lista=new Lista(Integer.parseInt(entrada.split(Constants.SEPARATOR)[1]),nombreNuevaLista);
+            lista=new Lista(Integer.parseInt(entrada.split(Constants.SEPARATOR)[1]),nombreNuevaLista,"Administrador");
             Singleton.getInstance().añadirNuevaLista(lista);
             listaCreada=true;
             return listaCreada;
@@ -546,7 +546,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(final Boolean aceptada) {
             if(aceptada){
-                listaSeleccionada.añadirUsuario(usuario);
+                listaSeleccionada.añadirUsuario(new Usuario(usuario,rol));
             }else{
                 Toast.makeText(getBaseContext(), "No existe ese usuario", Toast.LENGTH_LONG).show();
             }
@@ -588,7 +588,7 @@ public class MainActivity extends AppCompatActivity
         protected void onPostExecute(final Boolean aceptada) {
             if(aceptada){
                 actualizarListas();
-                listaSeleccionada.añadirUsuario(usuario);
+                listaSeleccionada.añadirUsuario(new Usuario(usuario,rol));
             }else{
                 Toast.makeText(getBaseContext(), "No existe ese usuario", Toast.LENGTH_LONG).show();
             }

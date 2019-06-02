@@ -110,6 +110,8 @@ public class ListasFragment extends Fragment {
                 crearNuevaListaPopup();
             }
         });
+        adapter=new ListaAdapter();
+        updateEditTextFiltrar(view);
         return view;
     }
 
@@ -247,13 +249,8 @@ public class ListasFragment extends Fragment {
         AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
         final AutoCompleteTextView editText=view.findViewById(R.id.editText);
         final Spinner spinnerRoles=view.findViewById(R.id.spinnerRoles);
-        List<String> valoresSpinner=new ArrayList<>();
-        valoresSpinner.add("Ninguno");
-        valoresSpinner.add("Administrador");
-        valoresSpinner.add("Participante");
-        valoresSpinner.add("Espectador");
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                getContext(),R.layout.spinner_item,valoresSpinner
+                getContext(),R.layout.spinner_item,Singleton.getInstance().getRoles()
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerRoles.setAdapter(adapter);
@@ -419,7 +416,7 @@ public class ListasFragment extends Fragment {
                 Log.e("respuesta",entrada.split(Constants.SEPARATOR)[1]);
                 if(entrada.split(Constants.SEPARATOR)[0].equals(Constants.CREACION_NUEVA_LISTA_CORRECTA)){
                     json=entrada.split(Constants.SEPARATOR)[1];
-                    lista=new Lista(Integer.parseInt(entrada.split(Constants.SEPARATOR)[1]),nombreNuevaLista);
+                    lista=new Lista(Integer.parseInt(entrada.split(Constants.SEPARATOR)[1]),nombreNuevaLista,"Administrador");
                     Singleton.getInstance().añadirNuevaLista(lista);
                 }else{
                     listaCreada=false;
@@ -460,7 +457,7 @@ public class ListasFragment extends Fragment {
         protected Boolean doInBackground(Void... params) {
 
                 String entrada=Constants.DUMMY_LISTA_ACEPTADA;
-                lista=new Lista(Integer.parseInt(entrada.split(Constants.SEPARATOR)[1]),nombreNuevaLista);
+                lista=new Lista(Integer.parseInt(entrada.split(Constants.SEPARATOR)[1]),nombreNuevaLista,"Administrador");
                 Singleton.getInstance().añadirNuevaLista(lista);
                 listaCreada=true;
                 return listaCreada;
@@ -535,6 +532,7 @@ public class ListasFragment extends Fragment {
         protected Boolean doInBackground(Void... params) {
             Singleton.getInstance().borrarLista(listaSeleccionada);
             Cambios.getInstance().addCambioLS(listaSeleccionada.getId());
+            peticion=true;
             return peticion;
         }
 
@@ -591,7 +589,7 @@ public class ListasFragment extends Fragment {
             @Override
         protected void onPostExecute(final Boolean aceptada) {
             if(aceptada){
-                listaSeleccionada.añadirUsuario(usuario);
+                listaSeleccionada.añadirUsuario(new Usuario(usuario,rol));
             }else{
                 Toast.makeText(getContext(), "No se ha podido compartir la lista", Toast.LENGTH_LONG).show();
             }
@@ -632,7 +630,7 @@ public class ListasFragment extends Fragment {
         @Override
         protected void onPostExecute(final Boolean aceptada) {
             if(aceptada){
-                listaSeleccionada.añadirUsuario(usuario);
+                listaSeleccionada.añadirUsuario(new Usuario(usuario,rol));
                 ((MainActivity)getActivity()).actualizarListas();
             }else{
                 Toast.makeText(getContext(), "No existe ese usuario", Toast.LENGTH_LONG).show();

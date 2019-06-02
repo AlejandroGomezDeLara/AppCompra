@@ -96,28 +96,27 @@ public class QueryUtils {
     public static ArrayList<Lista> listasJson(String json) {
         int id;
         String nombre;
+        String rol;
         ArrayList<Lista> listas=new ArrayList<>();
-        ArrayList<String> usuariosLista;
         try{
             JSONObject raiz=new JSONObject(json);
             JSONArray data=raiz.getJSONArray("listas");
             JSONObject listaActual;
             for (int i=0;i<data.length();i++){
-                usuariosLista=new ArrayList<>();
                 listaActual=data.getJSONObject(i);
                 id=listaActual.getInt("id");
                 nombre=listaActual.getString("nombre");
-                if(listaActual.getString("usuarios")!=null){
-                    String usuarios=listaActual.getString("usuarios");
-                    if(!usuarios.isEmpty()){
-                        for (int j=0;j<usuarios.split(",").length;j++){
-                            usuariosLista.add(usuarios.split(",")[j]);
-                        }
-                    }
+                JSONArray usuariosLista=listaActual.getJSONArray("usuarios");
+                rol=listaActual.getString("rol");
+                ArrayList<Usuario> usuarios=new ArrayList<>();
+                for (int j=0;j<usuariosLista.length();j++){
+                    JSONObject usuarioActual=usuariosLista.getJSONObject(j);
+                    Usuario usuario=new Usuario(usuarioActual.getString("nombre"),usuarioActual.getString("rol"));
+                    usuarios.add(usuario);
                 }
-                Lista c=new Lista(id,nombre);
-                if(!usuariosLista.isEmpty())
-                    c.setUsuarios(usuariosLista);
+                Lista c=new Lista(id,nombre,rol);
+                if(!usuarios.isEmpty())
+                    c.setUsuarios(usuarios);
                 listas.add(c);
             }
 

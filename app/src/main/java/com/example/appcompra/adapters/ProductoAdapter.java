@@ -37,6 +37,8 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
         this.context = context;
     }
 
+    public ProductoAdapter() {
+    }
 
     private Context getContext(){return context;}
     @NonNull

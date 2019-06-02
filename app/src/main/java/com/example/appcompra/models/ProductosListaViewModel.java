@@ -33,15 +33,18 @@ public class ProductosListaViewModel extends AndroidViewModel {
     public ProductosListaViewModel(@NonNull Application application) {
         super(application);
         this.application=application;
+        productos=new MutableLiveData<>();
     }
 
     public LiveData<ArrayList<Producto>> getProductosLista(int idLista){
         if(productos==null){
-            productos=new MutableLiveData<>();
             pedirProductos(idLista);
+        }else{
+            if(!Singleton.getInstance().getProductosLista().containsKey(idLista))
+                pedirProductos(idLista);
         }
-        if(!Singleton.getInstance().getProductosLista().containsKey(idLista))
-            pedirProductos(idLista);
+
+
         return productos;
     }
 
@@ -86,6 +89,7 @@ public class ProductosListaViewModel extends AndroidViewModel {
         @Override
         protected void onPostExecute(final ArrayList<Producto> p) {
             productos.setValue(p);
+            Singleton.getInstance().getProductosLista().put(idLista,p);
         }
 
         @Override
@@ -118,6 +122,7 @@ public class ProductosListaViewModel extends AndroidViewModel {
         @Override
         protected void onPostExecute(final ArrayList<Producto> p) {
             productos.setValue(p);
+            Singleton.getInstance().getProductosLista().put(idLista,p);
         }
 
         @Override
