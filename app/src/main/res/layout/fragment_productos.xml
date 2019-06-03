@@ -80,10 +80,30 @@
                 android:layout_alignParentRight="true"
                 android:background="@android:color/white"
                 >
+                <TextView
+                    android:id="@+id/textoCantidad"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorProducto"
+                    android:layout_centerVertical="true"
+                    android:layout_marginHorizontal="8dp"
+                    android:textSize="16dp"
+                    android:text="Cantidad"/>
+                <EditText
+                    android:layout_centerVertical="true"
+                    android:id="@+id/editTextCantidad"
+                    android:layout_toRightOf="@id/textoCantidad"
+                    android:layout_width="48dp"
+                    android:backgroundTint="@color/colorProducto"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:text="1"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorProducto"/>
                 <Spinner
+                    android:layout_toRightOf="@+id/editTextCantidad"
                     android:id="@+id/listasSpinner"
-                    android:layout_width="258dp"
-                    android:layout_marginHorizontal="28dp"
+                    android:layout_width="180dp"
                     android:background="@drawable/spinner_background"
                     android:layout_centerVertical="true"
                     android:layout_height="wrap_content"
@@ -91,10 +111,11 @@
                 </Spinner>
                 <Button
                     android:id="@+id/añadir_boton"
-                    android:layout_toRightOf="@+id/listasSpinner"
                     android:layout_width="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_height="38dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="8dp"
                     android:background="@drawable/shape_naranja"
                     android:text="añadir"/>
             </RelativeLayout>

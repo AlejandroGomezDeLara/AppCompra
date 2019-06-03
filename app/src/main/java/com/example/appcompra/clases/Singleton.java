@@ -98,7 +98,7 @@ public class Singleton {
                 ProductoLista pro=productosLista.get(idLista).get(i);
                 for (int j=0;j<p.size();j++){
                     if(pro.getId()==p.get(j).getId()){
-                        pro.sumarUnidades();
+                        pro.sumarUnidades(p.get(j).getUnidades());
                         p.remove(p.get(j));
                     }
                 }

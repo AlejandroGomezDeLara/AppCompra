@@ -75,6 +75,7 @@ public class ProductosFragment extends Fragment {
     protected Button addProductoListaButton;
     protected Spinner listasSpinner;
     protected ArrayList<Integer> idListas;
+    protected EditText cantidadEditText;
 
     @Nullable
     @Override
@@ -86,6 +87,7 @@ public class ProductosFragment extends Fragment {
         listasSpinner=view.findViewById(R.id.listasSpinner);
         categoriasSpinner=view.findViewById(R.id.spinner_categorias);
         recyclerView=view.findViewById(R.id.recyclerView);
+        cantidadEditText=view.findViewById(R.id.editTextCantidad);
         usuario=QueryUtils.getUsuario();
         productos=new ArrayList<>();
         categorias=new ArrayList<>();
@@ -148,7 +150,8 @@ public class ProductosFragment extends Fragment {
                 }
                 for (int i=0;i<productosSeleccionados.size();i++){
                     ProductoLista p=productosSeleccionados.get(i);
-                    Cambios.getInstance().addCambioTP(p.getId(),"add",Singleton.getInstance().getIdListaSeleccionada());
+                    p.setUnidades(Integer.parseInt(cantidadEditText.getText().toString()));
+                    Cambios.getInstance().addCambioTP(p.getId(),"add",Singleton.getInstance().getIdListaSeleccionada(),p.getUnidades());
                 }
                 Singleton.getInstance().añadirProductosLista(Singleton.getInstance().getIdListaSeleccionada(),productosSeleccionados);
                 if(Singleton.getInstance().getIdListaSeleccionada()==0)

@@ -93,11 +93,11 @@ public class Cambios {
         cambiosUsuarios = cambiosUsuarios;
     }
 
-    public void addCambioTP(int idProducto,String operacion,int idLista){
-        cambiosTipos.add(new CambiosTP(idProducto,operacion,idLista));
+    public void addCambioTP(int idProducto,String operacion,int idLista,int unidades){
+        cambiosTipos.add(new CambiosTP(idProducto,operacion,idLista,unidades));
     }
-    public void addCambioPC(int idProducto,String operacion,int idLista){
-        cambiosComerciales.add(new CambiosPC(idProducto,operacion,idLista));
+    public void addCambioPC(int idProducto,String operacion,int idLista,int unidades){
+        cambiosComerciales.add(new CambiosPC(idProducto,operacion,idLista,unidades));
     }
 
     public void addCambioLS(int idLista){
@@ -128,7 +128,7 @@ public class Cambios {
         //ProcesarTipos de productos
         for (int i=0;i<cambiosTipos.size();i++){
             CambiosTP c=cambiosTipos.get(i);
-            json+="{id:"+c.getIdProducto()+",operacion:"+c.getOperacion()+",idLista:"+c.getIdLista();
+            json+="{id:"+c.getIdProducto()+",operacion:"+c.getOperacion()+",idLista:"+c.getIdLista()+",unidades:"+c.getUnidades();
             if(i==cambiosTipos.size()-1){
                 json+="}";
             }else{
@@ -139,7 +139,7 @@ public class Cambios {
         //Procesar Comerciales
         for (int i=0;i<cambiosComerciales.size();i++){
             CambiosPC c=cambiosComerciales.get(i);
-            json+="{id:"+c.getIdProducto()+",operacion:"+c.getOperacion()+",idLista:"+c.getIdLista();
+            json+="{id:"+c.getIdProducto()+",operacion:"+c.getOperacion()+",idLista:"+c.getIdLista()+",unidades:"+c.getUnidades();
             if(i==cambiosComerciales.size()-1){
                 json+="}";
             }else{

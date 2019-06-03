@@ -4,11 +4,21 @@ public class CambiosPC {
     private int idProducto;
     private String operacion;
     private int idLista;
+    private int unidades;
 
-    public CambiosPC(int idProducto, String operacion, int idLista) {
+    public CambiosPC(int idProducto, String operacion, int idLista, int unidades) {
         this.idProducto = idProducto;
         this.operacion = operacion;
         this.idLista = idLista;
+        this.unidades=unidades;
+    }
+
+    public int getUnidades() {
+        return unidades;
+    }
+
+    public void setUnidades(int unidades) {
+        this.unidades = unidades;
     }
 
     public int getIdProducto() {

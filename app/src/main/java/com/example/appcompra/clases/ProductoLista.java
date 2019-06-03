@@ -66,7 +66,8 @@ public class ProductoLista extends Producto {
         this.comprado = comprado;
     }
 
-    public void sumarUnidades() {
-        this.unidades+=1;
+    public void sumarUnidades(int u) {
+        this.unidades+=u;
     }
+
 }

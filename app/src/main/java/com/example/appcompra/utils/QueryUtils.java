@@ -170,6 +170,7 @@ public class QueryUtils {
                 urlImagen=productoActual.getString("urlimagen");
                 marca=productoActual.getString("marca");
                 ProductoLista p=new ProductoLista(id,nombre,unidades,receta,cadena,comprado,urlImagen,marca,cantidad);
+
                 productos.add(p);
             }
 
