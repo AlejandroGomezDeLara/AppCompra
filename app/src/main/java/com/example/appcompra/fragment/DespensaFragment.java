@@ -38,7 +38,7 @@ import static android.content.Context.CONNECTIVITY_SERVICE;
 
 public class DespensaFragment extends Fragment {
 
-    protected ArrayList<Producto> productos;
+    protected ArrayList<ProductoLista> productos;
     protected RecyclerView recyclerView;
     protected DespensaAdapter adapter;
     protected DespensaViewModel model;
@@ -117,7 +117,7 @@ public class DespensaFragment extends Fragment {
         }*/
     }
 
-    private void updateUI(ArrayList<Producto> m){
+    private void updateUI(ArrayList<ProductoLista> m){
         /*productos.clear();
         productos.addAll(m);
         */

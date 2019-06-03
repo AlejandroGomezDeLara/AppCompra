@@ -20,12 +20,12 @@ import java.util.List;
 
 
 public class DespensaAdapter extends RecyclerView.Adapter<DespensaAdapter.ViewHolder> {
-    private List<Producto> productos;
+    private List<ProductoLista> productos;
     private Activity activity;
     private int layout;
     private Context context;
 
-    public DespensaAdapter(List<Producto> productos, Activity activity, int layout, Context context) {
+    public DespensaAdapter(List<ProductoLista> productos, Activity activity, int layout, Context context) {
         this.productos = productos;
         this.activity = activity;
         this.layout = layout;
@@ -63,7 +63,7 @@ public class DespensaAdapter extends RecyclerView.Adapter<DespensaAdapter.ViewHo
     public int getItemCount() {
         return productos.size();
     }
-    public void filtrarLista(ArrayList<Producto> listaFiltrada){
+    public void filtrarLista(ArrayList<ProductoLista> listaFiltrada){
         productos=listaFiltrada;
         notifyDataSetChanged();
     }

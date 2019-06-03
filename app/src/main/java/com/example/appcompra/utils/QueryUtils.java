@@ -127,7 +127,7 @@ public class QueryUtils {
         return listas;
     }
 
-    public static ArrayList<Producto> productosLista(String json){
+    public static ArrayList<ProductoLista> productosLista(String json){
         int id;
         String nombre;
         String urlImagen;
@@ -137,7 +137,7 @@ public class QueryUtils {
         String cantidad;
         int unidades;
         boolean comprado;
-        ArrayList<Producto> productos =new ArrayList<>();
+        ArrayList<ProductoLista> productos =new ArrayList<>();
 
         try{
             JSONObject raiz=new JSONObject(json);

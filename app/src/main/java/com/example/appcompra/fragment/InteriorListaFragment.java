@@ -35,6 +35,7 @@ import com.example.appcompra.adapters.DespensaAdapter;
 import com.example.appcompra.adapters.UsuariosAdapter;
 import com.example.appcompra.clases.Lista;
 import com.example.appcompra.clases.Producto;
+import com.example.appcompra.clases.ProductoLista;
 import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.Usuario;
 import com.example.appcompra.models.ProductosListaViewModel;
@@ -47,7 +48,7 @@ import static android.content.Context.CONNECTIVITY_SERVICE;
 
 public class InteriorListaFragment extends Fragment {
 
-    protected ArrayList<Producto> productos;
+    protected ArrayList<ProductoLista> productos;
     protected RecyclerView recyclerView;
     protected ProgressBar loadingIndicator;
     protected DespensaAdapter adapter;
@@ -153,8 +154,8 @@ public class InteriorListaFragment extends Fragment {
     }
 
     private void filtrar(String contenidoEditText) {
-        ArrayList<Producto> lista = new ArrayList<>();
-        for (Producto item : productos) {
+        ArrayList<ProductoLista> lista = new ArrayList<>();
+        for (ProductoLista item : productos) {
             if (item.getNombre().toLowerCase().contains(contenidoEditText.toLowerCase())) {
                 lista.add(item);
             }
@@ -162,15 +163,11 @@ public class InteriorListaFragment extends Fragment {
         adapter.filtrarLista(lista);
     }
 
-    private void updateUI(ArrayList<Producto> m) {
+    private void updateUI(ArrayList<ProductoLista> m) {
         /*productos.clear();
         productos.addAll(m);
         */
-        String nombres="";
-        for (int i=0;i<m.size();i++){
-            nombres+=m.get(i).getNombre()+",";
-        }
-        Log.e("actualizado nombres:",nombres);
+
         adapter = new DespensaAdapter(m, getActivity(), R.layout.item_row_despensa, getActivity());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
@@ -191,9 +188,9 @@ public class InteriorListaFragment extends Fragment {
         boolean isConnected=info!=null && info.isConnected();
 
         if(isConnected) {
-            model.getProductosLista(idLista).observe(getActivity(), new Observer<ArrayList<Producto>>() {
+            model.getProductosLista(idLista).observe(getActivity(), new Observer<ArrayList<ProductoLista>>() {
                 @Override
-                public void onChanged(@Nullable ArrayList<Producto> p) {
+                public void onChanged(@Nullable ArrayList<ProductoLista> p) {
                     if(p!=null){
                         updateUI(p);
                     }else{

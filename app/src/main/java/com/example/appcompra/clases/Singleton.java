@@ -2,13 +2,14 @@ package com.example.appcompra.clases;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.TreeMap;
 
 public class Singleton {
 
     private ArrayList<Categoria> categorias;
     private TreeMap<Integer,ArrayList<Producto>> ultimosProductos;
-    private TreeMap<Integer,ArrayList<Producto>> productosLista;
+    private TreeMap<Integer,ArrayList<ProductoLista>> productosLista;
     private ArrayList<Producto> despensa;
     private int posicionSpinnerCategorias;
     private int posicionSpinnerListas;
@@ -34,6 +35,13 @@ public class Singleton {
         this.idListaSeleccionada = idListaSeleccionada;
     }
 
+    public void deseleccionarProductos(){
+        for (Map.Entry<Integer, ArrayList<Producto>> entry : ultimosProductos.entrySet()) {
+            for (Producto p: entry.getValue()) {
+                p.setSeleccionado(false);
+            }
+        }
+    }
     public int getPosicionSpinnerListas() {
         return posicionSpinnerListas;
     }
@@ -67,11 +75,11 @@ public class Singleton {
         return instance;
     }
 
-    public TreeMap<Integer, ArrayList<Producto>> getProductosLista() {
+    public TreeMap<Integer, ArrayList<ProductoLista>> getProductosLista() {
         return productosLista;
     }
 
-    public void setProductosLista(TreeMap<Integer, ArrayList<Producto>> productosLista) {
+    public void setProductosLista(TreeMap<Integer, ArrayList<ProductoLista>> productosLista) {
         this.productosLista = productosLista;
     }
 
@@ -85,7 +93,17 @@ public class Singleton {
 
     public void añadirProductosLista(int idLista, LinkedList<ProductoLista> p){
         if(productosLista.containsKey(idLista)){
-            productosLista.get(idLista).addAll(p);
+            ArrayList<ProductoLista> productos=productosLista.get(idLista);
+            for (int i=0;i<productosLista.get(idLista).size();i++){
+                ProductoLista pro=productosLista.get(idLista).get(i);
+                for (int j=0;j<p.size();j++){
+                    if(pro.getId()==p.get(j).getId()){
+                        pro.sumarUnidades();
+                        p.remove(p.get(j));
+                    }
+                }
+            }
+            productos.addAll(p);
         }
     }
 

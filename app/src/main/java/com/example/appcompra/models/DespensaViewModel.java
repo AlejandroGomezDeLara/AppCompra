@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.example.appcompra.Constants;
 import com.example.appcompra.clases.Producto;
+import com.example.appcompra.clases.ProductoLista;
 import com.example.appcompra.utils.QueryUtils;
 
 import java.io.BufferedReader;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 import java.util.TreeMap;
 
 public class DespensaViewModel extends AndroidViewModel {
-    private MutableLiveData<ArrayList<Producto>> productos;
+    private MutableLiveData<ArrayList<ProductoLista>> productos;
     private Application application;
     protected PeticionProductosTask peticionProductosTask=null;
 
@@ -33,7 +34,7 @@ public class DespensaViewModel extends AndroidViewModel {
         this.application=application;
     }
 
-    public LiveData<ArrayList<Producto>> getProductosDespensa(){
+    public LiveData<ArrayList<ProductoLista>> getProductosDespensa(){
         if(productos==null){
             productos=new MutableLiveData<>();
             pedirProductos();
@@ -42,21 +43,21 @@ public class DespensaViewModel extends AndroidViewModel {
         return productos;
     }
 
-    public void setProductosDespensa(MutableLiveData<ArrayList<Producto>> productos) {
+    public void setProductosDespensa(MutableLiveData<ArrayList<ProductoLista>> productos) {
         this.productos = productos;
     }
 
-    public class PeticionProductosTask extends AsyncTask<Void, Void, ArrayList<Producto>> {
+    public class PeticionProductosTask extends AsyncTask<Void, Void, ArrayList<ProductoLista>> {
         private Socket socket;
         private BufferedReader in;
         private PrintWriter out;
         private String json;
-        private ArrayList<Producto> p=new ArrayList<>();
+        private ArrayList<ProductoLista> p=new ArrayList<>();
 
         PeticionProductosTask() {
         }
         @Override
-        protected ArrayList<Producto> doInBackground(Void... params) {
+        protected ArrayList<ProductoLista> doInBackground(Void... params) {
             socket=QueryUtils.getSocket();
             try {
                 in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -78,7 +79,7 @@ public class DespensaViewModel extends AndroidViewModel {
         }
 
         @Override
-        protected void onPostExecute(final ArrayList<Producto> p) {
+        protected void onPostExecute(final ArrayList<ProductoLista> p) {
             productos.setValue(p);
         }
 

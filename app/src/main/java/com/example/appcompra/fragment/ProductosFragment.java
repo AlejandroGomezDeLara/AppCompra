@@ -143,7 +143,7 @@ public class ProductosFragment extends Fragment {
                 for (Map.Entry<Integer, ArrayList<Producto>> entry : Singleton.getInstance().getUltimosProductos().entrySet()) {
                     for (Producto p: entry.getValue()) {
                         if(p.isSeleccionado())
-                            productosSeleccionados.add(new ProductoLista(p.getId(),p.getNombre(),0,null,null,false,p.getUrl(),null,null));
+                            productosSeleccionados.add(new ProductoLista(p.getId(),p.getNombre(),1,null,null,false,p.getUrl(),null,null));
                     }
                 }
                 for (int i=0;i<productosSeleccionados.size();i++){
@@ -155,6 +155,8 @@ public class ProductosFragment extends Fragment {
                     ((MainActivity)getActivity()).getViewPager().setCurrentItem(0);
                 else
                     ((MainActivity)getActivity()).getViewPager().setCurrentItem(5);
+                Singleton.getInstance().deseleccionarProductos();
+
             }
         });
         adapter=new ProductoAdapter();
@@ -194,7 +196,8 @@ public class ProductosFragment extends Fragment {
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         listasSpinner.setAdapter(adapter);
-        listasSpinner.setSelection(Singleton.getInstance().getPosicionSpinnerListas());
+        if(valoresSpinner.size()>Singleton.getInstance().getPosicionSpinnerListas())
+            listasSpinner.setSelection(Singleton.getInstance().getPosicionSpinnerListas());
     }
     private void updateUI(ArrayList<Producto> m){
         /*productos.clear();

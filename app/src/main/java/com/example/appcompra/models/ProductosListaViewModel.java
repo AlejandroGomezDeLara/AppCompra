@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.example.appcompra.Constants;
 import com.example.appcompra.clases.Producto;
+import com.example.appcompra.clases.ProductoLista;
 import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.utils.QueryUtils;
 
@@ -24,7 +25,7 @@ import java.util.ArrayList;
 import java.util.TreeMap;
 
 public class ProductosListaViewModel extends AndroidViewModel {
-    private MutableLiveData<ArrayList<Producto>> productos;
+    private MutableLiveData<ArrayList<ProductoLista>> productos;
     private Application application;
     protected PeticionProductosTask peticionProductosTask=null;
     protected PeticionProductosTaskTest peticionProductosTaskTest=null;
@@ -36,7 +37,7 @@ public class ProductosListaViewModel extends AndroidViewModel {
         productos=new MutableLiveData<>();
     }
 
-    public LiveData<ArrayList<Producto>> getProductosLista(int idLista){
+    public LiveData<ArrayList<ProductoLista>> getProductosLista(int idLista){
         if(productos==null){
             pedirProductos(idLista);
         }else{
@@ -51,24 +52,24 @@ public class ProductosListaViewModel extends AndroidViewModel {
         return productos;
     }
 
-    public void setProductosLista(MutableLiveData<ArrayList<Producto>> productos) {
+    public void setProductosLista(MutableLiveData<ArrayList<ProductoLista>> productos) {
         this.productos = productos;
     }
 
-    public class PeticionProductosTask extends AsyncTask<Void, Void, ArrayList<Producto>> {
+    public class PeticionProductosTask extends AsyncTask<Void, Void, ArrayList<ProductoLista>> {
         private Socket socket;
         private BufferedReader in;
         private PrintWriter out;
         private String json;
         private int idLista;
-        private ArrayList<Producto> p=new ArrayList<>();
+        private ArrayList<ProductoLista> p=new ArrayList<>();
 
         PeticionProductosTask(int idLista) {
             this.idLista=idLista;
         }
 
         @Override
-        protected ArrayList<Producto> doInBackground(Void... params) {
+        protected ArrayList<ProductoLista> doInBackground(Void... params) {
             socket=QueryUtils.getSocket();
             try {
                 in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -90,7 +91,7 @@ public class ProductosListaViewModel extends AndroidViewModel {
         }
 
         @Override
-        protected void onPostExecute(final ArrayList<Producto> p) {
+        protected void onPostExecute(final ArrayList<ProductoLista> p) {
             Singleton.getInstance().getProductosLista().put(idLista,p);
             productos.setValue(p);
 
@@ -100,18 +101,18 @@ public class ProductosListaViewModel extends AndroidViewModel {
         protected void onCancelled() {
         }
     }
-    public class PeticionProductosTaskTest extends AsyncTask<Void, Void, ArrayList<Producto>> {
+    public class PeticionProductosTaskTest extends AsyncTask<Void, Void, ArrayList<ProductoLista>> {
 
         private String json;
         private int idLista;
-        private ArrayList<Producto> p=new ArrayList<>();
+        private ArrayList<ProductoLista> p=new ArrayList<>();
 
         PeticionProductosTaskTest(int idLista) {
             this.idLista=idLista;
         }
 
         @Override
-        protected ArrayList<Producto> doInBackground(Void... params) {
+        protected ArrayList<ProductoLista> doInBackground(Void... params) {
             if(idLista==1){
                 json=Constants.DUMMY_PRODUCTO_LISTA_1;
             }else{
@@ -124,7 +125,7 @@ public class ProductosListaViewModel extends AndroidViewModel {
         }
 
         @Override
-        protected void onPostExecute(final ArrayList<Producto> p) {
+        protected void onPostExecute(final ArrayList<ProductoLista> p) {
             productos.setValue(p);
             Singleton.getInstance().getProductosLista().put(idLista,p);
         }
