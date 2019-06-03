@@ -25,6 +25,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,6 +58,8 @@ public class MainActivity extends AppCompatActivity
     Usuario usuario;
     Button botonNueva;
     String nombreNuevaLista;
+    Toolbar toolbar;
+    TextView titulo;
     PeticionNuevaListaTask nuevaListaTask;
     PeticionNuevaListaTaskTest nuevaListaTaskTest;
     BorrarListaTask borrarListaTask=null;
@@ -72,7 +75,9 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         recyclerView=findViewById(R.id.recyclerView);
         botonNueva=findViewById(R.id.boton_nueva_lista);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        titulo=toolbar.findViewById(R.id.title);
+        toolbar.setTitle("");
         setSupportActionBar(toolbar);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -136,29 +141,34 @@ public class MainActivity extends AppCompatActivity
                     switch (menuItem.getItemId()) {
                         case R.id.menu_despensa:
                             viewPager.setCurrentItem(0);
-                            getSupportActionBar().setTitle("Despensa");
-
+                            titulo.setText("Despensa");
                             break;
                         case R.id.menu_listas:
                             viewPager.setCurrentItem(1);
-                            getSupportActionBar().setTitle("Listas");
-
+                            titulo.setText("Listas");
                             break;
                         case R.id.menu_home:
                             viewPager.setCurrentItem(2);
-                            getSupportActionBar().setTitle("Inicio");
-
+                            titulo.setText("Inicio");
                             break;
                         case R.id.menu_productos:
                             viewPager.setCurrentItem(3);
-                            getSupportActionBar().setTitle("Productos");
+                            titulo.setText("Productos");
                             break;
                         case R.id.menu_recetas:
                             viewPager.setCurrentItem(4);
-                            getSupportActionBar().setTitle("Recetas");
+                            titulo.setText("Recetas");
                             break;
                     }
-                    getSupportActionBar().setSubtitle("");
+                    TextView subtitle=toolbar.findViewById(R.id.subtitle);
+                    subtitle.setVisibility(View.GONE);
+                    LinearLayout linearToolbar=toolbar.findViewById(R.id.linearToolbar);
+                    linearToolbar.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                        }
+                    });
                     return false;
                 }
             };

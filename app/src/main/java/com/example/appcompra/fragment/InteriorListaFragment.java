@@ -10,19 +10,21 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -102,18 +104,29 @@ public class InteriorListaFragment extends Fragment {
                     usuarios+=usuarioActual.getNombre()+", ";
                 }
             }
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(listaActual.getTitulo());
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(usuarios);
+            Toolbar toolbar= (Toolbar)((AppCompatActivity) getActivity()).findViewById(R.id.toolbar);
+            TextView titulo=toolbar.findViewById(R.id.title);
+            TextView subtitle=toolbar.findViewById(R.id.subtitle);
+            subtitle.setText(usuarios);
+            subtitle.setVisibility(View.VISIBLE);
+            titulo.setText(listaActual.getTitulo());
+            LinearLayout linearToolbar=toolbar.findViewById(R.id.linearToolbar);
+            linearToolbar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    usuariosPopup();
+                }
+            });
 
 
 
         }
-        usuariosPopup();
-
         adapter=new DespensaAdapter();
         updateEditTextFiltrar(view);
         return view;
     }
+
+
     public void intentProductos(){
         Singleton.getInstance().setPosicionSpinnerListas(Singleton.getInstance().getPosicionSpinnerListas());
         ((MainActivity)getActivity()).getViewPager().setCurrentItem(3);
