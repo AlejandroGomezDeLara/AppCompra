@@ -18,6 +18,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -165,6 +166,11 @@ public class InteriorListaFragment extends Fragment {
         /*productos.clear();
         productos.addAll(m);
         */
+        String nombres="";
+        for (int i=0;i<m.size();i++){
+            nombres+=m.get(i).getNombre()+",";
+        }
+        Log.e("actualizado nombres:",nombres);
         adapter = new DespensaAdapter(m, getActivity(), R.layout.item_row_despensa, getActivity());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));

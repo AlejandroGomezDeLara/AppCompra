@@ -4,7 +4,7 @@
         <item name="colorPrimary">@android:color/white</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/navMenuBackgroundColor</item>
-        <item name="android:windowBackground">@color/backgroundColor</item>
+        <item name="android:windowBackground">@color/backgroundProducto</item>
         <item name="android:windowAnimationStyle">@android:anim/fade_in</item>
     </style>
 

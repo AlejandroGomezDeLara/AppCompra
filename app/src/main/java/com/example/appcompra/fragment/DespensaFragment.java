@@ -77,7 +77,6 @@ public class DespensaFragment extends Fragment {
 
         rellenarProductos();
         updateUI(productos);
-        //updateEditTextFiltrar(view);
         return view;
     }
     public void intentProductos(){
@@ -88,26 +87,10 @@ public class DespensaFragment extends Fragment {
         productos.add(new ProductoLista(2,"Hamburguesa",2,null,null,false,"https://image.flaticon.com/icons/png/512/93/93104.png",null,null));
         productos.add(new ProductoLista(4,"Pepinos",3,null,null,false,"https://image.flaticon.com/icons/png/512/93/93104.png",null,"200g"));
         productos.add(new ProductoLista(3,"Hamburguesa",4,null,"mercadona",false,"https://image.flaticon.com/icons/png/512/93/93104.png","Gula del norte","400g"));
+        productos.add(new ProductoLista(9,"Huevo",1,null,"mercadona",false,"https://image.flaticon.com/icons/png/512/93/93104.png","Gula del norte","400g"));
+
     }
-    private void updateEditTextFiltrar(View view){
-        EditText editText=view.findViewById(R.id.editText);
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                filtrar(s.toString());
-            }
-        });
-    }
 
     public void onResume() {
         super.onResume();
@@ -134,15 +117,6 @@ public class DespensaFragment extends Fragment {
         }*/
     }
 
-    private void filtrar(String contenidoEditText){
-        ArrayList<Producto> lista=new ArrayList<>();
-        for (Producto item:productos){
-            if(item.getNombre().toLowerCase().contains(contenidoEditText.toLowerCase())){
-                lista.add(item);
-            }
-        }
-        adapter.filtrarLista(lista);
-    }
     private void updateUI(ArrayList<Producto> m){
         /*productos.clear();
         productos.addAll(m);

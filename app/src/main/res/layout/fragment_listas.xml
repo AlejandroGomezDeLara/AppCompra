@@ -7,20 +7,6 @@
     tools:context=".MainActivity"
     android:orientation="vertical">
 
-    <AutoCompleteTextView
-        android:id="@+id/editText"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="5dp"
-        android:background="@drawable/edit_text_background"
-        android:drawableLeft="@drawable/ic_search_black_24dp"
-        android:drawablePadding="5dp"
-        android:drawableTint="@color/colorProducto"
-        android:hint="Buscar Listas"
-        android:padding="10dp"
-        android:layout_marginHorizontal="10dp"
-        />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -42,6 +42,9 @@ public class ProductosListaViewModel extends AndroidViewModel {
         }else{
             if(!Singleton.getInstance().getProductosLista().containsKey(idLista))
                 pedirProductos(idLista);
+            else{
+                productos.setValue(Singleton.getInstance().getProductosLista().get(idLista));
+            }
         }
 
 
@@ -88,8 +91,9 @@ public class ProductosListaViewModel extends AndroidViewModel {
 
         @Override
         protected void onPostExecute(final ArrayList<Producto> p) {
-            productos.setValue(p);
             Singleton.getInstance().getProductosLista().put(idLista,p);
+            productos.setValue(p);
+
         }
 
         @Override

@@ -50,10 +50,6 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
         ViewHolder viewHolder=new ViewHolder(v);
         return viewHolder;
     }
-    public void addLista(List<Lista> listas){
-        this.listas=listas;
-        notifyDataSetChanged();
-    }
     @SuppressLint("ResourceAsColor")
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override

@@ -28,6 +28,8 @@
         android:layout_width="match_parent"
         android:layout_height="54dp"
         app:menu="@menu/bottom_menu"
+        app:itemIconTint="#fff"
+        app:itemTextColor="#fff"
         android:layout_alignParentBottom="true"
         android:background="@drawable/gradient"/>
 

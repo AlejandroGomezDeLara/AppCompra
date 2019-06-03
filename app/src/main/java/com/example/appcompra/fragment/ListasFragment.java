@@ -111,29 +111,9 @@ public class ListasFragment extends Fragment {
             }
         });
         adapter=new ListaAdapter();
-        updateEditTextFiltrar(view);
         return view;
     }
 
-    private void updateEditTextFiltrar(View view){
-        EditText editText=view.findViewById(R.id.editText);
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                filtrar(s.toString());
-            }
-        });
-    }
 
     public void onResume() {
         super.onResume();
@@ -164,15 +144,6 @@ public class ListasFragment extends Fragment {
             mEmptyStateTextView.setText(R.string.no_internet);
             mEmptyStateTextView.setVisibility(View.VISIBLE);
         }
-    }
-    private void filtrar(String contenidoEditText){
-        ArrayList<Lista> listass=new ArrayList<>();
-        for (Lista item:listas){
-            if(item.getTitulo().toLowerCase().contains(contenidoEditText.toLowerCase())){
-                listass.add(item);
-            }
-        }
-        adapter.filtrarLista(listass);
     }
 
     public void updateUI(ArrayList<Lista> m){

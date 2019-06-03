@@ -3,7 +3,9 @@ package com.example.appcompra.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.ImageViewCompat;
 import android.support.v7.widget.CardView;
@@ -58,6 +60,7 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
         Picasso.get().load(producto.getUrl()).into(viewHolder.imagen);
 
         viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
                 if(producto.isSeleccionado()){
@@ -66,9 +69,13 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
                     producto.setSeleccionado(true);
                 }
                 if(producto.isSeleccionado()){
-                    viewHolder.cardView.setCardBackgroundColor(getContext().getResources().getColor(R.color.navMenuBackgroundColor));
+                    viewHolder.cardView.setCardBackgroundColor(getContext().getResources().getColor(R.color.colorProducto));
+                    viewHolder.nombre.setTextColor(getContext().getResources().getColor(R.color.white));
+                    viewHolder.imagen.setImageTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.white)));
                 }else{
-                    viewHolder.cardView.setCardBackgroundColor(getContext().getResources().getColor(R.color.backgroundColor));
+                    viewHolder.imagen.setImageTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorProducto)));
+                    viewHolder.cardView.setCardBackgroundColor(getContext().getResources().getColor(R.color.white));
+                    viewHolder.nombre.setTextColor(getContext().getResources().getColor(R.color.colorProducto));
                 }
             }
         });
