@@ -499,7 +499,6 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected Boolean doInBackground(Void... params) {
             Singleton.getInstance().borrarLista(listaSeleccionada);
-            Cambios.getInstance().addCambioLS(listaSeleccionada.getId());
             return peticion;
         }
 

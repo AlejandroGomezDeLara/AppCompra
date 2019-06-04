@@ -45,7 +45,7 @@ import java.util.List;
 
 
 public class LoginActivity extends AppCompatActivity implements Serializable,LoaderCallbacks<Cursor> {
-    private UserLoginTaskTest mAuthTask = null;
+    private UserLoginTask mAuthTask = null;
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
@@ -150,7 +150,7 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
         } else {
             // Muestra el spinner del progreso, crea el async task y lo ejecutamos
             showProgress(true);
-            mAuthTask = new UserLoginTaskTest(email, password);
+            mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
         }
     }
@@ -286,12 +286,16 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
             } catch (IOException e) {
                 e.printStackTrace();
             }
-           if(respuesta.split(Constants.SEPARATOR)[0].equals(Constants.LOGIN_RESPUESTA_CORRECTA)) {
-               QueryUtils.setSocket(socket);
-               usuario=new Usuario(Integer.parseInt(respuesta.split(Constants.SEPARATOR)[1]),respuesta.split(Constants.SEPARATOR)[2],mEmail,"https://cdn.computerhoy.com/sites/navi.axelspringer.es/public/styles/480/public/media/image/2018/08/fotos-perfil-whatsapp_16.jpg?itok=aqeTumbO");
-                return true;
-            }else
+            if(respuesta!=null){
+                if(respuesta.split(Constants.SEPARATOR)[0].equals(Constants.LOGIN_RESPUESTA_CORRECTA)) {
+                    QueryUtils.setSocket(socket);
+                    usuario=new Usuario(Integer.parseInt(respuesta.split(Constants.SEPARATOR)[1]),respuesta.split(Constants.SEPARATOR)[2],mEmail,"https://cdn.computerhoy.com/sites/navi.axelspringer.es/public/styles/480/public/media/image/2018/08/fotos-perfil-whatsapp_16.jpg?itok=aqeTumbO");
+                    return true;
+                }else
+                    return false;
+            }else{
                 return false;
+            }
         }
 
         @Override
@@ -308,7 +312,7 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
             } else {
                 finish();
                 startActivity(getIntent());
-                mPasswordView.setError("Email o contraseña incorrectos");
+                mPasswordView.setError("Imposible loguearse");
                 mPasswordView.requestFocus();
 
             }

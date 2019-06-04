@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class Singleton {
 
     private ArrayList<Categoria> categorias;
     private TreeMap<Integer,ArrayList<Producto>> ultimosProductos;
-    private TreeMap<Integer,ArrayList<ProductoLista>> productosLista;
+    private TreeMap<Integer, ArrayList<ProductoLista>> productosLista;
     private ArrayList<Producto> despensa;
     private int posicionSpinnerCategorias;
     private int posicionSpinnerListas;
@@ -94,15 +95,16 @@ public class Singleton {
     public void añadirProductosLista(int idLista, LinkedList<ProductoLista> p){
         if(productosLista.containsKey(idLista)){
             ArrayList<ProductoLista> productos=productosLista.get(idLista);
-            for (int i=0;i<productosLista.get(idLista).size();i++){
-                ProductoLista pro=productosLista.get(idLista).get(i);
-                for (int j=0;j<p.size();j++){
-                    if(pro.getId()==p.get(j).getId()){
-                        pro.sumarUnidades(p.get(j).getUnidades());
-                        p.remove(p.get(j));
+            for (int i=0;i<p.size();i++){
+                for (int j=0;j<productos.size();j++){
+                    if(p.get(i).getId()==productos.get(j).getId()){
+                        productos.get(j).sumarUnidades(p.get(i).getUnidades());
+                        p.remove(p.get(i));
                     }
                 }
+
             }
+
             productos.addAll(p);
         }
     }

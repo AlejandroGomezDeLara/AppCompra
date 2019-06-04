@@ -1,5 +1,6 @@
 package com.example.appcompra.fragment;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -7,29 +8,22 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.appcompra.MainActivity;
 import com.example.appcompra.R;
 import com.example.appcompra.adapters.DespensaAdapter;
-import com.example.appcompra.clases.Producto;
 import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.ProductoLista;
 import com.example.appcompra.clases.Usuario;
-import com.example.appcompra.models.DespensaViewModel;
-import com.example.appcompra.utils.Cambios;
+import com.example.appcompra.models.ProductosListaViewModel;
 import com.example.appcompra.utils.QueryUtils;
 
 import java.util.ArrayList;
@@ -41,7 +35,7 @@ public class DespensaFragment extends Fragment {
     protected ArrayList<ProductoLista> productos;
     protected RecyclerView recyclerView;
     protected DespensaAdapter adapter;
-    protected DespensaViewModel model;
+    protected ProductosListaViewModel model;
     protected ProgressBar loadingIndicator;
     protected TextView mEmptyStateTextView;
     protected Usuario usuario;
@@ -55,7 +49,7 @@ public class DespensaFragment extends Fragment {
         View view = inflater.inflate(R.layout.frament_despensa, container, false);
         loadingIndicator = view.findViewById(R.id.loading_indicator);
         recyclerView=view.findViewById(R.id.recyclerView);
-        model= ViewModelProviders.of(getActivity()).get(DespensaViewModel.class);
+        model= ViewModelProviders.of(getActivity()).get(ProductosListaViewModel.class);
         mEmptyStateTextView=view.findViewById(R.id.emptyStateView);
         productos=new ArrayList<>();
         usuario= QueryUtils.getUsuario();
@@ -97,24 +91,24 @@ public class DespensaFragment extends Fragment {
         ConnectivityManager manager=(ConnectivityManager)getActivity().getSystemService(CONNECTIVITY_SERVICE);
         final NetworkInfo info=manager.getActiveNetworkInfo();
         boolean isConnected=info!=null && info.isConnected();
-        /*if(isConnected) {
-            model.getProductosDespensa().observe(getActivity(), new Observer<ArrayList<Producto>>() {
+
+        if(isConnected) {
+            model.getProductosLista(0).observe(getActivity(), new Observer<ArrayList<ProductoLista>>() {
                 @Override
-                public void onChanged(@Nullable ArrayList<Producto> p) {
+                public void onChanged(@Nullable ArrayList<ProductoLista> p) {
                     if(p!=null){
                         updateUI(p);
                     }else{
                         mEmptyStateTextView.setVisibility(View.VISIBLE);
-                        addProductosCentro.setVisibility(View.VISIBLE);
                     }
                 }
             });
 
         }else{
             loadingIndicator.setVisibility(View.GONE);
-            mEmptyStateTextView.setVisibility(View.VISIBLE);
             mEmptyStateTextView.setText(R.string.no_internet);
-        }*/
+            mEmptyStateTextView.setVisibility(View.VISIBLE);
+        }
     }
 
     private void updateUI(ArrayList<ProductoLista> m){

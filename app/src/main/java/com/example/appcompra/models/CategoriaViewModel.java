@@ -41,10 +41,10 @@ public class CategoriaViewModel extends AndroidViewModel {
     }
 
     public void loadCategorias() {
-        /*peticionTask = new PeticionCategoriasTask();
-        peticionTask.execute((Void) null);*/
-        peticionTaskTest = new PeticionCategoriasTaskTest();
-        peticionTaskTest.execute((Void) null);
+        peticionTask = new PeticionCategoriasTask();
+        peticionTask.execute((Void) null);
+        /*peticionTaskTest = new PeticionCategoriasTaskTest();
+        peticionTaskTest.execute((Void) null);*/
     }
 
     public void setCategorias(MutableLiveData<ArrayList<Categoria>> categorias) {

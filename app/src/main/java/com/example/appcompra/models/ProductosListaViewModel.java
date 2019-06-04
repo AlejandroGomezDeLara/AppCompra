@@ -136,9 +136,9 @@ public class ProductosListaViewModel extends AndroidViewModel {
     }
 
     public void pedirProductos(int idLista) {
-        peticionProductosTaskTest = new PeticionProductosTaskTest(idLista);
-        peticionProductosTaskTest.execute((Void) null);
-        /*peticionProductosTask = new PeticionProductosTask(idLista);
-        peticionProductosTask.execute((Void) null);*/
+        /*peticionProductosTaskTest = new PeticionProductosTaskTest(idLista);
+        peticionProductosTaskTest.execute((Void) null);*/
+        peticionProductosTask = new PeticionProductosTask(idLista);
+        peticionProductosTask.execute((Void) null);
     }
 }

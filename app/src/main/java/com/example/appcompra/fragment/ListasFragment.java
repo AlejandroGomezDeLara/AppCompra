@@ -84,10 +84,10 @@ public class ListasFragment extends Fragment {
         listas=new ArrayList<>();
         usuario=QueryUtils.getUsuario();
         if(!Singleton.getInstance().existenListas()){
-            /*listasTask=new PeticionListasTask();
-            listasTask.execute((Void) null);*/
-            test=new PeticionListasTaskTest();
-            test.execute((Void) null);
+            listasTask=new PeticionListasTask();
+            listasTask.execute((Void) null);
+            /*test=new PeticionListasTaskTest();
+            test.execute((Void) null);*/
         }else{
             updateUI(Singleton.getInstance().getListas());
         }
@@ -147,9 +147,6 @@ public class ListasFragment extends Fragment {
     }
 
     public void updateUI(ArrayList<Lista> m){
-        /*productos.clear();
-        productos.addAll(m);
-        */
         adapter=new ListaAdapter(m, getActivity(), R.layout.item_row_listas, getActivity(), new ListaAdapter.OnItemClickListener() {
             @Override
             public void onBorrarLista(Lista l) {
@@ -181,8 +178,8 @@ public class ListasFragment extends Fragment {
             public void onClick(View v) {
                 nombreNuevaLista=editText.getText().toString();
                 if(!nombreNuevaLista.isEmpty()){
-                    //peticionNuevaLista();
-                    peticionNuevaListaTest();
+                    peticionNuevaLista();
+                    //peticionNuevaListaTest();
                     dialog.dismiss();
                 }else {
                     Toast.makeText(getContext(),"Introduce un nombre para la lista",Toast.LENGTH_LONG).show();
@@ -203,8 +200,8 @@ public class ListasFragment extends Fragment {
         botonAceptarPopUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //peticionBorrarLista();
-                peticionBorrarListaTest();
+                peticionBorrarLista();
+                //peticionBorrarListaTest();
                 dialog.dismiss();
             }
         });
@@ -239,7 +236,8 @@ public class ListasFragment extends Fragment {
                 String nombreUsuario=editText.getText().toString();
                 if(!nombreUsuario.isEmpty()){
                     if(!rolElegido.equals("Ninguno") && !nombreUsuario.isEmpty()) {
-                        peticionCompartirListaTest(nombreUsuario,rolElegido);
+                        peticionCompartirLista(nombreUsuario,rolElegido);
+                        //peticionCompartirListaTest(nombreUsuario,rolElegido);
                         dialog.dismiss();
                     }else{
                         Toast.makeText(getContext(),"Elige un rol para el usuario",Toast.LENGTH_LONG).show();
@@ -467,7 +465,7 @@ public class ListasFragment extends Fragment {
             try {
                 in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out=new PrintWriter(socket.getOutputStream(),true);
-                out.println(Constants.BORRAR_LISTA_PETICION);
+                out.println(Constants.BORRAR_LISTA_PETICION+Constants.SEPARATOR+QueryUtils.getUsuario().getId()+Constants.SEPARATOR+listaSeleccionada.getId());
                 Singleton.getInstance().borrarLista(listaSeleccionada);
 
             } catch (IOException e) {
@@ -502,7 +500,6 @@ public class ListasFragment extends Fragment {
         @Override
         protected Boolean doInBackground(Void... params) {
             Singleton.getInstance().borrarLista(listaSeleccionada);
-            Cambios.getInstance().addCambioLS(listaSeleccionada.getId());
             peticion=true;
             return peticion;
         }

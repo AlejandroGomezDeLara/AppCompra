@@ -40,7 +40,6 @@ public class Cambios {
     //1 add 2 delete 3 mark
     private LinkedList<CambiosTP> cambiosTipos;
     private LinkedList<CambiosPC> cambiosComerciales;
-    private LinkedList<Integer> cambiosListas;
     private LinkedList<CambiosUS> cambiosUsuarios;
     private CambiosAsyncTask cambiosAsyncTask=null;
     private CambiosAsyncTaskTest cambiosAsyncTaskTest=null;
@@ -56,7 +55,6 @@ public class Cambios {
     public Cambios() {
         cambiosUsuarios=new LinkedList<>();
         cambiosTipos=new LinkedList<>();
-        cambiosListas=new LinkedList<>();
         cambiosComerciales=new LinkedList<>();
         cambiosUsuarios=new LinkedList<>();
     }
@@ -77,9 +75,7 @@ public class Cambios {
         cambiosComerciales = cambiosComerciales;
     }
 
-    public  LinkedList<Integer> getCambiosListas() {
-        return cambiosListas;
-    }
+
 
     public  void setCambiosListas(LinkedList<Integer> cambiosListas) {
         cambiosListas = cambiosListas;
@@ -100,16 +96,13 @@ public class Cambios {
         cambiosComerciales.add(new CambiosPC(idProducto,operacion,idLista,unidades));
     }
 
-    public void addCambioLS(int idLista){
-        cambiosListas.add(idLista);
-    }
 
     public void addCambioUS(String nombre,String operacion,String rol,int idLista){
         cambiosUsuarios.add(new CambiosUS(nombre,operacion,rol,idLista));
     }
 
     public boolean existenCambios(){
-        if(cambiosListas.isEmpty() && cambiosComerciales.isEmpty() && cambiosUsuarios.isEmpty() && cambiosTipos.isEmpty())
+        if( cambiosComerciales.isEmpty() && cambiosUsuarios.isEmpty() && cambiosTipos.isEmpty())
             return false;
         else
             return true;
@@ -146,16 +139,7 @@ public class Cambios {
                 json+="},";
             }
         }
-        json+="],lsb:[";
-        //Procesar listas
-        for (int i=0;i<cambiosListas.size();i++){
-            json+="{id:"+cambiosListas.get(i);
-            if(i==cambiosListas.size()-1){
-                json+="}";
-            }else{
-                json+="},";
-            }
-        }
+
         json+="],us:[";
         //Procesar usuarios
         for (int i=0;i<cambiosUsuarios.size();i++){
@@ -175,7 +159,6 @@ public class Cambios {
     public void limpiarCambios(){
         cambiosUsuarios.clear();
         cambiosTipos.clear();
-        cambiosListas.clear();
         cambiosComerciales.clear();
         cambiosUsuarios.clear();
     }

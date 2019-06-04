@@ -214,11 +214,11 @@ public class ProductosFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
     public void pedirProductos(int idCategoria) {
-        peticionTaskTest = new PeticionProductosTaskTest(idCategoria);
-        peticionTaskTest.execute((Void) null);
-        /*
+        /*peticionTaskTest = new PeticionProductosTaskTest(idCategoria);
+        peticionTaskTest.execute((Void) null);*/
+
         peticionTask = new PeticionProductosTask(idCategoria);
-        peticionTask.execute((Void) null);*/
+        peticionTask.execute((Void) null);
     }
     public class PeticionProductosTask extends AsyncTask<Void, Void, ArrayList<Producto>> {
         private Socket socket;
