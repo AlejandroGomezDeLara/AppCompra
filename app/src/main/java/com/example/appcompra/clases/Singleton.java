@@ -1,18 +1,32 @@
 package com.example.appcompra.clases;
 
+import com.example.appcompra.utils.Peticion;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class Singleton {
 
     private ArrayList<Categoria> categorias;
-    private TreeMap<Integer,ArrayList<Producto>> ultimosProductos;
-    private TreeMap<Integer,ArrayList<Producto>> productosLista;
-    private ArrayList<Producto> despensa;
+
+    private PriorityQueue<Peticion> peticionesEnviar;
+
+
+    private TreeMap<Integer, TreeSet<Producto>> productosCategoria;
+
+    private TreeMap<Integer, TreeSet<Producto>> productosLista;
+
+    private TreeSet<Producto> despensa;
+
     private int posicionSpinnerCategorias;
+
     private int posicionSpinnerListas;
+
     private int idListaSeleccionada;
+
     private ArrayList<String> roles;
 
     public ArrayList<String> getRoles() {
@@ -48,11 +62,11 @@ public class Singleton {
     public Singleton () {
         categorias=new ArrayList<>();
         listas=new ArrayList<>();
-        ultimosProductos=new TreeMap<>();
+        productosCategoria=new TreeMap<>();
         productosLista=new TreeMap<>();
         posicionSpinnerCategorias =0;
         idListaSeleccionada=0;
-        despensa=new ArrayList<>();
+        despensa=new TreeSet<>();
         roles=new ArrayList<>();
         roles.add("Ninguno");
         roles.add("Administrador");
@@ -67,11 +81,11 @@ public class Singleton {
         return instance;
     }
 
-    public TreeMap<Integer, ArrayList<Producto>> getProductosLista() {
+    public TreeMap<Integer, TreeSet<Producto>> getProductosLista() {
         return productosLista;
     }
 
-    public void setProductosLista(TreeMap<Integer, ArrayList<Producto>> productosLista) {
+    public void setProductosLista(TreeMap<Integer, TreeSet<Producto>> productosLista) {
         this.productosLista = productosLista;
     }
 
@@ -113,8 +127,8 @@ public class Singleton {
         return despensa!=null && !despensa.isEmpty();
     }
 
-    public void añadirNuevosProductos(int idCategoria,ArrayList<Producto> productos){
-        ultimosProductos.put(idCategoria,productos);
+    public void añadirNuevosProductos(int idCategoria,TreeSet<Producto> productos){
+        productosCategoria.put(idCategoria,productos);
     }
 
     public void setPosicionSpinnerCategorias(int pos){
@@ -129,19 +143,19 @@ public class Singleton {
         listas.add(lista);
     }
 
-    public TreeMap<Integer, ArrayList<Producto>> getUltimosProductos() {
-        return ultimosProductos;
+    public TreeMap<Integer, TreeSet<Producto>> getUltimosProductos() {
+        return productosCategoria;
     }
 
-    public void setUltimosProductos(TreeMap<Integer, ArrayList<Producto>> ultimosProductos) {
-        this.ultimosProductos = ultimosProductos;
+    public void setUltimosProductos(TreeMap<Integer, TreeSet<Producto>> ultimosProductos) {
+        this.productosCategoria = ultimosProductos;
     }
 
-    public ArrayList<Producto> getDespensa() {
+    public TreeSet<Producto> getDespensa() {
         return despensa;
     }
 
-    public void setDespensa(ArrayList<Producto> despensa) {
+    public void setDespensa(TreeSet<Producto> despensa) {
         this.despensa = despensa;
     }
 

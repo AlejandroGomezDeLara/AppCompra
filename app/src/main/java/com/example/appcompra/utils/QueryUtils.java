@@ -19,6 +19,7 @@ import java.util.ArrayList;
 public class QueryUtils {
     private static Socket socket;
     private static Usuario usuario;
+    private static int usuarioId;
     private static String IP;
 
     public static String getIP() {
@@ -35,6 +36,7 @@ public class QueryUtils {
 
     public static void setUsuario(Usuario usuario) {
         QueryUtils.usuario = usuario;
+        usuarioId=usuario.getId();
     }
 
     public static ArrayList<Producto> tipoProductosJson(String entrada){

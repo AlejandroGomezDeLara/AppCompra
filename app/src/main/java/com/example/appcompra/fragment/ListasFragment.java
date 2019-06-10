@@ -63,14 +63,6 @@ public class ListasFragment extends Fragment {
     protected ListasViewModel model;
     protected String nombreNuevaLista;
     protected TextView mEmptyStateTextView;
-    protected PeticionListasTask listasTask=null;
-    protected PeticionListasTaskTest test=null;
-    protected PeticionNuevaListaTask nuevaListaTask=null;
-    protected PeticionNuevaListaTaskTest nuevaListaTaskTest=null;
-    protected BorrarListaTask borrarListaTask=null;
-    protected BorrarListaTaskTest borrarListaTaskTest=null;
-    protected CompartirListaTask compartirListaTask=null;
-    protected CompartirListaTaskTest compartirListaTaskTest=null;
     protected Lista listaSeleccionada;
 
     @Nullable
@@ -86,8 +78,6 @@ public class ListasFragment extends Fragment {
         if(!Singleton.getInstance().existenListas()){
             /*listasTask=new PeticionListasTask();
             listasTask.execute((Void) null);*/
-            test=new PeticionListasTaskTest();
-            test.execute((Void) null);
         }else{
             updateUI(Singleton.getInstance().getListas());
         }
@@ -113,7 +103,6 @@ public class ListasFragment extends Fragment {
         adapter=new ListaAdapter();
         return view;
     }
-
 
     public void onResume() {
         super.onResume();
@@ -182,7 +171,6 @@ public class ListasFragment extends Fragment {
                 nombreNuevaLista=editText.getText().toString();
                 if(!nombreNuevaLista.isEmpty()){
                     //peticionNuevaLista();
-                    peticionNuevaListaTest();
                     dialog.dismiss();
                 }else {
                     Toast.makeText(getContext(),"Introduce un nombre para la lista",Toast.LENGTH_LONG).show();
@@ -190,6 +178,7 @@ public class ListasFragment extends Fragment {
             }
         });
     }
+
     public void borrarListaPopup( Lista l){
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.popup_confirmacion, null);
         AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
@@ -204,7 +193,6 @@ public class ListasFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //peticionBorrarLista();
-                peticionBorrarListaTest();
                 dialog.dismiss();
             }
         });
@@ -215,6 +203,7 @@ public class ListasFragment extends Fragment {
             }
         });
     }
+
     public void compartirListaPopup( Lista l){
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.popup_compartir, null);
         AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
@@ -239,7 +228,6 @@ public class ListasFragment extends Fragment {
                 String nombreUsuario=editText.getText().toString();
                 if(!nombreUsuario.isEmpty()){
                     if(!rolElegido.equals("Ninguno") && !nombreUsuario.isEmpty()) {
-                        peticionCompartirListaTest(nombreUsuario,rolElegido);
                         dialog.dismiss();
                     }else{
                         Toast.makeText(getContext(),"Elige un rol para el usuario",Toast.LENGTH_LONG).show();
@@ -256,370 +244,12 @@ public class ListasFragment extends Fragment {
             }
         });
     }
-    public void peticionNuevaLista(){
-        nuevaListaTask=new PeticionNuevaListaTask();
-        nuevaListaTask.execute((Void) null);
-    }
-    public void peticionNuevaListaTest(){
-        nuevaListaTaskTest=new PeticionNuevaListaTaskTest();
-        nuevaListaTaskTest.execute((Void) null);
-    }
-    public void peticionCompartirLista(String usuario,String rol){
-        compartirListaTask=new CompartirListaTask(usuario,rol);
-        compartirListaTask.execute((Void) null);
-    }
-    public void peticionCompartirListaTest(String usuario,String rol){
-        compartirListaTaskTest=new CompartirListaTaskTest(usuario,rol);
-        compartirListaTaskTest.execute((Void) null);
-    }
-    public void peticionBorrarLista(){
-        borrarListaTask=new BorrarListaTask();
-        borrarListaTask.execute((Void) null);
-    }
-    public void peticionBorrarListaTest(){
-        borrarListaTaskTest=new BorrarListaTaskTest();
-        borrarListaTaskTest.execute((Void) null);
-    }
-
-    public class PeticionListasTask extends AsyncTask<Void, Void, ArrayList<Lista>> {
-        private Socket socket;
-        private BufferedReader in;
-        private PrintWriter out;
-        private String json;
-        private ArrayList<Lista> listas=new ArrayList<>();
-
-        PeticionListasTask() {
-        }
-
-        @Override
-        protected ArrayList<Lista> doInBackground(Void... params) {
-
-            socket= QueryUtils.getSocket();
-            try {
-                in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                out=new PrintWriter(socket.getOutputStream(),true);
-                out.println(Constants.LISTAS_PETICION+Constants.SEPARATOR+usuario.getId());
-                String entrada=in.readLine();
-                Log.e("respuesta",entrada.split(Constants.SEPARATOR)[1]);
-                if(entrada.split(Constants.SEPARATOR)[0].equals(Constants.LISTAS_RESPUESTA_CORRECTA)){
-                    json=entrada.split(Constants.SEPARATOR)[1];
-                    listas=QueryUtils.listasJson(json);
-                    Singleton.getInstance().setListas(listas);
-                }
-
-            } catch (IOException e) {
-                Log.e("errorIO",e.getMessage());
-            }
-
-            return listas;
-        }
-
-        @Override
-        protected void onPostExecute(final ArrayList<Lista> listas) {
-            if(!listas.isEmpty()){
-                if(!Singleton.getInstance().existenListas()){
-                    Singleton.getInstance().setListas(listas);
-                }
-                ((MainActivity)getActivity()).actualizarListas();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-
-        }
-
-
-    }
-    public class PeticionListasTaskTest extends AsyncTask<Void, Void, ArrayList<Lista>> {
-
-        private String json;
-        private ArrayList<Lista> listas=new ArrayList<>();
-
-        PeticionListasTaskTest() {
-        }
-
-        @Override
-        protected ArrayList<Lista> doInBackground(Void... params) {
-            json=Constants.DUMMY_LISTAS;
-            listas=QueryUtils.listasJson(json);
-            Singleton.getInstance().setListas(listas);
-            return listas;
-        }
-
-        @Override
-        protected void onPostExecute(final ArrayList<Lista> listas) {
-            if(!listas.isEmpty()){
-                if(!Singleton.getInstance().existenListas()){
-                    Singleton.getInstance().setListas(listas);
-                }
-                ((MainActivity)getActivity()).actualizarListas();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-
-        }
-
-
-    }
-    public class PeticionNuevaListaTask extends AsyncTask<Void, Void, Boolean> {
-        private Socket socket;
-        private BufferedReader in;
-        private PrintWriter out;
-        private String json;
-        private Lista lista;
-        private Boolean listaCreada;
-
-        PeticionNuevaListaTask() {
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-
-            socket= QueryUtils.getSocket();
-            try {
-                in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                out=new PrintWriter(socket.getOutputStream(),true);
-                out.println(Constants.CREACION_NUEVA_LISTA+Constants.SEPARATOR+usuario.getId()+Constants.SEPARATOR+nombreNuevaLista+Constants.SEPARATOR);
-                String entrada=in.readLine();
-                Log.e("respuesta",entrada.split(Constants.SEPARATOR)[1]);
-                if(entrada.split(Constants.SEPARATOR)[0].equals(Constants.CREACION_NUEVA_LISTA_CORRECTA)){
-                    json=entrada.split(Constants.SEPARATOR)[1];
-                    lista=new Lista(Integer.parseInt(entrada.split(Constants.SEPARATOR)[1]),nombreNuevaLista,"Administrador");
-                    Singleton.getInstance().añadirNuevaLista(lista);
-                }else{
-                    listaCreada=false;
-                }
-
-            } catch (IOException e) {
-                Log.e("errorIO",e.getMessage());
-            }
-
-            return listaCreada;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean creada) {
-            if(creada)
-                ((MainActivity)getActivity()).actualizarListas();
-            else{
-                Toast.makeText(getContext(), "No se ha podido crear la lista", Toast.LENGTH_LONG).show();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-
-        }
-
-
-    }
-    public class PeticionNuevaListaTaskTest extends AsyncTask<Void, Void, Boolean> {
-        private String json;
-        private Lista lista;
-        private Boolean listaCreada;
-
-        PeticionNuevaListaTaskTest() {
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-
-                String entrada=Constants.DUMMY_LISTA_ACEPTADA;
-                lista=new Lista(Integer.parseInt(entrada.split(Constants.SEPARATOR)[1]),nombreNuevaLista,"Administrador");
-                Singleton.getInstance().añadirNuevaLista(lista);
-                listaCreada=true;
-                return listaCreada;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean creada) {
-            if(creada)
-                ((MainActivity)getActivity()).actualizarListas();
-            else{
-                Toast.makeText(getContext(), "No se ha podido crear la lista", Toast.LENGTH_LONG).show();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-
-        }
-
-
-    }
-    public class BorrarListaTask extends AsyncTask<Void, Void, Boolean> {
-        private Socket socket;
-        private BufferedReader in;
-        private PrintWriter out;
-        private boolean peticion;
-
-        BorrarListaTask() {
-            peticion=true;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-
-            socket= QueryUtils.getSocket();
-            try {
-                in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                out=new PrintWriter(socket.getOutputStream(),true);
-                out.println(Constants.BORRAR_LISTA_PETICION);
-                Singleton.getInstance().borrarLista(listaSeleccionada);
-
-            } catch (IOException e) {
-                Log.e("errorIO",e.getMessage());
-            }
-
-            return peticion;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean creada) {
-            if(creada)
-                ((MainActivity)getActivity()).actualizarListas();
-            else{
-                Toast.makeText(getContext(), "No se ha podido borrar la lista", Toast.LENGTH_LONG).show();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-
-        }
-    }
-    public class BorrarListaTaskTest extends AsyncTask<Void, Void, Boolean> {
-
-        private boolean peticion;
-
-        BorrarListaTaskTest() {
-            peticion=true;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            Singleton.getInstance().borrarLista(listaSeleccionada);
-            Cambios.getInstance().addCambioLS(listaSeleccionada.getId());
-            peticion=true;
-            return peticion;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean borrada) {
-            if(borrada)
-                ((MainActivity)getActivity()).actualizarListas();
-            else{
-                Toast.makeText(getContext(), "No se ha podido borrar la lista", Toast.LENGTH_LONG).show();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-
-        }
-    }
-    public class CompartirListaTask extends AsyncTask<Void, Void, Boolean> {
-        private Socket socket;
-        private BufferedReader in;
-        private PrintWriter out;
-        private boolean peticion;
-        private String usuario;
-        private String rol;
-        CompartirListaTask(String usuario,String rol)
-        {
-            this.usuario=usuario;
-            this.rol=rol;
-            peticion=true;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            socket = QueryUtils.getSocket();
-            try {
-                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                out = new PrintWriter(socket.getOutputStream(), true);
-                String salida = Constants.COMPARTIR_LISTA_PETICION + Constants.SEPARATOR + QueryUtils.getUsuario().getId() + Constants.SEPARATOR + listaSeleccionada.getId() + Constants.SEPARATOR + usuario + Constants.SEPARATOR + rol;
-                out.println(salida);
-                String entrada = in.readLine();
-                if (entrada.split(Constants.SEPARATOR)[1] != null) {
-                    if (entrada.split(Constants.SEPARATOR)[1].equals(Constants.COMPARTIR_LISTA_CORRECTA)) {
-                        peticion = true;
-                    } else {
-                        peticion = false;
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return peticion;
-        }
-
-            @Override
-        protected void onPostExecute(final Boolean aceptada) {
-            if(aceptada){
-                listaSeleccionada.añadirUsuario(new Usuario(usuario,rol));
-            }else{
-                Toast.makeText(getContext(), "No se ha podido compartir la lista", Toast.LENGTH_LONG).show();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-
-        }
-    }
-    public class CompartirListaTaskTest extends AsyncTask<Void, Void, Boolean> {
-
-        private boolean peticion;
-        private String usuario;
-        private String rol;
-        CompartirListaTaskTest(String usuario,String rol)
-        {
-            this.usuario=usuario;
-            this.rol=rol;
-            peticion=true;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            String salida=Constants.COMPARTIR_LISTA_PETICION+Constants.SEPARATOR+QueryUtils.getUsuario().getId()+Constants.SEPARATOR+listaSeleccionada.getId()+Constants.SEPARATOR+usuario+Constants.SEPARATOR+rol;
-            Log.e("salida",salida);
-            String entrada=Constants.DUMMY_COMPARTIR_LISTA_ACEPTADA;
-            if(entrada!=null) {
-                if(entrada.equals(Constants.COMPARTIR_LISTA_CORRECTA)){
-                    peticion=true;
-                }else{
-                    peticion=false;
-                }
-            }
-
-            return peticion;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean aceptada) {
-            if(aceptada){
-                listaSeleccionada.añadirUsuario(new Usuario(usuario,rol));
-                ((MainActivity)getActivity()).actualizarListas();
-            }else{
-                Toast.makeText(getContext(), "No existe ese usuario", Toast.LENGTH_LONG).show();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-
-        }
-    }
 
     @Override
     public void onStop() {
         super.onStop();
         if(Cambios.getInstance().existenCambios()){
-            Cambios.getInstance().enviarCambios();
+
         }
     }
 }
