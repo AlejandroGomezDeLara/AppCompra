@@ -1,5 +1,6 @@
 package com.example.appcompra;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -60,23 +61,25 @@ public class MainActivity extends AppCompatActivity
     String nombreNuevaLista;
     Toolbar toolbar;
     TextView titulo;
-    PeticionNuevaListaTask nuevaListaTask;
-    PeticionNuevaListaTaskTest nuevaListaTaskTest;
-    BorrarListaTask borrarListaTask=null;
-    BorrarListaTaskTest borrarListaTaskTest=null;
-    protected CompartirListaTask compartirListaTask=null;
-    protected CompartirListaTaskTest compartirListaTaskTest=null;
     Lista listaSeleccionada;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        usuario= (Usuario)getIntent().getExtras().getSerializable("Usuario");
+        usuario = (Usuario) getIntent().getExtras().getSerializable("Usuario");
         QueryUtils.setUsuario(usuario);
         setContentView(R.layout.activity_main);
-        recyclerView=findViewById(R.id.recyclerView);
-        botonNueva=findViewById(R.id.boton_nueva_lista);
+
+
+        //Iniciar servicio
+        Intent i = new Intent(getApplicationContext(), ServerComunicationService.class);
+        i.putExtra("KEY1", "Value to be used by the service");
+        getApplicationContext().startService(i);
+
+        recyclerView = findViewById(R.id.recyclerView);
+        botonNueva = findViewById(R.id.boton_nueva_lista);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        titulo=toolbar.findViewById(R.id.title);
+        titulo = toolbar.findViewById(R.id.title);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -86,12 +89,12 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        View headView=findViewById(R.id.header);
-        TextView nombreUsuario=headView.findViewById(R.id.drawer_nombre);
+        View headView = findViewById(R.id.header);
+        TextView nombreUsuario = headView.findViewById(R.id.drawer_nombre);
         nombreUsuario.setText(usuario.getNombre());
-        TextView emailUsuario=headView.findViewById(R.id.drawer_email);
+        TextView emailUsuario = headView.findViewById(R.id.drawer_email);
         emailUsuario.setText(usuario.getEmail());
-        ImageView imagenUsuario=headView.findViewById(R.id.drawer_imagen);
+        ImageView imagenUsuario = headView.findViewById(R.id.drawer_imagen);
         Picasso.get().load(usuario.getUrlImagenPerfil()).into(imagenUsuario);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         MenuAdapter adapter = new MenuAdapter(getSupportFragmentManager());
@@ -118,7 +121,7 @@ public class MainActivity extends AppCompatActivity
                 } else {
                     menu.getMenu().getItem(0).setChecked(false);
                 }
-                if(position!=5){
+                if (position != 5) {
                     menu.getMenu().getItem(position).setChecked(true);
                     prevMenuItem = menu.getMenu().getItem(position);
                 }
@@ -160,9 +163,9 @@ public class MainActivity extends AppCompatActivity
                             titulo.setText("Recetas");
                             break;
                     }
-                    TextView subtitle=toolbar.findViewById(R.id.subtitle);
+                    TextView subtitle = toolbar.findViewById(R.id.subtitle);
                     subtitle.setVisibility(View.GONE);
-                    LinearLayout linearToolbar=toolbar.findViewById(R.id.linearToolbar);
+                    LinearLayout linearToolbar = toolbar.findViewById(R.id.linearToolbar);
                     linearToolbar.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -200,6 +203,7 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
     public Usuario getUsuario() {
         return this.usuario;
     }
@@ -212,15 +216,16 @@ public class MainActivity extends AppCompatActivity
         return viewPager;
     }
 
-    public void updateUI(ArrayList<Lista> m){
+    public void updateUI(ArrayList<Lista> m) {
         /*productos.clear();
         productos.addAll(m);
         */
-        adapter=new ListaAdapter(m, this, R.layout.item_row_listas, this, new ListaAdapter.OnItemClickListener() {
+        adapter = new ListaAdapter(m, this, R.layout.item_row_listas, this, new ListaAdapter.OnItemClickListener() {
             @Override
             public void onBorrarLista(Lista l) {
                 borrarListaPopup(l);
             }
+
             @Override
             public void onCompartirLista(Lista l) {
                 compartirListaPopup(l);
@@ -238,45 +243,43 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    public void crearNuevaListaPopup(){
+    public void crearNuevaListaPopup() {
         View view = LayoutInflater.from(this).inflate(R.layout.popup_crear_lista, null);
-        final AutoCompleteTextView editText=view.findViewById(R.id.crear_lista_editText);
-        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        final AutoCompleteTextView editText = view.findViewById(R.id.crear_lista_editText);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(view);
-        final AlertDialog dialog=builder.create();
+        final AlertDialog dialog = builder.create();
         dialog.show();
         dialog.getWindow().setBackgroundDrawableResource(R.color.backgroundColor);
-        Button botonAceptarPopUp=view.findViewById(R.id.botonAceptarPopup);
+        Button botonAceptarPopUp = view.findViewById(R.id.botonAceptarPopup);
 
         botonAceptarPopUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                nombreNuevaLista=editText.getText().toString();
-                if(!nombreNuevaLista.isEmpty()){
+                nombreNuevaLista = editText.getText().toString();
+                if (!nombreNuevaLista.isEmpty()) {
                     //peticionNuevaLista();
-                    peticionNuevaListaTest();
                     dialog.dismiss();
-                }else {
-                    Toast.makeText(getBaseContext(),"Introduce un nombre para la lista",Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getBaseContext(), "Introduce un nombre para la lista", Toast.LENGTH_LONG).show();
                 }
             }
         });
     }
-    public void borrarListaPopup( Lista l){
+
+    public void borrarListaPopup(Lista l) {
         View view = LayoutInflater.from(this).inflate(R.layout.popup_confirmacion, null);
-        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(view);
-        final AlertDialog dialog=builder.create();
-        listaSeleccionada=l;
+        final AlertDialog dialog = builder.create();
+        listaSeleccionada = l;
         dialog.show();
         dialog.getWindow().setBackgroundDrawableResource(R.color.backgroundColor);
-        Button botonAceptarPopUp=view.findViewById(R.id.botonAceptarPopup);
-        Button botonCancelarPopUp=view.findViewById(R.id.botonCancelarPopup);
+        Button botonAceptarPopUp = view.findViewById(R.id.botonAceptarPopup);
+        Button botonCancelarPopUp = view.findViewById(R.id.botonCancelarPopup);
         botonAceptarPopUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //peticionBorrarLista();
-                peticionBorrarListaTest();
                 dialog.dismiss();
             }
         });
@@ -287,43 +290,32 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
-    public void compartirListaPopup( Lista l){
+
+    public void compartirListaPopup(Lista l) {
         View view = LayoutInflater.from(this).inflate(R.layout.popup_compartir, null);
-        AlertDialog.Builder builder=new AlertDialog.Builder(this);
-        final AutoCompleteTextView editText=view.findViewById(R.id.editText);
-        final Spinner spinnerRoles=view.findViewById(R.id.spinnerRoles);
-        List<String> valoresSpinner=new ArrayList<>();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final AutoCompleteTextView editText = view.findViewById(R.id.editText);
+        final Spinner spinnerRoles = view.findViewById(R.id.spinnerRoles);
+        List<String> valoresSpinner = new ArrayList<>();
         valoresSpinner.add("Ninguno");
         valoresSpinner.add("Administrador");
         valoresSpinner.add("Participante");
         valoresSpinner.add("Espectador");
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                getBaseContext(),R.layout.spinner_item,valoresSpinner
+                getBaseContext(), R.layout.spinner_item, valoresSpinner
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerRoles.setAdapter(adapter);
         builder.setView(view);
-        final AlertDialog dialog=builder.create();
-        listaSeleccionada=l;
+        final AlertDialog dialog = builder.create();
+        listaSeleccionada = l;
         dialog.show();
         dialog.getWindow().setBackgroundDrawableResource(R.color.backgroundColor);
-        Button botonAceptarPopUp=view.findViewById(R.id.botonAceptarPopup);
-        Button botonCancelarPopUp=view.findViewById(R.id.botonCancelarPopup);
+        Button botonAceptarPopUp = view.findViewById(R.id.botonAceptarPopup);
+        Button botonCancelarPopUp = view.findViewById(R.id.botonCancelarPopup);
         botonAceptarPopUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String rolElegido=spinnerRoles.getSelectedItem().toString();
-                String nombreUsuario=editText.getText().toString();
-                if(!nombreUsuario.isEmpty()){
-                    if(!rolElegido.equals("Ninguno") && !nombreUsuario.isEmpty()) {
-                        peticionCompartirListaTest(nombreUsuario,rolElegido);
-                        dialog.dismiss();
-                    }else{
-                        Toast.makeText(getBaseContext(),"Elige un rol para el usuario",Toast.LENGTH_LONG).show();
-                    }
-                }else{
-                    Toast.makeText(getBaseContext(),"Introduce algún nombre",Toast.LENGTH_LONG).show();
-                }
 
 
             }
@@ -334,285 +326,5 @@ public class MainActivity extends AppCompatActivity
                 dialog.dismiss();
             }
         });
-    }
-    public void peticionNuevaLista(){
-        nuevaListaTask=new PeticionNuevaListaTask();
-        nuevaListaTask.execute((Void) null);
-    }
-    public void peticionNuevaListaTest(){
-        nuevaListaTaskTest=new PeticionNuevaListaTaskTest();
-        nuevaListaTaskTest.execute((Void) null);
-    }
-    public void peticionBorrarLista(){
-        borrarListaTask=new BorrarListaTask();
-        borrarListaTask.execute((Void) null);
-    }
-    public void peticionBorrarListaTest(){
-        borrarListaTaskTest=new BorrarListaTaskTest();
-        borrarListaTaskTest.execute((Void) null);
-    }
-    public void peticionCompartirLista(String usuario,String rol){
-        compartirListaTask=new CompartirListaTask(usuario,rol);
-        compartirListaTask.execute((Void) null);
-    }
-    public void peticionCompartirListaTest(String usuario,String rol){
-        compartirListaTaskTest=new CompartirListaTaskTest(usuario,rol);
-        compartirListaTaskTest.execute((Void) null);
-    }
-
-    public class PeticionNuevaListaTask extends AsyncTask<Void, Void, Boolean> {
-        private Socket socket;
-        private BufferedReader in;
-        private PrintWriter out;
-        private String json;
-        private Lista lista;
-        private Boolean listaCreada;
-
-        PeticionNuevaListaTask() {
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-
-            socket= QueryUtils.getSocket();
-            try {
-                in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                out=new PrintWriter(socket.getOutputStream(),true);
-                out.println(Constants.CREACION_NUEVA_LISTA+Constants.SEPARATOR+usuario.getId()+Constants.SEPARATOR+nombreNuevaLista+Constants.SEPARATOR);
-                String entrada=in.readLine();
-                Log.e("respuesta",entrada.split(Constants.SEPARATOR)[1]);
-                if(entrada.split(Constants.SEPARATOR)[0].equals(Constants.CREACION_NUEVA_LISTA_CORRECTA)){
-                    json=entrada.split(Constants.SEPARATOR)[1];
-                    lista=new Lista(Integer.parseInt(entrada.split(Constants.SEPARATOR)[1]),nombreNuevaLista,"Administrador");
-                    Singleton.getInstance().añadirNuevaLista(lista);
-                }else{
-                    listaCreada=false;
-                }
-
-            } catch (IOException e) {
-                Log.e("errorIO",e.getMessage());
-            }
-
-            return listaCreada;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean creada) {
-            if(creada)
-                actualizarListas();
-            else{
-                Toast.makeText(getBaseContext(), "No se ha podido crear la lista", Toast.LENGTH_LONG).show();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-
-        }
-
-
-    }
-    public class PeticionNuevaListaTaskTest extends AsyncTask<Void, Void, Boolean> {
-        private String json;
-        private Lista lista;
-        private Boolean listaCreada;
-
-        PeticionNuevaListaTaskTest() {
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-
-            String entrada=Constants.DUMMY_LISTA_ACEPTADA;
-            lista=new Lista(Integer.parseInt(entrada.split(Constants.SEPARATOR)[1]),nombreNuevaLista,"Administrador");
-            Singleton.getInstance().añadirNuevaLista(lista);
-            listaCreada=true;
-            return listaCreada;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean creada) {
-            if(creada)
-                updateUI(Singleton.getInstance().getListas());
-
-            else{
-                Toast.makeText(getBaseContext(), "No se ha podido crear la lista", Toast.LENGTH_LONG).show();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-
-        }
-
-
-    }
-    public class BorrarListaTask extends AsyncTask<Void, Void, Boolean> {
-        private Socket socket;
-        private BufferedReader in;
-        private PrintWriter out;
-        private boolean peticion;
-
-        BorrarListaTask() {
-            peticion=true;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-
-            socket= QueryUtils.getSocket();
-            try {
-                in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                out=new PrintWriter(socket.getOutputStream(),true);
-                out.println(Constants.BORRAR_LISTA_PETICION);
-                Singleton.getInstance().borrarLista(listaSeleccionada);
-
-            } catch (IOException e) {
-                Log.e("errorIO",e.getMessage());
-            }
-
-            return peticion;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean creada) {
-            if(creada)
-                actualizarListas();
-            else{
-                Toast.makeText(getBaseContext(), "No se ha podido borrar la lista", Toast.LENGTH_LONG).show();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-
-        }
-    }
-    public class BorrarListaTaskTest extends AsyncTask<Void, Void, Boolean> {
-
-        private boolean peticion;
-
-        BorrarListaTaskTest() {
-            peticion=true;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            Singleton.getInstance().borrarLista(listaSeleccionada);
-            Cambios.getInstance().addCambioLS(listaSeleccionada.getId());
-            return peticion;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean borrada) {
-            if(borrada)
-                actualizarListas();
-            else{
-                Toast.makeText(getBaseContext(), "No se ha podido borrar la lista", Toast.LENGTH_LONG).show();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-
-        }
-    }
-    public class CompartirListaTask extends AsyncTask<Void, Void, Boolean> {
-        private Socket socket;
-        private BufferedReader in;
-        private PrintWriter out;
-        private boolean peticion;
-        private String usuario;
-        private String rol;
-        CompartirListaTask(String usuario,String rol)
-        {
-            this.usuario=usuario;
-            this.rol=rol;
-            peticion=true;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            socket = QueryUtils.getSocket();
-            try {
-                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                out = new PrintWriter(socket.getOutputStream(), true);
-                String salida = Constants.COMPARTIR_LISTA_PETICION + Constants.SEPARATOR + QueryUtils.getUsuario().getId() + Constants.SEPARATOR + listaSeleccionada.getId() + Constants.SEPARATOR + usuario + Constants.SEPARATOR + rol;
-                out.println(salida);
-                String entrada = in.readLine();
-                if (entrada.split(Constants.SEPARATOR)[1] != null) {
-                    if (entrada.split(Constants.SEPARATOR)[1].equals(Constants.COMPARTIR_LISTA_CORRECTA)) {
-                        peticion = true;
-                    } else {
-                        peticion = false;
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return peticion;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean aceptada) {
-            if(aceptada){
-                listaSeleccionada.añadirUsuario(new Usuario(usuario,rol));
-            }else{
-                Toast.makeText(getBaseContext(), "No existe ese usuario", Toast.LENGTH_LONG).show();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-
-        }
-    }
-    public class CompartirListaTaskTest extends AsyncTask<Void, Void, Boolean> {
-
-        private boolean peticion;
-        private String usuario;
-        private String rol;
-        CompartirListaTaskTest(String usuario,String rol)
-        {
-            this.usuario=usuario;
-            this.rol=rol;
-            peticion=true;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            String salida=Constants.COMPARTIR_LISTA_PETICION+Constants.SEPARATOR+QueryUtils.getUsuario().getId()+Constants.SEPARATOR+listaSeleccionada.getId()+Constants.SEPARATOR+usuario+Constants.SEPARATOR+rol;
-            String entrada=Constants.DUMMY_COMPARTIR_LISTA_ACEPTADA;
-            if(entrada!=null) {
-                if(entrada.equals(Constants.COMPARTIR_LISTA_CORRECTA)){
-                    peticion=true;
-                }else{
-                    peticion=false;
-                }
-            }
-
-            return peticion;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean aceptada) {
-            if(aceptada){
-                actualizarListas();
-                listaSeleccionada.añadirUsuario(new Usuario(usuario,rol));
-            }else{
-                Toast.makeText(getBaseContext(), "No existe ese usuario", Toast.LENGTH_LONG).show();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-
-        }
-    }
-
-    public void actualizarListas(){
-        updateUI(Singleton.getInstance().getListas());
-        ListasFragment page = (ListasFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewPager + ":" +1);
-        page.updateUI(Singleton.getInstance().getListas());
     }
 }

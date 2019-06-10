@@ -128,11 +128,11 @@ public class InteriorListaFragment extends Fragment {
         return view;
     }
 
-
     public void intentProductos(){
         Singleton.getInstance().setPosicionSpinnerListas(Singleton.getInstance().getPosicionSpinnerListas());
         ((MainActivity)getActivity()).getViewPager().setCurrentItem(3);
     }
+
     private void updateEditTextFiltrar(View view) {
         EditText editText = view.findViewById(R.id.editText);
         editText.addTextChangedListener(new TextWatcher() {
@@ -179,7 +179,6 @@ public class InteriorListaFragment extends Fragment {
         mEmptyStateTextView.setVisibility(View.GONE);
 
     }
-
 
     public void onResume() {
         super.onResume();

@@ -1,6 +1,7 @@
 package com.example.appcompra.fragment;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 
 import com.example.appcompra.MainActivity;
 import com.example.appcompra.R;
+import com.example.appcompra.ServerComunicationService;
 import com.example.appcompra.adapters.DespensaAdapter;
 import com.example.appcompra.clases.Producto;
 import com.example.appcompra.clases.Singleton;
@@ -83,14 +85,17 @@ public class DespensaFragment extends Fragment {
         Singleton.getInstance().setPosicionSpinnerListas(0);
         ((MainActivity)getActivity()).getViewPager().setCurrentItem(3);
     }
+
     public void rellenarProductos(){
+        Intent i = new Intent(getContext(), ServerComunicationService.class);
+        i.putExtra("KEY1", "Rellenar productos peticion");
+        getContext().startService(i);
         productos.add(new ProductoLista(2,"Hamburguesa",2,null,null,false,"https://image.flaticon.com/icons/png/512/93/93104.png",null,null));
         productos.add(new ProductoLista(4,"Pepinos",3,null,null,false,"https://image.flaticon.com/icons/png/512/93/93104.png",null,"200g"));
         productos.add(new ProductoLista(3,"Hamburguesa",4,null,"mercadona",false,"https://image.flaticon.com/icons/png/512/93/93104.png","Gula del norte","400g"));
         productos.add(new ProductoLista(9,"Huevo",1,null,"mercadona",false,"https://image.flaticon.com/icons/png/512/93/93104.png","Gula del norte","400g"));
 
     }
-
 
     public void onResume() {
         super.onResume();

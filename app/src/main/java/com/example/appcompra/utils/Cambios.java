@@ -42,8 +42,6 @@ public class Cambios {
     private LinkedList<CambiosPC> cambiosComerciales;
     private LinkedList<Integer> cambiosListas;
     private LinkedList<CambiosUS> cambiosUsuarios;
-    private CambiosAsyncTask cambiosAsyncTask=null;
-    private CambiosAsyncTaskTest cambiosAsyncTaskTest=null;
 
     private static Cambios instance;
 
@@ -115,13 +113,6 @@ public class Cambios {
             return true;
     }
 
-    public void enviarCambios(){
-        cambiosAsyncTaskTest=new CambiosAsyncTaskTest();
-        cambiosAsyncTaskTest.execute((Void) null);
-        /*cambiosAsyncTask=new CambiosAsyncTask();
-        cambiosAsyncTask.execute((Void) null);*/
-    }
-
     public String getJsonCambios(){
         String json= Constants.ENVIAR_NOTIFICACIONES+Constants.SEPARATOR+QueryUtils.getUsuario().getId()+Constants.SEPARATOR+
                 "{tp:[";
@@ -179,65 +170,5 @@ public class Cambios {
         cambiosComerciales.clear();
         cambiosUsuarios.clear();
     }
-
-    public class CambiosAsyncTask extends AsyncTask<Void, Void, Boolean> {
-        private Socket socket;
-        private BufferedReader in;
-        private PrintWriter out;
-        CambiosAsyncTask() {
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-
-            socket= QueryUtils.getSocket();
-            try {
-                in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                out=new PrintWriter(socket.getOutputStream(),true);
-                out.println(Constants.ENVIAR_NOTIFICACIONES+Constants.SEPARATOR+getJsonCambios());
-                Log.e("salida notificaciones",Constants.ENVIAR_NOTIFICACIONES+Constants.SEPARATOR+getJsonCambios());
-                String entrada=in.readLine();
-                Log.e("entrada notificaciones",entrada);
-            } catch (IOException e) {
-                Log.e("errorIO",e.getMessage());
-            }
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean ca) {
-            if(ca)
-                limpiarCambios();
-
-        }
-
-        @Override
-        protected void onCancelled() {
-
-        }
-    }
-    public class CambiosAsyncTaskTest extends AsyncTask<Void, Void, Boolean> {
-
-        CambiosAsyncTaskTest() {
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            Log.e("salida notificaciones",getJsonCambios());
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean ca) {
-            if(ca)
-            limpiarCambios();
-        }
-
-        @Override
-        protected void onCancelled() {
-
-        }
-    }
-
 
 }
