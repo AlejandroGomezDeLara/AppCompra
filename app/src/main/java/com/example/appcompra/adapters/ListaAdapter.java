@@ -23,18 +23,22 @@ import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.Usuario;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 
 public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> {
-    private List<Lista> listas;
+    private LinkedList<Lista> listas;
     private Activity activity;
     private int layout;
     private Context context;
     private OnItemClickListener listener;
 
-    public ListaAdapter(List<Lista> listas, Activity activity, int layout, Context context,OnItemClickListener listener) {
-        this.listas = listas;
+    public ListaAdapter(TreeSet<Lista> listas, Activity activity, int layout, Context context, OnItemClickListener listener) {
+        this.listas = new LinkedList<>(listas);
         this.activity = activity;
         this.layout = layout;
         this.context = context;
@@ -260,10 +264,7 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
     public int getItemCount() {
         return listas.size();
     }
-    public void filtrarLista(ArrayList<Lista> listaFiltrada){
-        listas=listaFiltrada;
-        notifyDataSetChanged();
-    }
+
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         TextView titulo;

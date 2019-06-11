@@ -24,6 +24,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
 
 public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHolder> {
@@ -32,8 +33,8 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
     private int layout;
     private Context context;
 
-    public ProductoAdapter(List<Producto> productos, Activity activity, int layout, Context context) {
-        this.productos = productos;
+    public ProductoAdapter(TreeSet<Producto> productos, Activity activity, int layout, Context context) {
+        this.productos = new ArrayList<>(productos);
         this.activity = activity;
         this.layout = layout;
         this.context = context;

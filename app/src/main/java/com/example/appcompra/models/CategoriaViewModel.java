@@ -20,101 +20,24 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class CategoriaViewModel extends AndroidViewModel {
-    private MutableLiveData<ArrayList<Categoria>> categorias;
+    private MutableLiveData<TreeSet<Categoria>> categorias;
     private Application application;
-    protected PeticionCategoriasTask peticionTask = null;
-    protected PeticionCategoriasTaskTest peticionTaskTest = null;
+
 
     public CategoriaViewModel(@NonNull Application application) {
         super(application);
         this.application=application;
     }
 
-    public LiveData<ArrayList<Categoria>> getCategorias(){
+    public LiveData<TreeSet<Categoria>> getCategorias(){
         if(categorias==null){
             categorias=new MutableLiveData<>();
-            loadCategorias();
         }
         return categorias;
     }
 
-    public void loadCategorias() {
-        /*peticionTask = new PeticionCategoriasTask();
-        peticionTask.execute((Void) null);*/
-        peticionTaskTest = new PeticionCategoriasTaskTest();
-        peticionTaskTest.execute((Void) null);
-    }
-
-    public void setCategorias(MutableLiveData<ArrayList<Categoria>> categorias) {
-        this.categorias = categorias;
-    }
-
-
-    public class PeticionCategoriasTask extends AsyncTask<Void, Void, ArrayList<Categoria>> {
-        private Socket socket;
-        private BufferedReader in;
-        private PrintWriter out;
-        private String json;
-        private ArrayList<Categoria> c=new ArrayList<>();
-        PeticionCategoriasTask() {
-        }
-
-        @Override
-        protected ArrayList<Categoria> doInBackground(Void... params) {
-
-            socket= QueryUtils.getSocket();
-            try {
-                in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                out=new PrintWriter(socket.getOutputStream(),true);
-                out.println(Constants.CATEGORIAS_PETICION+Constants.SEPARATOR+QueryUtils.getUsuario().getId());
-                String entrada=in.readLine();
-                if(entrada!=null && !entrada.isEmpty()) {
-                    Log.e("respuesta", entrada.split(Constants.SEPARATOR)[1]);
-                    if (entrada.split(Constants.SEPARATOR)[0].equals(Constants.CATEGORIAS_RESPUESTA_CORRECTA)) {
-                        json = entrada.split(Constants.SEPARATOR)[1];
-                        c = QueryUtils.categoriasJson(json);
-                    }
-                }
-            } catch (IOException e) {
-                Log.e("errorIO",e.getMessage());
-            }
-            return c;
-        }
-
-        @Override
-        protected void onPostExecute(final ArrayList<Categoria> ca) {
-            categorias.setValue(ca);
-        }
-
-        @Override
-        protected void onCancelled() {
-
-        }
-    }
-    public class PeticionCategoriasTaskTest extends AsyncTask<Void, Void, ArrayList<Categoria>> {
-        private String json;
-        private ArrayList<Categoria> c=new ArrayList<>();
-        PeticionCategoriasTaskTest() {
-        }
-
-        @Override
-        protected ArrayList<Categoria> doInBackground(Void... params) {
-            json = Constants.DUMMY_CATEGORIAS;
-            c = QueryUtils.categoriasJson(json);
-            return c;
-        }
-
-        @Override
-        protected void onPostExecute(final ArrayList<Categoria> ca) {
-            categorias.setValue(ca);
-        }
-
-        @Override
-        protected void onCancelled() {
-
-        }
-    }
 
 }

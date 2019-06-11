@@ -29,6 +29,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.appcompra.clases.Usuario;
 import com.example.appcompra.utils.QueryUtils;
@@ -38,6 +39,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -45,7 +47,7 @@ import java.util.List;
 
 
 public class LoginActivity extends AppCompatActivity implements Serializable,LoaderCallbacks<Cursor> {
-    private UserLoginTaskTest mAuthTask = null;
+    private UserLoginTask mAuthTask = null;
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
@@ -56,6 +58,10 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Iniciar servicio de comunicación con el servidor
+        /*Intent serviceIntent = new Intent(this, ServerComunicationService.class);
+        startService(serviceIntent);*/
+
         setContentView(R.layout.login);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -105,7 +111,10 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
         botonAceptarPopUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                QueryUtils.setIP(editText.getText().toString());
+                if(!editText.getText().toString().isEmpty())
+                    QueryUtils.setIP(editText.getText().toString());
+                else
+                    QueryUtils.setIP("127.0.0.1");
                 dialog.dismiss();
             }
         });
@@ -150,7 +159,7 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
         } else {
             // Muestra el spinner del progreso, crea el async task y lo ejecutamos
             showProgress(true);
-            mAuthTask = new UserLoginTaskTest(email, password);
+            mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
         }
     }
@@ -273,25 +282,39 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
 
             try {
                 if(QueryUtils.getSocket()==null)
-                    socket=new Socket(QueryUtils.getIP(),Constants.PORT);
+                    socket=new Socket(InetAddress.getByName(QueryUtils.getIP()),Constants.PORT);
                 else
                     socket=QueryUtils.getSocket();
                 in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out=new PrintWriter(socket.getOutputStream(),true);
                 out.println(Constants.LOGIN_PETICION +Constants.SEPARATOR+mEmail+Constants.SEPARATOR+mPassword);
-                respuesta=in.readLine();
+                if(!in.ready()){
+                    Thread.sleep(5000);
+                }
+                if(in.ready())
+                    respuesta=in.readLine();
+                else{
+                    Log.e("conexion","No se ha podido conectar");
+                    terminado=false;
+                    return terminado;
+                }
+
+                if(respuesta.split(Constants.SEPARATOR)[0].equals(Constants.LOGIN_RESPUESTA_CORRECTA)) {
+                    QueryUtils.setSocket(socket);
+                    usuario=new Usuario(Integer.parseInt(respuesta.split(Constants.SEPARATOR)[1]),respuesta.split(Constants.SEPARATOR)[2],mEmail,"https://cdn.computerhoy.com/sites/navi.axelspringer.es/public/styles/480/public/media/image/2018/08/fotos-perfil-whatsapp_16.jpg?itok=aqeTumbO");
+                    terminado=true;
+                }else
+                    terminado=false;
                 Log.e("xd",respuesta);
             } catch (UnknownHostException e) {
-                e.printStackTrace();
+               e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-           if(respuesta.split(Constants.SEPARATOR)[0].equals(Constants.LOGIN_RESPUESTA_CORRECTA)) {
-               QueryUtils.setSocket(socket);
-               usuario=new Usuario(Integer.parseInt(respuesta.split(Constants.SEPARATOR)[1]),respuesta.split(Constants.SEPARATOR)[2],mEmail,"https://cdn.computerhoy.com/sites/navi.axelspringer.es/public/styles/480/public/media/image/2018/08/fotos-perfil-whatsapp_16.jpg?itok=aqeTumbO");
-                return true;
-            }else
-                return false;
+
+            return terminado;
         }
 
         @Override

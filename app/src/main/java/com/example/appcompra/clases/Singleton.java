@@ -1,5 +1,6 @@
 package com.example.appcompra.clases;
 
+import com.example.appcompra.MainActivity;
 import com.example.appcompra.utils.Peticion;
 
 import java.util.ArrayList;
@@ -14,10 +15,15 @@ public class Singleton {
 
     private PriorityQueue<Peticion> peticionesEnviar;
 
+    private PriorityQueue<String> respuestasServidor;
+
+    private MainActivity.PeticionesThread hiloComunicacion;
 
     private TreeMap<Integer, TreeSet<Producto>> productosCategoria;
 
-    private TreeMap<Integer, TreeSet<Producto>> productosLista;
+    private TreeMap<Integer, TreeSet<ProductoLista>> productosLista;
+
+    private TreeSet<Lista> listas;
 
     private TreeSet<Producto> despensa;
 
@@ -33,40 +39,26 @@ public class Singleton {
         return roles;
     }
 
-    public void setRoles(ArrayList<String> roles) {
-        this.roles = roles;
-    }
-    public void addRol(String rol){
-        roles.add(rol);
+    public MainActivity.PeticionesThread getHiloComunicacion() {
+        return hiloComunicacion;
     }
 
-    public int getIdListaSeleccionada() {
-        return idListaSeleccionada;
+    public void setHiloComunicacion(MainActivity.PeticionesThread hiloComunicacion) {
+        this.hiloComunicacion = hiloComunicacion;
     }
 
-    public void setIdListaSeleccionada(int idListaSeleccionada) {
-        this.idListaSeleccionada = idListaSeleccionada;
-    }
-
-    public int getPosicionSpinnerListas() {
-        return posicionSpinnerListas;
-    }
-
-    public void setPosicionSpinnerListas(int posicionSpinnerListas) {
-        this.posicionSpinnerListas = posicionSpinnerListas;
-    }
-
-    private ArrayList<Lista> listas;
     private static Singleton instance;
 
     public Singleton () {
         categorias=new ArrayList<>();
-        listas=new ArrayList<>();
+        listas=new TreeSet<>();
         productosCategoria=new TreeMap<>();
         productosLista=new TreeMap<>();
         posicionSpinnerCategorias =0;
         idListaSeleccionada=0;
         despensa=new TreeSet<>();
+        peticionesEnviar=new PriorityQueue<>();
+        respuestasServidor=new PriorityQueue<>();
         roles=new ArrayList<>();
         roles.add("Ninguno");
         roles.add("Administrador");
@@ -81,19 +73,19 @@ public class Singleton {
         return instance;
     }
 
-    public TreeMap<Integer, TreeSet<Producto>> getProductosLista() {
+    public TreeMap<Integer, TreeSet<ProductoLista>> getProductosLista() {
         return productosLista;
     }
 
-    public void setProductosLista(TreeMap<Integer, TreeSet<Producto>> productosLista) {
+    public void setProductosLista(TreeMap<Integer, TreeSet<ProductoLista>> productosLista) {
         this.productosLista = productosLista;
     }
 
-    public ArrayList<Lista> getListas() {
+    public TreeSet<Lista> getListas() {
         return listas;
     }
 
-    public void setListas(ArrayList<Lista> listas) {
+    public void setListas(TreeSet<Lista> listas) {
         this.listas = listas;
     }
 
@@ -102,6 +94,7 @@ public class Singleton {
             productosLista.get(idLista).addAll(p);
         }
     }
+
 
     public ArrayList<Categoria> getCategorias() {
         return categorias;
@@ -161,5 +154,65 @@ public class Singleton {
 
     public void borrarLista(Lista l) {
         listas.remove(l);
+    }
+    public void setRoles(ArrayList<String> roles) {
+        this.roles = roles;
+    }
+
+    public void addRol(String rol){
+        roles.add(rol);
+    }
+
+    public int getIdListaSeleccionada() {
+        return idListaSeleccionada;
+    }
+
+    public void setIdListaSeleccionada(int idListaSeleccionada) {
+        this.idListaSeleccionada = idListaSeleccionada;
+    }
+
+    public int getPosicionSpinnerListas() {
+        return posicionSpinnerListas;
+    }
+
+    public void setPosicionSpinnerListas(int posicionSpinnerListas) {
+        this.posicionSpinnerListas = posicionSpinnerListas;
+    }
+
+    public PriorityQueue<Peticion> getPeticionesEnviar() {
+        return peticionesEnviar;
+    }
+
+    public void setPeticionesEnviar(PriorityQueue<Peticion> peticionesEnviar) {
+        this.peticionesEnviar = peticionesEnviar;
+    }
+
+    public PriorityQueue<String> getRespuestasServidor() {
+        return respuestasServidor;
+    }
+
+    public void setRespuestasServidor(PriorityQueue<String> respuestasServidor) {
+        this.respuestasServidor = respuestasServidor;
+    }
+
+    public synchronized void enviarPeticion(Peticion peticion){
+        peticionesEnviar.offer(peticion);
+    }
+
+    public synchronized String getPeticionMaxPrioridad(){
+        return peticionesEnviar.peek().getStringPeticion();
+    }
+
+    public synchronized void añadirRespuestaServidor(String respuesta){
+        respuestasServidor.offer(respuesta);
+        peticionesEnviar.remove();
+    }
+
+    public synchronized String getRespuestaMaxPrioridad(){
+        return respuestasServidor.peek();
+    }
+
+    public synchronized void peticionProcesada() {
+        peticionesEnviar.remove();
     }
 }

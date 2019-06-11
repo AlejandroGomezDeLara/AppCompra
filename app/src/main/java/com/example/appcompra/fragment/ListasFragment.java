@@ -4,50 +4,34 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.appcompra.Constants;
-import com.example.appcompra.MainActivity;
 import com.example.appcompra.R;
 import com.example.appcompra.adapters.ListaAdapter;
 import com.example.appcompra.clases.Lista;
 import com.example.appcompra.models.ListasViewModel;
 import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.Usuario;
-import com.example.appcompra.utils.Cambios;
 import com.example.appcompra.utils.QueryUtils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.TreeSet;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 
@@ -120,9 +104,9 @@ public class ListasFragment extends Fragment {
             addLista.setVisibility(View.VISIBLE);
         }
         if(isConnected) {
-            model.getListas().observe(getActivity(), new Observer<ArrayList<Lista>>() {
+            model.getListas().observe(getActivity(), new Observer<TreeSet<Lista>>() {
                 @Override
-                public void onChanged(@Nullable ArrayList<Lista> l) {
+                public void onChanged(@Nullable TreeSet<Lista> l) {
                     if(l!=null){
                         updateUI(l);
                     }
@@ -135,7 +119,7 @@ public class ListasFragment extends Fragment {
         }
     }
 
-    public void updateUI(ArrayList<Lista> m){
+    public void updateUI(TreeSet<Lista> m){
         /*productos.clear();
         productos.addAll(m);
         */
@@ -248,8 +232,5 @@ public class ListasFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        if(Cambios.getInstance().existenCambios()){
-
-        }
     }
 }

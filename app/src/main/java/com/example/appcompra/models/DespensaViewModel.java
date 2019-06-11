@@ -22,11 +22,11 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class DespensaViewModel extends AndroidViewModel {
-    private MutableLiveData<ArrayList<ProductoLista>> productos;
+    private MutableLiveData<TreeSet<ProductoLista>> productos;
     private Application application;
-    protected PeticionProductosTask peticionProductosTask=null;
 
 
     public DespensaViewModel(@NonNull Application application) {
@@ -34,62 +34,16 @@ public class DespensaViewModel extends AndroidViewModel {
         this.application=application;
     }
 
-    public LiveData<ArrayList<ProductoLista>> getProductosDespensa(){
+    public LiveData<TreeSet<ProductoLista>> getProductosDespensa(){
         if(productos==null){
             productos=new MutableLiveData<>();
-            pedirProductos();
         }
 
         return productos;
     }
 
-    public void setProductosDespensa(MutableLiveData<ArrayList<ProductoLista>> productos) {
+    public void setProductosDespensa(MutableLiveData<TreeSet<ProductoLista>> productos) {
         this.productos = productos;
     }
 
-    public class PeticionProductosTask extends AsyncTask<Void, Void, ArrayList<ProductoLista>> {
-        private Socket socket;
-        private BufferedReader in;
-        private PrintWriter out;
-        private String json;
-        private ArrayList<ProductoLista> p=new ArrayList<>();
-
-        PeticionProductosTask() {
-        }
-        @Override
-        protected ArrayList<ProductoLista> doInBackground(Void... params) {
-            socket=QueryUtils.getSocket();
-            try {
-                in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                out=new PrintWriter(socket.getOutputStream(),true);
-                out.println(Constants.PRODUCTOS_DESPENSA_PETICION+Constants.SEPARATOR+QueryUtils.getUsuario().getId());
-                String entrada=in.readLine();
-                if(entrada!=null && !entrada.isEmpty()){
-                    Log.e("respuesta",entrada.split(Constants.SEPARATOR)[1]);
-                    if(entrada.split(Constants.SEPARATOR)[0].equals(Constants.PRODUCTOS_DESPENSA_CORRECTA)){
-                        json=entrada.split(Constants.SEPARATOR)[1];
-                        p=QueryUtils.productosLista(json);
-                    }
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return p;
-        }
-
-        @Override
-        protected void onPostExecute(final ArrayList<ProductoLista> p) {
-            productos.setValue(p);
-        }
-
-        @Override
-        protected void onCancelled() {
-        }
-    }
-
-    public void pedirProductos() {
-        peticionProductosTask = new PeticionProductosTask();
-        peticionProductosTask.execute((Void) null);
-    }
 }

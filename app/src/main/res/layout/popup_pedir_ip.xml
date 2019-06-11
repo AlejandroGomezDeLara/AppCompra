@@ -19,7 +19,7 @@
         android:id="@+id/editText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="number"
+        android:inputType="text|number"
         android:hint="Server IP"
         android:textColorHint="@color/colorProducto"
         android:textColor="@color/colorProducto"

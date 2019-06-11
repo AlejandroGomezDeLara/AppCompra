@@ -9,10 +9,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -40,7 +38,7 @@ import com.example.appcompra.models.ProductoViewModel;
 import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.adapters.ProductoAdapter;
 import com.example.appcompra.clases.Usuario;
-import com.example.appcompra.utils.Cambios;
+import com.example.appcompra.utils.Peticion;
 import com.example.appcompra.utils.QueryUtils;
 
 import java.io.BufferedReader;
@@ -52,15 +50,14 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import javax.crypto.Cipher;
+import java.util.TreeSet;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 
 public class ProductosFragment extends Fragment {
 
-    protected ArrayList<Producto> productos;
-    protected ArrayList<Categoria> categorias;
+    protected TreeSet<Producto> productos;
+    protected TreeSet<Categoria> categorias;
     protected Usuario usuario;
     protected RecyclerView recyclerView;
     protected ProductoAdapter adapter;
@@ -70,8 +67,6 @@ public class ProductosFragment extends Fragment {
     protected TextView mEmptyStateTextView;
     protected ProductoViewModel modelProductos;
     protected CategoriaViewModel categoriaViewModel;
-    protected PeticionProductosTask peticionTask = null;
-    protected PeticionProductosTaskTest peticionTaskTest = null;
     protected Button addProductoListaButton;
     protected Spinner listasSpinner;
     protected ArrayList<Integer> idListas;
@@ -89,10 +84,18 @@ public class ProductosFragment extends Fragment {
         recyclerView=view.findViewById(R.id.recyclerView);
         cantidadEditText=view.findViewById(R.id.editTextCantidad);
         usuario=QueryUtils.getUsuario();
-        productos=new ArrayList<>();
-        categorias=new ArrayList<>();
+        productos=new TreeSet<>();
+        categorias=new TreeSet<>();
         idListas=new ArrayList<>();
         updateSpinnerCategorias(categorias);
+
+        Singleton.getInstance().enviarPeticion(new Peticion(Constants.CATEGORIAS_PETICION,QueryUtils.getUsuario().getId(),false));
+        Singleton.getInstance().enviarPeticion(new Peticion(Constants.PRODUCTOS_CATEGORIA_PETICION,QueryUtils.getUsuario().getId(),9+"",true));
+        Singleton.getInstance().enviarPeticion(new Peticion(Constants.LISTAS_PETICION,QueryUtils.getUsuario().getId(),false));
+
+
+        Singleton.getInstance().getHiloComunicacion().interrupt();
+
         if(Singleton.getInstance().existenListas())
             updateSpinnerListas(Singleton.getInstance().getListas());
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -121,16 +124,10 @@ public class ProductosFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, final long id) {
                 idCategoria = position + 1;
-                updateUI(new ArrayList<Producto>());
+                updateUI(new TreeSet<Producto>());
                 loadingIndicator.setVisibility(View.VISIBLE);
                 mEmptyStateTextView.setVisibility(View.GONE);
-                Singleton.getInstance().setPosicionSpinnerCategorias(position);
-                if(!Singleton.getInstance().getUltimosProductos().containsKey(idCategoria)){
-                    pedirProductos(idCategoria);
-                }else{
-                    loadingIndicator.setVisibility(View.GONE);
-                    updateUI(Singleton.getInstance().getUltimosProductos().get(idCategoria));
-                }
+
             }
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
@@ -142,7 +139,7 @@ public class ProductosFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 LinkedList<ProductoLista> productosSeleccionados=new LinkedList<>();
-                for (Map.Entry<Integer, ArrayList<Producto>> entry : Singleton.getInstance().getUltimosProductos().entrySet()) {
+                for (Map.Entry<Integer, TreeSet<Producto>> entry : Singleton.getInstance().getUltimosProductos().entrySet()) {
                     for (Producto p: entry.getValue()) {
                         if(p.isSeleccionado())
                             productosSeleccionados.add(new ProductoLista(p.getId(),p.getNombre(),1,null,null,false,p.getUrl(),null,null));
@@ -151,25 +148,24 @@ public class ProductosFragment extends Fragment {
                 for (int i=0;i<productosSeleccionados.size();i++){
                     ProductoLista p=productosSeleccionados.get(i);
                     p.setUnidades(Integer.parseInt(cantidadEditText.getText().toString()));
-                    Cambios.getInstance().addCambioTP(p.getId(),"add",Singleton.getInstance().getIdListaSeleccionada(),p.getUnidades());
                 }
                 Singleton.getInstance().añadirProductosLista(Singleton.getInstance().getIdListaSeleccionada(),productosSeleccionados);
                 if(Singleton.getInstance().getIdListaSeleccionada()==0)
                     ((MainActivity)getActivity()).getViewPager().setCurrentItem(0);
                 else
                     ((MainActivity)getActivity()).getViewPager().setCurrentItem(5);
-                Singleton.getInstance().deseleccionarProductos();
 
             }
         });
         adapter=new ProductoAdapter();
-        updateEditTextFiltrar(view);
+
         return view;
     }
-    private void updateSpinnerCategorias(ArrayList<Categoria> c) {
+    private void updateSpinnerCategorias(TreeSet<Categoria> c) {
         List<String> valoresSpinner=new ArrayList<>();
-        for (int i=0;i<c.size();i++){
-            valoresSpinner.add(c.get(i).getNombre());
+        List<Categoria> ci=new ArrayList<>(c);
+        for (int i=0;i<ci.size();i++){
+            valoresSpinner.add(ci.get(i).getNombre());
         }
         /*
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
@@ -185,14 +181,16 @@ public class ProductosFragment extends Fragment {
         categoriasSpinner.setAdapter(adapter);
         categoriasSpinner.setSelection(Singleton.getInstance().getPosicionSpinnerCategorias());
     }
-    private void updateSpinnerListas(ArrayList<Lista> l) {
+
+    private void updateSpinnerListas(TreeSet<Lista> l) {
         List<String> valoresSpinner=new ArrayList<>();
+        ArrayList<Lista> li=new ArrayList<>(l);
         idListas.clear();
         valoresSpinner.add("Despensa");
         idListas.add(0);
-        for (int i=0;i<l.size();i++){
-            valoresSpinner.add(l.get(i).getTitulo());
-            idListas.add(l.get(i).getId());
+        for (int i=0;i<li.size();i++){
+            valoresSpinner.add(li.get(i).getTitulo());
+            idListas.add(li.get(i).getId());
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 getContext(),R.layout.spinner_item,valoresSpinner
@@ -202,7 +200,7 @@ public class ProductosFragment extends Fragment {
         if(valoresSpinner.size()>Singleton.getInstance().getPosicionSpinnerListas())
             listasSpinner.setSelection(Singleton.getInstance().getPosicionSpinnerListas());
     }
-    private void updateUI(ArrayList<Producto> m){
+    private void updateUI(TreeSet<Producto> m){
         /*productos.clear();
         productos.addAll(m);
         */
@@ -213,121 +211,8 @@ public class ProductosFragment extends Fragment {
 
         adapter.notifyDataSetChanged();
     }
-    public void pedirProductos(int idCategoria) {
-        peticionTaskTest = new PeticionProductosTaskTest(idCategoria);
-        peticionTaskTest.execute((Void) null);
-        /*
-        peticionTask = new PeticionProductosTask(idCategoria);
-        peticionTask.execute((Void) null);*/
-    }
-    public class PeticionProductosTask extends AsyncTask<Void, Void, ArrayList<Producto>> {
-        private Socket socket;
-        private BufferedReader in;
-        private PrintWriter out;
-        private String json;
-        private int idCategoria;
-        private ArrayList<Producto> p=new ArrayList<>();
 
-        PeticionProductosTask(int idCategoria) {
-            this.idCategoria=idCategoria;
-        }
 
-        @Override
-        protected ArrayList<Producto> doInBackground(Void... params) {
-            socket=QueryUtils.getSocket();
-            try {
-                in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                out=new PrintWriter(socket.getOutputStream(),true);
-                out.println(Constants.PRODUCTOS_CATEGORIA_PETICION+Constants.SEPARATOR+QueryUtils.getUsuario().getId()+Constants.SEPARATOR+idCategoria);
-                String entrada=in.readLine();
-                if(entrada!=null && !entrada.isEmpty()){
-                    Log.e("respuesta",entrada.split(Constants.SEPARATOR)[1]);
-                    if(entrada.split(Constants.SEPARATOR)[0].equals(Constants.PRODUCTOS_CATEGORIA_RESPUESTA_CORRECTA)){
-                        json=entrada.split(Constants.SEPARATOR)[1];
-                        p=QueryUtils.tipoProductosJson(json);
-                    }
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return p;
-        }
-
-        @Override
-        protected void onPostExecute(final ArrayList<Producto> tipoProductos) {
-            if(!tipoProductos.isEmpty()){
-                if(!Singleton.getInstance().getUltimosProductos().containsKey(idCategoria)){
-                    Singleton.getInstance().añadirNuevosProductos(idCategoria,tipoProductos);
-                }
-                updateUI(tipoProductos);
-            }else{
-                mEmptyStateTextView.setVisibility(View.VISIBLE);
-            }
-            loadingIndicator.setVisibility(View.GONE);
-
-        }
-        @Override
-        protected void onCancelled() {
-        }
-    }
-    public class PeticionProductosTaskTest extends AsyncTask<Void, Void, ArrayList<Producto>> {
-
-        private String json;
-        private int idCategoria;
-        private ArrayList<Producto> p=new ArrayList<>();
-
-        PeticionProductosTaskTest(int idCategoria) {
-            this.idCategoria=idCategoria;
-        }
-
-        @Override
-        protected ArrayList<Producto> doInBackground(Void... params) {
-            json= Constants.DUMMY_PRODUCTOS_CATEGORIA_BODEGA;
-            p=QueryUtils.tipoProductosJson(json);
-            return p;
-        }
-
-        @Override
-        protected void onPostExecute(final ArrayList<Producto> tipoProductos) {
-            if(!tipoProductos.isEmpty()){
-                if(!Singleton.getInstance().getUltimosProductos().containsKey(idCategoria)){
-                    Singleton.getInstance().añadirNuevosProductos(idCategoria,tipoProductos);
-                }
-                updateUI(tipoProductos);
-            }else{
-                mEmptyStateTextView.setVisibility(View.VISIBLE);
-            }
-            loadingIndicator.setVisibility(View.GONE);
-
-        }
-        @Override
-        protected void onCancelled() {
-        }
-    }
-
-    private void updateEditTextFiltrar(View view){
-        EditText editText=view.findViewById(R.id.editText);
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-            @Override
-            public void afterTextChanged(Editable s) {
-                filtrar(s.toString());
-            }
-        });
-    }
-    private void filtrar(String contenidoEditText){
-        ArrayList<Producto> lista=new ArrayList<>();
-        for (Producto item:productos){
-            if(item.getNombre().toLowerCase().contains(contenidoEditText.toLowerCase())){
-                lista.add(item);
-            }
-        }
-        adapter.filtrarLista(lista);
-    }
     public void onResume() {
         super.onResume();
         ConnectivityManager manager=(ConnectivityManager)getActivity().getSystemService(CONNECTIVITY_SERVICE);
@@ -335,18 +220,18 @@ public class ProductosFragment extends Fragment {
         boolean isConnected=info!=null && info.isConnected();
         updateSpinnerListas(Singleton.getInstance().getListas());
         if(isConnected) {
-            categoriaViewModel.getCategorias().observe(getActivity(), new Observer<ArrayList<Categoria>>() {
+            categoriaViewModel.getCategorias().observe(getActivity(), new Observer<TreeSet<Categoria>>(){
                 @Override
-                public void onChanged(@Nullable ArrayList<Categoria> categorias) {
+                public void onChanged(@Nullable TreeSet<Categoria> categorias) {
                     if(categorias!=null){
                         updateSpinnerCategorias(categorias);
                     }
                 }
             });
 
-            modelProductos.getProductos().observe(getActivity(), new Observer<ArrayList<Producto>>() {
+            modelProductos.getProductos().observe(getActivity(), new Observer<TreeSet<Producto>>() {
                 @Override
-                public void onChanged(@Nullable ArrayList<Producto> p) {
+                public void onChanged(@Nullable TreeSet<Producto> p) {
                     if (p != null) {
                         updateUI(p);
                     }else{

@@ -2,7 +2,7 @@ package com.example.appcompra;
 
 public class Constants {
     //Constantes para la conexion
-    public static final int PORT=7777;
+    public static final int PORT=4444;
 
     //Caracteres para el servidor
     public static final String SEPARATOR=";";

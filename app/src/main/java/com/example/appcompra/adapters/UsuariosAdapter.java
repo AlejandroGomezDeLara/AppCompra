@@ -2,7 +2,6 @@ package com.example.appcompra.adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.media.Image;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -20,12 +19,8 @@ import android.widget.TextView;
 
 import com.example.appcompra.R;
 import com.example.appcompra.clases.Lista;
-import com.example.appcompra.clases.Producto;
-import com.example.appcompra.clases.ProductoLista;
 import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.Usuario;
-import com.example.appcompra.utils.Cambios;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,7 +93,6 @@ public class UsuariosAdapter extends RecyclerView.Adapter<UsuariosAdapter.ViewHo
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     usuario.setRol(Singleton.getInstance().getRoles().get(position));
-                    Cambios.getInstance().addCambioUS(usuario.getNombre(),"change",usuario.getRol(),listaActual.getId());
                     switch (usuario.getRol().toLowerCase()){
                         case "administrador":
                             viewHolder.linearUsuario.setBackground(ContextCompat.getDrawable(context,R.drawable.gradient_lista_admin));

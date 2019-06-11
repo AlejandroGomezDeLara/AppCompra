@@ -1,12 +1,11 @@
 package com.example.appcompra;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,8 +35,7 @@ import com.example.appcompra.adapters.MenuAdapter;
 import com.example.appcompra.clases.Lista;
 import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.Usuario;
-import com.example.appcompra.fragment.ListasFragment;
-import com.example.appcompra.utils.Cambios;
+import com.example.appcompra.utils.Peticion;
 import com.example.appcompra.utils.QueryUtils;
 import com.squareup.picasso.Picasso;
 
@@ -47,7 +45,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.TreeSet;
+
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -62,19 +63,31 @@ public class MainActivity extends AppCompatActivity
     Toolbar toolbar;
     TextView titulo;
     Lista listaSeleccionada;
+    protected Socket socket;
+    protected BufferedReader in;
+    protected PrintWriter out;
+    protected boolean working=true ;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        socket= QueryUtils.getSocket();
+        try {
+            in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out=new PrintWriter(socket.getOutputStream(),true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        PeticionesThread p=new PeticionesThread();
+        p.setDaemon(true);
+        p.start();
+        Singleton.getInstance().setHiloComunicacion(p);
+
         usuario = (Usuario) getIntent().getExtras().getSerializable("Usuario");
         QueryUtils.setUsuario(usuario);
         setContentView(R.layout.activity_main);
 
-
-        //Iniciar servicio
-        Intent i = new Intent(getApplicationContext(), ServerComunicationService.class);
-        i.putExtra("KEY1", "Value to be used by the service");
-        getApplicationContext().startService(i);
 
         recyclerView = findViewById(R.id.recyclerView);
         botonNueva = findViewById(R.id.boton_nueva_lista);
@@ -216,7 +229,7 @@ public class MainActivity extends AppCompatActivity
         return viewPager;
     }
 
-    public void updateUI(ArrayList<Lista> m) {
+    public void updateUI(TreeSet<Lista> m) {
         /*productos.clear();
         productos.addAll(m);
         */
@@ -326,5 +339,41 @@ public class MainActivity extends AppCompatActivity
                 dialog.dismiss();
             }
         });
+    }
+
+    public class PeticionesThread extends Thread{
+
+        PeticionesThread(){
+
+        }
+
+        @Override
+        public void run() {
+            while (working) {
+                try {
+                    Log.e("enviado","durmiendo");
+                    Thread.sleep(6000000);
+
+                } catch (InterruptedException e) {
+                    try {
+                        String salida=Singleton.getInstance().getPeticionMaxPrioridad();
+                        out.println(salida);
+                        Log.e("salida",salida+" "+Singleton.getInstance().getPeticionesEnviar().size());
+                        String entrada=in.readLine();
+                        if(entrada!=null){
+                            Singleton.getInstance().añadirRespuestaServidor(entrada);
+                            Singleton.getInstance().peticionProcesada();
+                        }
+                        Log.e("entrada",entrada);
+
+
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+
+                }
+                Thread.interrupted();
+            }
+        }
     }
 }

@@ -18,9 +18,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -34,12 +32,10 @@ import com.example.appcompra.R;
 import com.example.appcompra.adapters.DespensaAdapter;
 import com.example.appcompra.adapters.UsuariosAdapter;
 import com.example.appcompra.clases.Lista;
-import com.example.appcompra.clases.Producto;
 import com.example.appcompra.clases.ProductoLista;
 import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.Usuario;
 import com.example.appcompra.models.ProductosListaViewModel;
-import com.example.appcompra.utils.Cambios;
 import com.example.appcompra.utils.QueryUtils;
 
 import java.util.ArrayList;
@@ -74,7 +70,6 @@ public class InteriorListaFragment extends Fragment {
         addProducto = view.findViewById(R.id.añadir_boton);
         addProductoCentro = view.findViewById(R.id.añadir_boton_centro);
         idLista=Singleton.getInstance().getIdListaSeleccionada();
-        model= ViewModelProviders.of(getActivity()).get(ProductosListaViewModel.class);
         addProductoCentro.setVisibility(View.VISIBLE);
         addProducto.setVisibility(View.GONE);
         productos = new ArrayList<>();
@@ -92,11 +87,8 @@ public class InteriorListaFragment extends Fragment {
             }
         });
         String usuarios="";
-        for (int i=0;i<Singleton.getInstance().getListas().size();i++){
-            if(Singleton.getInstance().getListas().get(i).getId()==idLista) {
-                listaActual = Singleton.getInstance().getListas().get(i);
-            }
-        }
+
+
         if(listaActual!=null){
             for (int i=0;i<listaActual.getUsuarios().size();i++) {
                 Usuario usuarioActual=listaActual.getUsuarios().get(i);
@@ -182,27 +174,9 @@ public class InteriorListaFragment extends Fragment {
 
     public void onResume() {
         super.onResume();
-        ConnectivityManager manager=(ConnectivityManager)getActivity().getSystemService(CONNECTIVITY_SERVICE);
-        final NetworkInfo info=manager.getActiveNetworkInfo();
-        boolean isConnected=info!=null && info.isConnected();
 
-        if(isConnected) {
-            model.getProductosLista(idLista).observe(getActivity(), new Observer<ArrayList<ProductoLista>>() {
-                @Override
-                public void onChanged(@Nullable ArrayList<ProductoLista> p) {
-                    if(p!=null){
-                        updateUI(p);
-                    }else{
-                        mEmptyStateTextView.setVisibility(View.VISIBLE);
-                    }
-                }
-            });
 
-        }else{
-            loadingIndicator.setVisibility(View.GONE);
-            mEmptyStateTextView.setText(R.string.no_internet);
-            mEmptyStateTextView.setVisibility(View.VISIBLE);
-        }
+
     }
 
     @Override
@@ -222,7 +196,6 @@ public class InteriorListaFragment extends Fragment {
             @Override
             public void onBorrarUsuario(Usuario u) {
                 listaActual.borrarUsuario(u);
-                Cambios.getInstance().addCambioUS(u.getNombre(),"delete",null,idLista);
                 usuariosRecyclerView.setAdapter(usuariosAdapter);
                 usuariosAdapter.notifyDataSetChanged();
             }

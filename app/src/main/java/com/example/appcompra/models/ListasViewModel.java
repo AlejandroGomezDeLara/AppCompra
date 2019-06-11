@@ -21,9 +21,10 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class ListasViewModel extends AndroidViewModel {
-    private MutableLiveData<ArrayList<Lista>> listas;
+    private MutableLiveData<TreeSet<Lista>> listas;
     private Application application;
 
     public ListasViewModel(@NonNull Application application) {
@@ -31,7 +32,7 @@ public class ListasViewModel extends AndroidViewModel {
         this.application=application;
     }
 
-    public LiveData<ArrayList<Lista>> getListas(){
+    public LiveData<TreeSet<Lista>> getListas(){
         if(listas==null){
             listas=new MutableLiveData<>();
         }
@@ -40,7 +41,7 @@ public class ListasViewModel extends AndroidViewModel {
     }
 
 
-    public void setListas(MutableLiveData<ArrayList<Lista>> listas) {
+    public void setListas(MutableLiveData<TreeSet<Lista>> listas) {
         this.listas = listas;
     }
 

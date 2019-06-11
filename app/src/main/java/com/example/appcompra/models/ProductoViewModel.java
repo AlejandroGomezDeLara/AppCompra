@@ -21,9 +21,10 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class ProductoViewModel extends AndroidViewModel {
-    private MutableLiveData<ArrayList<Producto>> productos;
+    private MutableLiveData<TreeSet<Producto>> productos;
     private Application application;
 
     public ProductoViewModel(@NonNull Application application) {
@@ -31,7 +32,7 @@ public class ProductoViewModel extends AndroidViewModel {
         this.application=application;
     }
 
-    public LiveData<ArrayList<Producto>> getProductos(){
+    public LiveData<TreeSet<Producto>> getProductos(){
         if(productos==null){
             productos=new MutableLiveData<>();
         }
@@ -40,7 +41,7 @@ public class ProductoViewModel extends AndroidViewModel {
     }
 
 
-    public void setProductos(MutableLiveData<ArrayList<Producto>> productos) {
+    public void setProductos(MutableLiveData<TreeSet<Producto>> productos) {
         this.productos = productos;
     }
 
