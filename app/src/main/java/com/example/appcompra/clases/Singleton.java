@@ -1,5 +1,6 @@
 package com.example.appcompra.clases;
 
+import com.example.appcompra.Constants;
 import com.example.appcompra.MainActivity;
 import com.example.appcompra.utils.Peticion;
 
@@ -24,6 +25,8 @@ public class Singleton {
     private TreeMap<Integer, TreeSet<ProductoLista>> productosLista;
 
     private TreeSet<Lista> listas;
+
+    private ArrayList<String> caracteresPeticionesDirectas;
 
     private TreeSet<Producto> despensa;
 
@@ -60,10 +63,25 @@ public class Singleton {
         peticionesEnviar=new PriorityQueue<>();
         respuestasServidor=new PriorityQueue<>();
         roles=new ArrayList<>();
+        caracteresPeticionesDirectas=new ArrayList<>();
         roles.add("Ninguno");
         roles.add("Administrador");
         roles.add("Participante");
         roles.add("Espectador");
+        caracteresPeticionesDirectas.add(Constants.COMPARTIR_LISTA_CORRECTA);
+        caracteresPeticionesDirectas.add(Constants.CATEGORIAS_RESPUESTA_CORRECTA);
+        caracteresPeticionesDirectas.add(Constants.PRODUCTOS_CATEGORIA_RESPUESTA_CORRECTA);
+        caracteresPeticionesDirectas.add(Constants.PRODUCTOS_LISTA_CORRECTA);
+        caracteresPeticionesDirectas.add(Constants.LISTAS_RESPUESTA_CORRECTA);
+        caracteresPeticionesDirectas.add(Constants.PRODUCTOS_DESPENSA_CORRECTA);
+        caracteresPeticionesDirectas.add(Constants.CREACION_NUEVA_LISTA_CORRECTA);
+
+
+
+    }
+
+    public synchronized ArrayList<String> getCaracteresPeticionesDirectas() {
+        return caracteresPeticionesDirectas;
     }
 
     public static Singleton getInstance () {
@@ -120,7 +138,7 @@ public class Singleton {
         return despensa!=null && !despensa.isEmpty();
     }
 
-    public void añadirNuevosProductos(int idCategoria,TreeSet<Producto> productos){
+    public void añadirNuevosProductosCategoria(int idCategoria,TreeSet<Producto> productos){
         productosCategoria.put(idCategoria,productos);
     }
 
@@ -136,13 +154,14 @@ public class Singleton {
         listas.add(lista);
     }
 
-    public TreeMap<Integer, TreeSet<Producto>> getUltimosProductos() {
+    public TreeMap<Integer, TreeSet<Producto>> getProductosCategoria() {
         return productosCategoria;
     }
 
-    public void setUltimosProductos(TreeMap<Integer, TreeSet<Producto>> ultimosProductos) {
+    public void setProductosCategoria(TreeMap<Integer, TreeSet<Producto>> ultimosProductos) {
         this.productosCategoria = ultimosProductos;
     }
+
 
     public TreeSet<Producto> getDespensa() {
         return despensa;
@@ -197,6 +216,7 @@ public class Singleton {
 
     public synchronized void enviarPeticion(Peticion peticion){
         peticionesEnviar.offer(peticion);
+        hiloComunicacion.interrupt();
     }
 
     public synchronized String getPeticionMaxPrioridad(){
@@ -205,7 +225,7 @@ public class Singleton {
 
     public synchronized void añadirRespuestaServidor(String respuesta){
         respuestasServidor.offer(respuesta);
-        peticionesEnviar.remove();
+        peticionesEnviar.poll();
     }
 
     public synchronized String getRespuestaMaxPrioridad(){
@@ -213,6 +233,9 @@ public class Singleton {
     }
 
     public synchronized void peticionProcesada() {
-        peticionesEnviar.remove();
+        peticionesEnviar.poll();
     }
+
+
+
 }

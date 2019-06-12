@@ -86,5 +86,6 @@ public class Constants {
     public static final String DUMMY_COMPARTIR_LISTA_ACEPTADA="ALC";
 
 
+    public static final String PETICIONES_INDIRECTAS_ENVIADAS ="NC" ;
 }
 

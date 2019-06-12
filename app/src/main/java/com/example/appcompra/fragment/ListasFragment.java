@@ -22,12 +22,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.appcompra.Constants;
 import com.example.appcompra.R;
 import com.example.appcompra.adapters.ListaAdapter;
 import com.example.appcompra.clases.Lista;
 import com.example.appcompra.models.ListasViewModel;
 import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.Usuario;
+import com.example.appcompra.utils.Peticion;
 import com.example.appcompra.utils.QueryUtils;
 
 import java.util.ArrayList;
@@ -59,12 +61,7 @@ public class ListasFragment extends Fragment {
         model= ViewModelProviders.of(getActivity()).get(ListasViewModel.class);
         listas=new ArrayList<>();
         usuario=QueryUtils.getUsuario();
-        if(!Singleton.getInstance().existenListas()){
-            /*listasTask=new PeticionListasTask();
-            listasTask.execute((Void) null);*/
-        }else{
-            updateUI(Singleton.getInstance().getListas());
-        }
+
 
         //updateEditTextFiltrar(view);
         addLista=view.findViewById(R.id.añadir_boton);

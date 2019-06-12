@@ -5,6 +5,7 @@ import android.util.Log;
 import com.example.appcompra.clases.Categoria;
 import com.example.appcompra.clases.Lista;
 import com.example.appcompra.clases.Producto;
+import com.example.appcompra.clases.ProductosConID;
 import com.example.appcompra.clases.TipoProducto;
 import com.example.appcompra.clases.ProductoLista;
 import com.example.appcompra.clases.Usuario;
@@ -15,6 +16,7 @@ import org.json.JSONObject;
 
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 public class QueryUtils {
     private static Socket socket;
@@ -39,13 +41,15 @@ public class QueryUtils {
         usuarioId=usuario.getId();
     }
 
-    public static ArrayList<Producto> tipoProductosJson(String entrada){
+    public static ProductosConID tipoProductosJson(String entrada){
         int id;
         String nombre;
         String urlImagen;
-        ArrayList<Producto> productos =new ArrayList<>();
+        TreeSet<Producto> productos =new TreeSet<>();
+        int idCategoria=0;
         try{
             JSONObject raiz=new JSONObject(entrada);
+            idCategoria=raiz.getInt("id");
             JSONArray data=raiz.getJSONArray("productos");
             JSONObject productoActual;
             for (int i=0;i<data.length();i++){
@@ -61,7 +65,7 @@ public class QueryUtils {
             Log.e("JSONException ","JSON mal formado "+e.getMessage());
         }
 
-        return productos;
+        return new ProductosConID(idCategoria,productos);
     }
 
     public static ArrayList<Categoria> categoriasJson(String entrada){
@@ -95,11 +99,11 @@ public class QueryUtils {
         QueryUtils.socket = socket;
     }
 
-    public static ArrayList<Lista> listasJson(String json) {
+    public static TreeSet<Lista> listasJson(String json) {
         int id;
         String nombre;
         String rol;
-        ArrayList<Lista> listas=new ArrayList<>();
+        TreeSet<Lista> listas=new TreeSet<>();
         try{
             JSONObject raiz=new JSONObject(json);
             JSONArray data=raiz.getJSONArray("listas");
@@ -129,8 +133,9 @@ public class QueryUtils {
         return listas;
     }
 
-    public static ArrayList<ProductoLista> productosLista(String json){
+    public static ProductosConID productosLista(String json){
         int id;
+        int idLista=0;
         String nombre;
         String urlImagen;
         String marca;
@@ -139,10 +144,11 @@ public class QueryUtils {
         String cantidad;
         int unidades;
         boolean comprado;
-        ArrayList<ProductoLista> productos =new ArrayList<>();
+        TreeSet<Producto> productos =new TreeSet<>();
 
         try{
             JSONObject raiz=new JSONObject(json);
+            idLista=raiz.getInt("id");
             JSONArray tipos=raiz.getJSONArray("tipos");
             JSONArray comerciales=raiz.getJSONArray("comerciales");
             JSONObject productoActual;
@@ -180,7 +186,7 @@ public class QueryUtils {
             Log.e("JSONException ","JSON mal formado "+e.getMessage());
         }
 
-        return productos;
+        return new ProductosConID(idLista,productos);
     }
 
 }

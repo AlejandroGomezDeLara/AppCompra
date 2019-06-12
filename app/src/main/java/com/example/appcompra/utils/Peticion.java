@@ -58,6 +58,14 @@ public class Peticion implements Comparable<Peticion> {
 
     @Override
     public int compareTo(Peticion o) {
+        if(o.isDirecta() && this.isDirecta())
+            return -1;
+        if(o.isDirecta()){
+            return 1;
+        }
+        if(this.isDirecta()){
+            return -1;
+        }
         return 0;
     }
 }

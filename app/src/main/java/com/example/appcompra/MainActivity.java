@@ -1,10 +1,7 @@
 package com.example.appcompra;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -33,9 +30,9 @@ import android.widget.Toast;
 import com.example.appcompra.adapters.ListaAdapter;
 import com.example.appcompra.adapters.MenuAdapter;
 import com.example.appcompra.clases.Lista;
+import com.example.appcompra.clases.ProductosConID;
 import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.Usuario;
-import com.example.appcompra.utils.Peticion;
 import com.example.appcompra.utils.QueryUtils;
 import com.squareup.picasso.Picasso;
 
@@ -45,7 +42,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -355,24 +351,74 @@ public class MainActivity extends AppCompatActivity
                     Thread.sleep(6000000);
 
                 } catch (InterruptedException e) {
-                    try {
-                        String salida=Singleton.getInstance().getPeticionMaxPrioridad();
-                        out.println(salida);
-                        Log.e("salida",salida+" "+Singleton.getInstance().getPeticionesEnviar().size());
-                        String entrada=in.readLine();
-                        if(entrada!=null){
-                            Singleton.getInstance().añadirRespuestaServidor(entrada);
-                            Singleton.getInstance().peticionProcesada();
-                        }
-                        Log.e("entrada",entrada);
-
-
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
-
+                    procesarPeticiones();
+                    rellenarColecciones();
                 }
                 Thread.interrupted();
+            }
+        }
+        public synchronized void procesarPeticiones(){
+            while(Singleton.getInstance().getPeticionesEnviar().size()>0) {
+                try {
+                    String salida = Singleton.getInstance().getPeticionMaxPrioridad();
+
+                    out.println(salida);
+                    Log.e("procesar", salida + " size:" + Singleton.getInstance().getPeticionesEnviar().size());
+
+                    String entrada = in.readLine();
+                    while(Singleton.getInstance().getRespuestasServidor())
+                    
+                    Log.e("procesar", entrada);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+        public synchronized void rellenarColecciones(){
+            while(Singleton.getInstance().getRespuestasServidor().size()>0){
+                String entrada=Singleton.getInstance().getRespuestaMaxPrioridad();
+                if(entrada.contains(Constants.SEPARATOR))
+                    if(!entrada.split(Constants.SEPARATOR)[0].equals(Constants.PETICIONES_INDIRECTAS_ENVIADAS))
+                        procesarEntrada(entrada);
+            }
+        }
+        /*  Constants.COMPARTIR_LISTA_CORRECTA;
+            Constants.CATEGORIAS_RESPUESTA_CORRECTA;
+            Constants.PRODUCTOS_CATEGORIA_RESPUESTA_CORRECTA;
+            Constants.PRODUCTOS_LISTA_CORRECTA;
+            Constants.LISTAS_RESPUESTA_CORRECTA;
+            Constants.PRODUCTOS_DESPENSA_CORRECTA;
+            Constants.CREACION_NUEVA_LISTA_CORRECTA;*/
+
+        public void procesarEntrada(String entrada){
+            String codigoRespuesta=entrada.split(Constants.SEPARATOR)[0];
+            //Esta peticion va a ser directa asi que comprobamos su codigo entre el de las peticiones directas
+            switch (codigoRespuesta){
+                case Constants.COMPARTIR_LISTA_CORRECTA:
+                    Log.e("procesar","lista compartida, el id de la lista es"+entrada.split(Constants.SEPARATOR)[1]);
+                    break;
+                case Constants.CATEGORIAS_RESPUESTA_CORRECTA:
+                    Singleton.getInstance().setCategorias(QueryUtils.categoriasJson(entrada.split(Constants.SEPARATOR)[1]));
+                    break;
+                case Constants.PRODUCTOS_CATEGORIA_RESPUESTA_CORRECTA:
+                    ProductosConID productosCategoria =QueryUtils.tipoProductosJson(entrada);
+                    Singleton.getInstance().añadirNuevosProductosCategoria(productosCategoria.getId(), productosCategoria.getProductosConID());
+                    break;
+                case Constants.PRODUCTOS_LISTA_CORRECTA:
+                    ProductosConID productosLista =QueryUtils.productosLista(entrada);
+                    Singleton.getInstance().añadirNuevosProductosCategoria(productosLista.getId(), productosLista.getProductosConID());
+                    break;
+                case Constants.LISTAS_RESPUESTA_CORRECTA:
+                    Singleton.getInstance().setListas(QueryUtils.listasJson(entrada.split(Constants.SEPARATOR)[1]));
+                    break;
+                case Constants.PRODUCTOS_DESPENSA_CORRECTA:
+                    break;
+                case Constants.CREACION_NUEVA_LISTA_CORRECTA:
+
+                    break;
+                default:
+                    Log.e("procesar","Codigo de respuesta desconocido");
+                break;
             }
         }
     }

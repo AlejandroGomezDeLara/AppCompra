@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.example.appcompra.Constants;
 import com.example.appcompra.clases.Producto;
+import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.utils.QueryUtils;
 
 import java.io.BufferedReader;

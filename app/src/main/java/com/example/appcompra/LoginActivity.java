@@ -288,17 +288,7 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
                 in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out=new PrintWriter(socket.getOutputStream(),true);
                 out.println(Constants.LOGIN_PETICION +Constants.SEPARATOR+mEmail+Constants.SEPARATOR+mPassword);
-                if(!in.ready()){
-                    Thread.sleep(5000);
-                }
-                if(in.ready())
-                    respuesta=in.readLine();
-                else{
-                    Log.e("conexion","No se ha podido conectar");
-                    terminado=false;
-                    return terminado;
-                }
-
+                respuesta=in.readLine();
                 if(respuesta.split(Constants.SEPARATOR)[0].equals(Constants.LOGIN_RESPUESTA_CORRECTA)) {
                     QueryUtils.setSocket(socket);
                     usuario=new Usuario(Integer.parseInt(respuesta.split(Constants.SEPARATOR)[1]),respuesta.split(Constants.SEPARATOR)[2],mEmail,"https://cdn.computerhoy.com/sites/navi.axelspringer.es/public/styles/480/public/media/image/2018/08/fotos-perfil-whatsapp_16.jpg?itok=aqeTumbO");
@@ -309,8 +299,6 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
             } catch (UnknownHostException e) {
                e.printStackTrace();
             } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 

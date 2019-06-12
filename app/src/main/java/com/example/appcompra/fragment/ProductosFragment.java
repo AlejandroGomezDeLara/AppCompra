@@ -87,14 +87,9 @@ public class ProductosFragment extends Fragment {
         productos=new TreeSet<>();
         categorias=new TreeSet<>();
         idListas=new ArrayList<>();
-        updateSpinnerCategorias(categorias);
-
-        Singleton.getInstance().enviarPeticion(new Peticion(Constants.CATEGORIAS_PETICION,QueryUtils.getUsuario().getId(),false));
-        Singleton.getInstance().enviarPeticion(new Peticion(Constants.PRODUCTOS_CATEGORIA_PETICION,QueryUtils.getUsuario().getId(),9+"",true));
-        Singleton.getInstance().enviarPeticion(new Peticion(Constants.LISTAS_PETICION,QueryUtils.getUsuario().getId(),false));
 
 
-        Singleton.getInstance().getHiloComunicacion().interrupt();
+        Singleton.getInstance().enviarPeticion(new Peticion(Constants.CATEGORIAS_PETICION,QueryUtils.getUsuario().getId(),true));
 
         if(Singleton.getInstance().existenListas())
             updateSpinnerListas(Singleton.getInstance().getListas());
@@ -139,7 +134,7 @@ public class ProductosFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 LinkedList<ProductoLista> productosSeleccionados=new LinkedList<>();
-                for (Map.Entry<Integer, TreeSet<Producto>> entry : Singleton.getInstance().getUltimosProductos().entrySet()) {
+                for (Map.Entry<Integer, TreeSet<Producto>> entry : Singleton.getInstance().getProductosCategoria().entrySet()) {
                     for (Producto p: entry.getValue()) {
                         if(p.isSeleccionado())
                             productosSeleccionados.add(new ProductoLista(p.getId(),p.getNombre(),1,null,null,false,p.getUrl(),null,null));
@@ -200,6 +195,7 @@ public class ProductosFragment extends Fragment {
         if(valoresSpinner.size()>Singleton.getInstance().getPosicionSpinnerListas())
             listasSpinner.setSelection(Singleton.getInstance().getPosicionSpinnerListas());
     }
+
     private void updateUI(TreeSet<Producto> m){
         /*productos.clear();
         productos.addAll(m);
