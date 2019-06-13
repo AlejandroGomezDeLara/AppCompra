@@ -9,7 +9,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -27,6 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.appcompra.Constants;
 import com.example.appcompra.MainActivity;
 import com.example.appcompra.R;
 import com.example.appcompra.adapters.DespensaAdapter;
@@ -36,9 +39,11 @@ import com.example.appcompra.clases.ProductoLista;
 import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.Usuario;
 import com.example.appcompra.models.ProductosListaViewModel;
+import com.example.appcompra.utils.Peticion;
 import com.example.appcompra.utils.QueryUtils;
 
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 
@@ -87,7 +92,11 @@ public class InteriorListaFragment extends Fragment {
             }
         });
         String usuarios="";
-
+        for(Lista l: Singleton.getInstance().getListas()){
+            if(l.getId()==idLista){
+                listaActual=l;
+            }
+        }
 
         if(listaActual!=null){
             for (int i=0;i<listaActual.getUsuarios().size();i++) {
@@ -99,6 +108,21 @@ public class InteriorListaFragment extends Fragment {
                 }
             }
             Toolbar toolbar= (Toolbar)((AppCompatActivity) getActivity()).findViewById(R.id.toolbar);
+            BottomNavigationView menu=((AppCompatActivity) getActivity()).findViewById(R.id.menu_bottom);
+            switch (listaActual.getRol().toLowerCase()){
+                case "administrador":
+                    toolbar.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.gradient_lista_admin));
+                    menu.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.gradient_lista_admin));
+                    break;
+                case "participante":
+                    toolbar.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.gradient_lista_participante));
+                    menu.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.gradient_lista_participante));
+                    break;
+                case "espectador":
+                    toolbar.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.gradient_lista_espectador));
+                    menu.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.gradient_lista_espectador));
+                    break;
+            }
             TextView titulo=toolbar.findViewById(R.id.title);
             TextView subtitle=toolbar.findViewById(R.id.subtitle);
             subtitle.setText(usuarios);
@@ -113,10 +137,14 @@ public class InteriorListaFragment extends Fragment {
             });
 
 
-
         }
         adapter=new DespensaAdapter();
         updateEditTextFiltrar(view);
+        if(Singleton.getInstance().existenProductosLista()){
+            updateUI(Singleton.getInstance().getProductosListaLista(Singleton.getInstance().getIdListaSeleccionada()));
+        }else{
+            Singleton.getInstance().enviarPeticion(new Peticion(Constants.PRODUCTOS_LISTA_PETICION,QueryUtils.getUsuario().getId(),Singleton.getInstance().getIdListaSeleccionada()+"",5));
+        }
         return view;
     }
 
@@ -155,14 +183,14 @@ public class InteriorListaFragment extends Fragment {
         adapter.filtrarLista(lista);
     }
 
-    private void updateUI(ArrayList<ProductoLista> m) {
+    private void updateUI(TreeSet<ProductoLista> m) {
         /*productos.clear();
         productos.addAll(m);
         */
 
         adapter = new DespensaAdapter(m, getActivity(), R.layout.item_row_despensa, getActivity());
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         addProducto.setVisibility(View.VISIBLE);
@@ -174,8 +202,14 @@ public class InteriorListaFragment extends Fragment {
 
     public void onResume() {
         super.onResume();
-
-
+        ((MainActivity)getActivity()).getProductosListaViewModel().getProductosLista().observe(getActivity(), new Observer<TreeSet<ProductoLista>>() {
+            @Override
+            public void onChanged(@Nullable TreeSet<ProductoLista> p) {
+                if(p!=null){
+                    updateUI(p);
+                }
+            }
+        });
 
     }
 

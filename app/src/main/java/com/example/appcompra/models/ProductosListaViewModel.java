@@ -30,23 +30,27 @@ public class ProductosListaViewModel extends AndroidViewModel {
     private Application application;
 
 
-    public void setProductosLista(MutableLiveData<TreeSet<ProductoLista>> productos) {
-        this.productos = productos;
-    }
-
-    public ProductosListaViewModel(@NonNull Application application, Application application1) {
+    public ProductosListaViewModel(@NonNull Application application) {
         super(application);
-        this.application = application1;
+        this.application = application;
     }
 
 
-    public LiveData<TreeSet<ProductoLista>> getProductosLista(int idLista){
+    public LiveData<TreeSet<ProductoLista>> getProductosLista(){
         if(productos==null){
             productos=new MutableLiveData<>();
-            productos.setValue(Singleton.getInstance().getProductosListaLista(idLista));
+            loadProductosLista();
         }
 
         return productos;
+    }
+
+    public void setProductosLista(TreeSet<ProductoLista> p){
+        this.productos.postValue(p);
+    }
+
+    public void loadProductosLista(){
+        productos.setValue(Singleton.getInstance().getProductosListaLista(Singleton.getInstance().getIdListaSeleccionada()));
     }
 
 }

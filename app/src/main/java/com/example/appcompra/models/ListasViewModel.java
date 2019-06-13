@@ -49,7 +49,9 @@ public class ListasViewModel extends AndroidViewModel {
 
 
     public void añadirNuevaLista(Lista l){
-        listas.getValue().add(l);
+        TreeSet<Lista> listas=this.getListas().getValue();
+        listas.add(l);
+        this.listas.postValue(listas);
     }
 
     public void setListas(TreeSet<Lista> listas) {

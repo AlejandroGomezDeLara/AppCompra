@@ -51,11 +51,24 @@ public class Peticion implements Comparable<Peticion> {
         return importancia;
     }
 
+
     @Override
     public int compareTo(Peticion o) {
-        if(o.importancia > this.importancia)
-            return -1;
-        else
+        if(o.importancia < this.importancia)
             return 1;
+        else
+            return -1;
+    }
+
+    public int getIdUsuario() {
+        return idUsuario;
+    }
+
+    public String getCodPeticion() {
+        return codPeticion;
+    }
+
+    public String getParametros() {
+        return parametros;
     }
 }

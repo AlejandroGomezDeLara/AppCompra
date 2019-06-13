@@ -125,15 +125,14 @@ public class ProductosFragment extends Fragment {
         addProductoListaButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LinkedList<ProductoLista> productosSeleccionados=new LinkedList<>();
+                TreeSet<ProductoLista> productosSeleccionados=new TreeSet<>();
                 for (Map.Entry<Integer, TreeSet<Producto>> entry : Singleton.getInstance().getProductosCategoria().entrySet()) {
                     for (Producto p: entry.getValue()) {
                         if(p.isSeleccionado())
                             productosSeleccionados.add(new ProductoLista(p.getId(),p.getNombre(),1,null,null,false,p.getUrl(),null,null));
                     }
                 }
-                for (int i=0;i<productosSeleccionados.size();i++){
-                    ProductoLista p=productosSeleccionados.get(i);
+                for(ProductoLista p:productosSeleccionados){
                     p.setUnidades(Integer.parseInt(cantidadEditText.getText().toString()));
                 }
                 Singleton.getInstance().añadirProductosLista(Singleton.getInstance().getIdListaSeleccionada(),productosSeleccionados);

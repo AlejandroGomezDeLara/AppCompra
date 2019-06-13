@@ -1,9 +1,13 @@
 package com.example.appcompra;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -32,12 +36,16 @@ import com.example.appcompra.adapters.ListaAdapter;
 import com.example.appcompra.adapters.MenuAdapter;
 import com.example.appcompra.clases.Categoria;
 import com.example.appcompra.clases.Lista;
+import com.example.appcompra.clases.Producto;
+import com.example.appcompra.clases.ProductoLista;
 import com.example.appcompra.clases.ProductosConID;
+import com.example.appcompra.clases.ProductosListaConID;
 import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.Usuario;
 import com.example.appcompra.models.CategoriaViewModel;
 import com.example.appcompra.models.ListasViewModel;
 import com.example.appcompra.models.ProductoViewModel;
+import com.example.appcompra.models.ProductosListaViewModel;
 import com.example.appcompra.utils.QueryUtils;
 import com.squareup.picasso.Picasso;
 
@@ -64,6 +72,7 @@ public class MainActivity extends AppCompatActivity
     Toolbar toolbar;
     TextView titulo;
     Lista listaSeleccionada;
+    DrawerLayout drawerLayout;
     protected Socket socket;
     protected BufferedReader in;
     protected PrintWriter out;
@@ -71,6 +80,7 @@ public class MainActivity extends AppCompatActivity
     protected ProductoViewModel modelProductos;
     protected CategoriaViewModel categoriaViewModel;
     protected ListasViewModel listasViewModel;
+    protected ProductosListaViewModel productosListaViewModel;
 
 
     @Override
@@ -90,6 +100,7 @@ public class MainActivity extends AppCompatActivity
         this.categoriaViewModel= ViewModelProviders.of(this).get(CategoriaViewModel.class);
         this.modelProductos= ViewModelProviders.of(this).get(ProductoViewModel.class);
         this.listasViewModel= ViewModelProviders.of(this).get(ListasViewModel.class);
+        this.productosListaViewModel= ViewModelProviders.of(this).get(ProductosListaViewModel.class);
 
         usuario = (Usuario) getIntent().getExtras().getSerializable("Usuario");
         QueryUtils.setUsuario(usuario);
@@ -102,10 +113,10 @@ public class MainActivity extends AppCompatActivity
         titulo = toolbar.findViewById(R.id.title);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
+                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -159,6 +170,8 @@ public class MainActivity extends AppCompatActivity
 
     BottomNavigationView.OnNavigationItemSelectedListener navListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @SuppressLint("ResourceAsColor")
+                @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                     switch (menuItem.getItemId()) {
@@ -183,6 +196,8 @@ public class MainActivity extends AppCompatActivity
                             titulo.setText("Recetas");
                             break;
                     }
+                    toolbar.setBackground(ContextCompat.getDrawable(getApplicationContext(),R.drawable.gradient));
+                    menu.setBackground(ContextCompat.getDrawable(getApplicationContext(),R.drawable.gradient));
                     TextView subtitle = toolbar.findViewById(R.id.subtitle);
                     subtitle.setVisibility(View.GONE);
                     LinearLayout linearToolbar = toolbar.findViewById(R.id.linearToolbar);
@@ -198,9 +213,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
@@ -220,7 +234,8 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        drawer.closeDrawers();
+
         return true;
     }
 
@@ -348,6 +363,10 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
+    public DrawerLayout getDrawerLayout() {
+        return drawerLayout;
+    }
+
     public class PeticionesThread extends Thread{
 
         PeticionesThread(){
@@ -408,19 +427,22 @@ public class MainActivity extends AppCompatActivity
                     Log.e("procesar","lista compartida, el id de la lista es"+entrada.split(Constants.SEPARATOR)[1]);
                     break;
                 case Constants.CATEGORIAS_RESPUESTA_CORRECTA:
+                    Log.e("procesar", entrada);
                     TreeSet<Categoria> c=QueryUtils.categoriasJson(entrada.split(Constants.SEPARATOR)[1]);
                     Singleton.getInstance().setCategorias(c);
                     categoriaViewModel.setCategorias(c);
                     break;
                 case Constants.PRODUCTOS_CATEGORIA_RESPUESTA_CORRECTA:
+                    Log.e("procesar", entrada);
                     ProductosConID productosCategoria =QueryUtils.tipoProductosJson(entrada.split(Constants.SEPARATOR)[1]);
                     Singleton.getInstance().añadirNuevosProductosCategoria(productosCategoria.getId(), productosCategoria.getProductosConID());
                     modelProductos.setProductos(productosCategoria.getProductosConID());
                     break;
                 case Constants.PRODUCTOS_LISTA_CORRECTA:
-                    ProductosConID productosLista =QueryUtils.productosLista(entrada.split(Constants.SEPARATOR)[1]);
-                    Singleton.getInstance().añadirNuevosProductosCategoria(productosLista.getId(), productosLista.getProductosConID());
-
+                    Log.e("procesar", entrada);
+                    ProductosListaConID productosLista =QueryUtils.productosLista(entrada.split(Constants.SEPARATOR)[1]);
+                    Singleton.getInstance().añadirProductosLista(productosLista.getId(), productosLista.getProductosListaConID());
+                    productosListaViewModel.setProductosLista(productosLista.getProductosListaConID());
                     break;
                 case Constants.LISTAS_RESPUESTA_CORRECTA:
                     Log.e("procesar", entrada);
@@ -432,7 +454,9 @@ public class MainActivity extends AppCompatActivity
                     break;
                 case Constants.CREACION_NUEVA_LISTA_CORRECTA:
                     Log.e("procesar", entrada);
-                    Singleton.getInstance().añadirNuevaLista(new Lista(Integer.parseInt(entrada.split(Constants.SEPARATOR)[1]),entrada.split(Constants.SEPARATOR)[2],"Administrador"));
+                    Lista l=new Lista(Integer.parseInt(entrada.split(Constants.SEPARATOR)[1]),entrada.split(Constants.SEPARATOR)[2],"Administrador");
+                    Singleton.getInstance().añadirNuevaLista(l);
+                    listasViewModel.añadirNuevaLista(l);
                     break;
                 default:
                     Log.e("procesar","Codigo de respuesta desconocido");
@@ -464,5 +488,9 @@ public class MainActivity extends AppCompatActivity
 
     public void setListasViewModel(ListasViewModel listasViewModel) {
         this.listasViewModel = listasViewModel;
+    }
+
+    public ProductosListaViewModel getProductosListaViewModel() {
+        return productosListaViewModel;
     }
 }

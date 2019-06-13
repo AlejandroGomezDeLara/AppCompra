@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,12 +27,13 @@ import com.example.appcompra.models.DespensaViewModel;
 import com.example.appcompra.utils.QueryUtils;
 
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 
 public class DespensaFragment extends Fragment {
 
-    protected ArrayList<ProductoLista> productos;
+    protected TreeSet<ProductoLista> productos;
     protected RecyclerView recyclerView;
     protected DespensaAdapter adapter;
     protected DespensaViewModel model;
@@ -50,7 +52,7 @@ public class DespensaFragment extends Fragment {
         recyclerView=view.findViewById(R.id.recyclerView);
         model= ViewModelProviders.of(getActivity()).get(DespensaViewModel.class);
         mEmptyStateTextView=view.findViewById(R.id.emptyStateView);
-        productos=new ArrayList<>();
+        productos=new TreeSet<>();
         usuario= QueryUtils.getUsuario();
         addProductos=view.findViewById(R.id.añadir_boton);
         addProductos.setVisibility(View.GONE);
@@ -79,7 +81,7 @@ public class DespensaFragment extends Fragment {
 
     public void rellenarProductos(){
         productos.add(new ProductoLista(2,"Hamburguesa",2,null,null,false,"https://image.flaticon.com/icons/png/512/93/93104.png",null,null));
-        productos.add(new ProductoLista(4,"Pepinos",3,null,null,false,"https://image.flaticon.com/icons/png/512/93/93104.png",null,"200g"));
+        productos.add(new ProductoLista(4,"Cerveza",3,null,null,false,"https://www.bevald.es/wp-content/uploads/2016/06/modulo_producto_radler1.png",null,"200g"));
         productos.add(new ProductoLista(3,"Hamburguesa",4,null,"mercadona",false,"https://image.flaticon.com/icons/png/512/93/93104.png","Gula del norte","400g"));
         productos.add(new ProductoLista(9,"Huevo",1,null,"mercadona",false,"https://image.flaticon.com/icons/png/512/93/93104.png","Gula del norte","400g"));
 
@@ -110,13 +112,13 @@ public class DespensaFragment extends Fragment {
         }*/
     }
 
-    private void updateUI(ArrayList<ProductoLista> m){
+    private void updateUI(TreeSet<ProductoLista> m){
         /*productos.clear();
         productos.addAll(m);
         */
         adapter=new DespensaAdapter(m, getActivity(), R.layout.item_row_despensa, getActivity());
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         mEmptyStateTextView.setVisibility(View.GONE);

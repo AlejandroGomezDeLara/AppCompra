@@ -6,6 +6,7 @@ import com.example.appcompra.clases.Categoria;
 import com.example.appcompra.clases.Lista;
 import com.example.appcompra.clases.Producto;
 import com.example.appcompra.clases.ProductosConID;
+import com.example.appcompra.clases.ProductosListaConID;
 import com.example.appcompra.clases.TipoProducto;
 import com.example.appcompra.clases.ProductoLista;
 import com.example.appcompra.clases.Usuario;
@@ -134,7 +135,7 @@ public class QueryUtils {
         return listas;
     }
 
-    public static ProductosConID productosLista(String json){
+    public static ProductosListaConID productosLista(String json){
         int id;
         int idLista=0;
         String nombre;
@@ -145,7 +146,7 @@ public class QueryUtils {
         String cantidad;
         int unidades;
         boolean comprado;
-        TreeSet<Producto> productos =new TreeSet<>();
+        TreeSet<ProductoLista> productos =new TreeSet<>();
 
         try{
             JSONObject raiz=new JSONObject(json);
@@ -187,7 +188,7 @@ public class QueryUtils {
             Log.e("JSONException ","JSON mal formado "+e.getMessage());
         }
 
-        return new ProductosConID(idLista,productos);
+        return new ProductosListaConID(idLista,productos);
     }
 
 }

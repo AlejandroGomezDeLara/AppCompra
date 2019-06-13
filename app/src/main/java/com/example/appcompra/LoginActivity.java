@@ -65,7 +65,8 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
         setContentView(R.layout.login);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-        pedirIpPopup();
+        if(QueryUtils.getIP()==null)
+            pedirIpPopup();
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override

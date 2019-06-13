@@ -17,6 +17,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
 
 public class DespensaAdapter extends RecyclerView.Adapter<DespensaAdapter.ViewHolder> {
@@ -25,8 +26,8 @@ public class DespensaAdapter extends RecyclerView.Adapter<DespensaAdapter.ViewHo
     private int layout;
     private Context context;
 
-    public DespensaAdapter(List<ProductoLista> productos, Activity activity, int layout, Context context) {
-        this.productos = productos;
+    public DespensaAdapter(TreeSet<ProductoLista> productos, Activity activity, int layout, Context context) {
+        this.productos = new ArrayList<>(productos);
         this.activity = activity;
         this.layout = layout;
         this.context = context;
@@ -49,11 +50,6 @@ public class DespensaAdapter extends RecyclerView.Adapter<DespensaAdapter.ViewHo
         final ProductoLista producto=(ProductoLista)productos.get(i);
         viewHolder.nombre.setText(producto.getNombre());
         viewHolder.unidades.setText(producto.getUnidades()+" u");
-        if(producto.getCantidad()==null){
-            viewHolder.cantidad.setVisibility(View.GONE);
-        }else {
-            viewHolder.cantidad.setText(producto.getCantidad());
-        }
         if(producto.getUrl()!=null)
             Picasso.get().load(producto.getUrl()).into(viewHolder.imagen);
     }
@@ -71,13 +67,11 @@ public class DespensaAdapter extends RecyclerView.Adapter<DespensaAdapter.ViewHo
     public class ViewHolder extends RecyclerView.ViewHolder{
         TextView nombre;
         ImageView imagen;
-        TextView cantidad;
         TextView unidades;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             nombre=itemView.findViewById(R.id.nombre_producto);
-            imagen=itemView.findViewById(R.id.imagen_producto);
-            cantidad=itemView.findViewById(R.id.cantidad);
+            imagen=itemView.findViewById(R.id.imagen);
             unidades=itemView.findViewById(R.id.unidades);
         }
     }

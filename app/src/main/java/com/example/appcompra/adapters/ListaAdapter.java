@@ -88,6 +88,7 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
                 Singleton.getInstance().setPosicionSpinnerListas(i+1);
                 Singleton.getInstance().setIdListaSeleccionada(lista.getId());
                 ((MainActivity)activity).getViewPager().setCurrentItem(5);
+                ((MainActivity)activity).getDrawerLayout().closeDrawers();
             }
         });
         if(lista.getNumeroUsuarios()==0){

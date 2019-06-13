@@ -105,6 +105,7 @@ public class ListasFragment extends Fragment {
                 public void onChanged(@Nullable TreeSet<Lista> l) {
                     if(l!=null){
                         updateUI(l);
+                        ((MainActivity)getActivity()).updateUI(l);
                     }
                 }
             });

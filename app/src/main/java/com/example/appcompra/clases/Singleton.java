@@ -128,7 +128,7 @@ public class Singleton {
         this.listas = listas;
     }
 
-    public void añadirProductosLista(int idLista, LinkedList<ProductoLista> p){
+    public void añadirProductosLista(int idLista, TreeSet<ProductoLista> p){
         if(productosLista.containsKey(idLista)){
             productosLista.get(idLista).addAll(p);
         }
@@ -151,8 +151,14 @@ public class Singleton {
         return categorias!=null && !categorias.isEmpty();
     }
 
-    public boolean existenProdcuctosLista(){
-        return productosLista!=null && !productosLista.isEmpty();
+    public boolean existenProductosLista(){
+        if(productosLista.containsKey(idListaSeleccionada)){
+            if(productosLista.get(idListaSeleccionada).isEmpty())
+                return false;
+            else
+                return true;
+        }
+        else return false;
     }
 
     public boolean existenDespensa(){
@@ -241,8 +247,16 @@ public class Singleton {
     }
 
     public synchronized void enviarPeticion(Peticion peticion){
-        peticionesEnviar.offer(peticion);
+        boolean existePeticion=false;
+        for(Peticion p: peticionesEnviar){
+            if(p.getCodPeticion().equals(peticion.getCodPeticion()))
+                existePeticion=true;
+        }
+        if(!existePeticion){
+            peticionesEnviar.offer(peticion);
+        }
         hiloComunicacion.interrupt();
+
     }
 
     public synchronized String getPeticionMaxPrioridad(){
@@ -251,7 +265,7 @@ public class Singleton {
 
     public synchronized void añadirRespuestaServidor(String respuesta){
         respuestasServidor.offer(respuesta);
-        peticionesEnviar.poll();
+        peticionesEnviar.remove();
     }
 
     public synchronized String getRespuestaMaxPrioridad(){
