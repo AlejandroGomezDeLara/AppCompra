@@ -1,6 +1,6 @@
 package com.example.appcompra.clases;
 
-public class ProductoLista extends Producto {
+public class ProductoLista extends Producto{
     private int unidades;
     private String receta;
     private String cadena;

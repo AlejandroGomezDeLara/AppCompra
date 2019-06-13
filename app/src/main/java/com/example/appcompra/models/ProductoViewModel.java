@@ -7,21 +7,10 @@ import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
-import com.example.appcompra.Constants;
 import com.example.appcompra.clases.Producto;
 import com.example.appcompra.clases.Singleton;
-import com.example.appcompra.utils.QueryUtils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class ProductoViewModel extends AndroidViewModel {
@@ -37,14 +26,18 @@ public class ProductoViewModel extends AndroidViewModel {
         if(productos==null){
             productos=new MutableLiveData<>();
         }
-
+        loadProductos();
         return productos;
     }
 
-
-    public void setProductos(MutableLiveData<TreeSet<Producto>> productos) {
-        this.productos = productos;
+    public void setProductos(TreeSet<Producto> productos) {
+        this.productos.postValue(productos);
     }
+
+    public void loadProductos(){
+        productos.setValue(Singleton.getInstance().getProductosCategoriaCategoria(Singleton.getInstance().getIdCategoriaSelecionada()));
+    }
+
 
 
 

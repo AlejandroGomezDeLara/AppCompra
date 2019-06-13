@@ -1,7 +1,12 @@
 package com.example.appcompra.clases;
 
+import android.arch.lifecycle.ViewModelProviders;
+
 import com.example.appcompra.Constants;
 import com.example.appcompra.MainActivity;
+import com.example.appcompra.models.CategoriaViewModel;
+import com.example.appcompra.models.ListasViewModel;
+import com.example.appcompra.models.ProductoViewModel;
 import com.example.appcompra.utils.Peticion;
 
 import java.util.ArrayList;
@@ -12,7 +17,7 @@ import java.util.TreeSet;
 
 public class Singleton {
 
-    private ArrayList<Categoria> categorias;
+    private TreeSet<Categoria> categorias;
 
     private PriorityQueue<Peticion> peticionesEnviar;
 
@@ -36,7 +41,12 @@ public class Singleton {
 
     private int idListaSeleccionada;
 
+    private int idCategoriaSelecionada;
+
     private ArrayList<String> roles;
+
+
+
 
     public ArrayList<String> getRoles() {
         return roles;
@@ -53,12 +63,13 @@ public class Singleton {
     private static Singleton instance;
 
     public Singleton () {
-        categorias=new ArrayList<>();
+        categorias=new TreeSet<>();
         listas=new TreeSet<>();
         productosCategoria=new TreeMap<>();
         productosLista=new TreeMap<>();
         posicionSpinnerCategorias =0;
         idListaSeleccionada=0;
+        idCategoriaSelecionada=0;
         despensa=new TreeSet<>();
         peticionesEnviar=new PriorityQueue<>();
         respuestasServidor=new PriorityQueue<>();
@@ -76,8 +87,6 @@ public class Singleton {
         caracteresPeticionesDirectas.add(Constants.PRODUCTOS_DESPENSA_CORRECTA);
         caracteresPeticionesDirectas.add(Constants.CREACION_NUEVA_LISTA_CORRECTA);
 
-
-
     }
 
     public synchronized ArrayList<String> getCaracteresPeticionesDirectas() {
@@ -91,8 +100,20 @@ public class Singleton {
         return instance;
     }
 
+    public int getIdCategoriaSelecionada() {
+        return idCategoriaSelecionada;
+    }
+
+    public void setIdCategoriaSelecionada(int idCategoriaSelecionada) {
+        this.idCategoriaSelecionada = idCategoriaSelecionada;
+    }
+
     public TreeMap<Integer, TreeSet<ProductoLista>> getProductosLista() {
         return productosLista;
+    }
+
+    public TreeSet<ProductoLista> getProductosListaLista(int idLista) {
+        return productosLista.get(idLista);
     }
 
     public void setProductosLista(TreeMap<Integer, TreeSet<ProductoLista>> productosLista) {
@@ -114,11 +135,11 @@ public class Singleton {
     }
 
 
-    public ArrayList<Categoria> getCategorias() {
+    public TreeSet<Categoria> getCategorias() {
         return categorias;
     }
 
-    public void setCategorias(ArrayList<Categoria> categorias) {
+    public void setCategorias(TreeSet<Categoria> categorias) {
         this.categorias = categorias;
     }
 
@@ -157,6 +178,11 @@ public class Singleton {
     public TreeMap<Integer, TreeSet<Producto>> getProductosCategoria() {
         return productosCategoria;
     }
+
+    public TreeSet<Producto> getProductosCategoriaCategoria(int idCategoria) {
+        return productosCategoria.get(idCategoria);
+    }
+
 
     public void setProductosCategoria(TreeMap<Integer, TreeSet<Producto>> ultimosProductos) {
         this.productosCategoria = ultimosProductos;
@@ -233,9 +259,12 @@ public class Singleton {
     }
 
     public synchronized void peticionProcesada() {
-        peticionesEnviar.poll();
+        respuestasServidor.poll();
     }
 
 
+    public boolean existenProductosCategoriaSeleccionada() {
+        return productosCategoria.containsKey(idCategoriaSelecionada);
+    }
 
 }

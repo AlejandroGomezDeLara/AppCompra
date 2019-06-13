@@ -1,6 +1,6 @@
 package com.example.appcompra.clases;
 
-public class Categoria {
+public class Categoria implements Comparable{
     private int id;
     private String nombre;
 
@@ -24,4 +24,12 @@ public class Categoria {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
+
+    @Override
+    public int compareTo(Object o) {
+        if(((Categoria)o).getId() == this.getId())
+            return 0;
+        else return 1;
+    }
+
 }

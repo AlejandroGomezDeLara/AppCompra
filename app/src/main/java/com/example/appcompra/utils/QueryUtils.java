@@ -68,10 +68,10 @@ public class QueryUtils {
         return new ProductosConID(idCategoria,productos);
     }
 
-    public static ArrayList<Categoria> categoriasJson(String entrada){
+    public static TreeSet<Categoria> categoriasJson(String entrada){
         int id;
         String nombre;
-        ArrayList<Categoria> categorias=new ArrayList<>();
+        TreeSet<Categoria> categorias=new TreeSet<>();
         try{
             JSONObject raiz=new JSONObject(entrada);
             JSONArray data=raiz.getJSONArray("categorias");
@@ -102,7 +102,7 @@ public class QueryUtils {
     public static TreeSet<Lista> listasJson(String json) {
         int id;
         String nombre;
-        String rol;
+        String rol="";
         TreeSet<Lista> listas=new TreeSet<>();
         try{
             JSONObject raiz=new JSONObject(json);
@@ -113,11 +113,12 @@ public class QueryUtils {
                 id=listaActual.getInt("id");
                 nombre=listaActual.getString("nombre");
                 JSONArray usuariosLista=listaActual.getJSONArray("usuarios");
-                rol=listaActual.getString("rol");
                 ArrayList<Usuario> usuarios=new ArrayList<>();
                 for (int j=0;j<usuariosLista.length();j++){
                     JSONObject usuarioActual=usuariosLista.getJSONObject(j);
                     Usuario usuario=new Usuario(usuarioActual.getString("nombre"),usuarioActual.getString("rol"));
+                    if(usuario.getNombre().equals(QueryUtils.getUsuario().getNombre()))
+                        rol=usuario.getRol();
                     usuarios.add(usuario);
                 }
                 Lista c=new Lista(id,nombre,rol);

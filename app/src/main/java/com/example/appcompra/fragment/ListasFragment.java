@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.appcompra.Constants;
+import com.example.appcompra.MainActivity;
 import com.example.appcompra.R;
 import com.example.appcompra.adapters.ListaAdapter;
 import com.example.appcompra.clases.Lista;
@@ -46,7 +49,6 @@ public class ListasFragment extends Fragment {
     protected Usuario usuario;
     protected Button addLista;
     protected Button addListaCentro;
-    protected ListasViewModel model;
     protected String nombreNuevaLista;
     protected TextView mEmptyStateTextView;
     protected Lista listaSeleccionada;
@@ -58,11 +60,8 @@ public class ListasFragment extends Fragment {
         loadingIndicator = view.findViewById(R.id.loading_indicator);
         recyclerView=view.findViewById(R.id.recyclerView);
         mEmptyStateTextView=view.findViewById(R.id.emptyStateView);
-        model= ViewModelProviders.of(getActivity()).get(ListasViewModel.class);
         listas=new ArrayList<>();
         usuario=QueryUtils.getUsuario();
-
-
         //updateEditTextFiltrar(view);
         addLista=view.findViewById(R.id.añadir_boton);
         addListaCentro=view.findViewById(R.id.añadir_boton_centro);
@@ -101,7 +100,7 @@ public class ListasFragment extends Fragment {
             addLista.setVisibility(View.VISIBLE);
         }
         if(isConnected) {
-            model.getListas().observe(getActivity(), new Observer<TreeSet<Lista>>() {
+            ((MainActivity)getActivity()).getListasViewModel().getListas().observe(getActivity(), new Observer<TreeSet<Lista>>() {
                 @Override
                 public void onChanged(@Nullable TreeSet<Lista> l) {
                     if(l!=null){
@@ -114,6 +113,8 @@ public class ListasFragment extends Fragment {
             mEmptyStateTextView.setText(R.string.no_internet);
             mEmptyStateTextView.setVisibility(View.VISIBLE);
         }
+        if(!Singleton.getInstance().existenListas())
+            Singleton.getInstance().enviarPeticion(new Peticion(Constants.LISTAS_PETICION,QueryUtils.getUsuario().getId(),4));
     }
 
     public void updateUI(TreeSet<Lista> m){
@@ -151,7 +152,8 @@ public class ListasFragment extends Fragment {
             public void onClick(View v) {
                 nombreNuevaLista=editText.getText().toString();
                 if(!nombreNuevaLista.isEmpty()){
-                    //peticionNuevaLista();
+                    Singleton.getInstance().enviarPeticion(new Peticion(Constants.CREACION_NUEVA_LISTA,QueryUtils.getUsuario().getId(),nombreNuevaLista,4));
+
                     dialog.dismiss();
                 }else {
                     Toast.makeText(getContext(),"Introduce un nombre para la lista",Toast.LENGTH_LONG).show();

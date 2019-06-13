@@ -11,6 +11,8 @@ import android.util.Log;
 
 import com.example.appcompra.Constants;
 import com.example.appcompra.clases.Categoria;
+import com.example.appcompra.clases.Singleton;
+import com.example.appcompra.utils.Peticion;
 import com.example.appcompra.utils.QueryUtils;
 
 import java.io.BufferedReader;
@@ -35,9 +37,28 @@ public class CategoriaViewModel extends AndroidViewModel {
     public LiveData<TreeSet<Categoria>> getCategorias(){
         if(categorias==null){
             categorias=new MutableLiveData<>();
+            loadCategorias();
         }
+
         return categorias;
     }
+    public void loadCategorias(){
+        this.categorias.postValue(Singleton.getInstance().getCategorias());
+    }
 
+    public void setCategorias(TreeSet<Categoria> categorias) {
+        this.categorias.postValue(categorias);
+    }
 
+    public class EsperarRespuestaTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            while(!Singleton.getInstance().existenCategorias()){}
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void param) {
+            categorias.setValue(Singleton.getInstance().getCategorias());
+        }
+    }
 }

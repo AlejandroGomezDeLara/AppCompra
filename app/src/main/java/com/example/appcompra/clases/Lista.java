@@ -4,7 +4,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-public class Lista {
+public class Lista implements Comparable{
     private int id;
     private String titulo;
     private ArrayList<Producto> productos;
@@ -73,5 +73,12 @@ public class Lista {
     public void borrarUsuario(Usuario u) {
         if(usuarios.contains(u))
             usuarios.remove(u);
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if(((Lista)o).getId() == this.getId())
+            return 0;
+        else return 1;
     }
 }

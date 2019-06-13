@@ -2,8 +2,6 @@ package com.example.appcompra.fragment;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,8 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,18 +37,11 @@ import com.example.appcompra.clases.Usuario;
 import com.example.appcompra.utils.Peticion;
 import com.example.appcompra.utils.QueryUtils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
-
-import static android.content.Context.CONNECTIVITY_SERVICE;
 
 public class ProductosFragment extends Fragment {
 
@@ -65,8 +54,6 @@ public class ProductosFragment extends Fragment {
     protected Spinner categoriasSpinner;
     protected int idCategoria;
     protected TextView mEmptyStateTextView;
-    protected ProductoViewModel modelProductos;
-    protected CategoriaViewModel categoriaViewModel;
     protected Button addProductoListaButton;
     protected Spinner listasSpinner;
     protected ArrayList<Integer> idListas;
@@ -89,7 +76,6 @@ public class ProductosFragment extends Fragment {
         idListas=new ArrayList<>();
 
 
-        Singleton.getInstance().enviarPeticion(new Peticion(Constants.CATEGORIAS_PETICION,QueryUtils.getUsuario().getId(),true));
 
         if(Singleton.getInstance().existenListas())
             updateSpinnerListas(Singleton.getInstance().getListas());
@@ -102,8 +88,6 @@ public class ProductosFragment extends Fragment {
                 }
             }
         });
-        categoriaViewModel= ViewModelProviders.of(getActivity()).get(CategoriaViewModel.class);
-        modelProductos= ViewModelProviders.of(getActivity()).get(ProductoViewModel.class);
         listasSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -119,8 +103,16 @@ public class ProductosFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, final long id) {
                 idCategoria = position + 1;
-                updateUI(new TreeSet<Producto>());
-                loadingIndicator.setVisibility(View.VISIBLE);
+                Singleton.getInstance().setIdCategoriaSelecionada(idCategoria);
+                Singleton.getInstance().setPosicionSpinnerCategorias(position);
+                if(!Singleton.getInstance().existenProductosCategoriaSeleccionada()){
+                    Singleton.getInstance().enviarPeticion(new Peticion(Constants.PRODUCTOS_CATEGORIA_PETICION,QueryUtils.getUsuario().getId(),idCategoria+"",2));
+                    updateUI(new TreeSet<Producto>());
+                    loadingIndicator.setVisibility(View.VISIBLE);
+                }else{
+                    productos=Singleton.getInstance().getProductosCategoria().get(idCategoria);
+                    updateUI(productos);
+                }
                 mEmptyStateTextView.setVisibility(View.GONE);
 
             }
@@ -153,7 +145,8 @@ public class ProductosFragment extends Fragment {
             }
         });
         adapter=new ProductoAdapter();
-
+        if(!Singleton.getInstance().existenCategorias())
+            Singleton.getInstance().enviarPeticion(new Peticion(Constants.CATEGORIAS_PETICION,QueryUtils.getUsuario().getId(),3));
         return view;
     }
     private void updateSpinnerCategorias(TreeSet<Categoria> c) {
@@ -204,43 +197,34 @@ public class ProductosFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 4));
         recyclerView.setAdapter(adapter);
-
         adapter.notifyDataSetChanged();
+        if(m.isEmpty()){
+            mEmptyStateTextView.setText("No hay productos en esa categoria");
+            mEmptyStateTextView.setVisibility(View.VISIBLE);
+        }
+        loadingIndicator.setVisibility(View.GONE);
     }
+
 
 
     public void onResume() {
         super.onResume();
-        ConnectivityManager manager=(ConnectivityManager)getActivity().getSystemService(CONNECTIVITY_SERVICE);
-        final NetworkInfo info=manager.getActiveNetworkInfo();
-        boolean isConnected=info!=null && info.isConnected();
         updateSpinnerListas(Singleton.getInstance().getListas());
-        if(isConnected) {
-            categoriaViewModel.getCategorias().observe(getActivity(), new Observer<TreeSet<Categoria>>(){
-                @Override
-                public void onChanged(@Nullable TreeSet<Categoria> categorias) {
-                    if(categorias!=null){
-                        updateSpinnerCategorias(categorias);
-                    }
-                }
-            });
+        idCategoria=Singleton.getInstance().getPosicionSpinnerCategorias()+1;
+        ((MainActivity)getActivity()).getCategoriaViewModel().getCategorias().observe(getActivity(),new Observer<TreeSet<Categoria>>(){
+            @Override
+            public void onChanged(@Nullable TreeSet<Categoria> c) {
+                if(c!=null)
+                    updateSpinnerCategorias(c);
+            }
+        });
 
-            modelProductos.getProductos().observe(getActivity(), new Observer<TreeSet<Producto>>() {
-                @Override
-                public void onChanged(@Nullable TreeSet<Producto> p) {
-                    if (p != null) {
-                        updateUI(p);
-                    }else{
-                        mEmptyStateTextView.setVisibility(View.VISIBLE);
-                    }
-                }
-            });
-
-        }else{
-            loadingIndicator.setVisibility(View.GONE);
-            mEmptyStateTextView.setVisibility(View.VISIBLE);
-            mEmptyStateTextView.setText(R.string.no_internet);
-        }
+        ((MainActivity) getActivity()).getModelProductos().getProductos().observe(getActivity(), new Observer<TreeSet<Producto>>() {
+            @Override
+            public void onChanged(@Nullable TreeSet<Producto> p) {
+            if(p!=null)
+                updateUI(p);
+            }
+        });
     }
-
 }

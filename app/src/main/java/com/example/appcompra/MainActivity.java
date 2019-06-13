@@ -1,5 +1,6 @@
 package com.example.appcompra;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -29,10 +30,14 @@ import android.widget.Toast;
 
 import com.example.appcompra.adapters.ListaAdapter;
 import com.example.appcompra.adapters.MenuAdapter;
+import com.example.appcompra.clases.Categoria;
 import com.example.appcompra.clases.Lista;
 import com.example.appcompra.clases.ProductosConID;
 import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.Usuario;
+import com.example.appcompra.models.CategoriaViewModel;
+import com.example.appcompra.models.ListasViewModel;
+import com.example.appcompra.models.ProductoViewModel;
 import com.example.appcompra.utils.QueryUtils;
 import com.squareup.picasso.Picasso;
 
@@ -63,6 +68,9 @@ public class MainActivity extends AppCompatActivity
     protected BufferedReader in;
     protected PrintWriter out;
     protected boolean working=true ;
+    protected ProductoViewModel modelProductos;
+    protected CategoriaViewModel categoriaViewModel;
+    protected ListasViewModel listasViewModel;
 
 
     @Override
@@ -79,6 +87,9 @@ public class MainActivity extends AppCompatActivity
         p.setDaemon(true);
         p.start();
         Singleton.getInstance().setHiloComunicacion(p);
+        this.categoriaViewModel= ViewModelProviders.of(this).get(CategoriaViewModel.class);
+        this.modelProductos= ViewModelProviders.of(this).get(ProductoViewModel.class);
+        this.listasViewModel= ViewModelProviders.of(this).get(ListasViewModel.class);
 
         usuario = (Usuario) getIntent().getExtras().getSerializable("Usuario");
         QueryUtils.setUsuario(usuario);
@@ -366,9 +377,8 @@ public class MainActivity extends AppCompatActivity
                     Log.e("procesar", salida + " size:" + Singleton.getInstance().getPeticionesEnviar().size());
 
                     String entrada = in.readLine();
-                    while(Singleton.getInstance().getRespuestasServidor())
-                    
-                    Log.e("procesar", entrada);
+                    Singleton.getInstance().añadirRespuestaServidor(entrada);
+
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
@@ -398,28 +408,61 @@ public class MainActivity extends AppCompatActivity
                     Log.e("procesar","lista compartida, el id de la lista es"+entrada.split(Constants.SEPARATOR)[1]);
                     break;
                 case Constants.CATEGORIAS_RESPUESTA_CORRECTA:
-                    Singleton.getInstance().setCategorias(QueryUtils.categoriasJson(entrada.split(Constants.SEPARATOR)[1]));
+                    TreeSet<Categoria> c=QueryUtils.categoriasJson(entrada.split(Constants.SEPARATOR)[1]);
+                    Singleton.getInstance().setCategorias(c);
+                    categoriaViewModel.setCategorias(c);
                     break;
                 case Constants.PRODUCTOS_CATEGORIA_RESPUESTA_CORRECTA:
-                    ProductosConID productosCategoria =QueryUtils.tipoProductosJson(entrada);
+                    ProductosConID productosCategoria =QueryUtils.tipoProductosJson(entrada.split(Constants.SEPARATOR)[1]);
                     Singleton.getInstance().añadirNuevosProductosCategoria(productosCategoria.getId(), productosCategoria.getProductosConID());
+                    modelProductos.setProductos(productosCategoria.getProductosConID());
                     break;
                 case Constants.PRODUCTOS_LISTA_CORRECTA:
-                    ProductosConID productosLista =QueryUtils.productosLista(entrada);
+                    ProductosConID productosLista =QueryUtils.productosLista(entrada.split(Constants.SEPARATOR)[1]);
                     Singleton.getInstance().añadirNuevosProductosCategoria(productosLista.getId(), productosLista.getProductosConID());
+
                     break;
                 case Constants.LISTAS_RESPUESTA_CORRECTA:
+                    Log.e("procesar", entrada);
                     Singleton.getInstance().setListas(QueryUtils.listasJson(entrada.split(Constants.SEPARATOR)[1]));
+                    listasViewModel.setListas(Singleton.getInstance().getListas());
+
                     break;
                 case Constants.PRODUCTOS_DESPENSA_CORRECTA:
                     break;
                 case Constants.CREACION_NUEVA_LISTA_CORRECTA:
-
+                    Log.e("procesar", entrada);
+                    Singleton.getInstance().añadirNuevaLista(new Lista(Integer.parseInt(entrada.split(Constants.SEPARATOR)[1]),entrada.split(Constants.SEPARATOR)[2],"Administrador"));
                     break;
                 default:
                     Log.e("procesar","Codigo de respuesta desconocido");
                 break;
             }
+            Singleton.getInstance().peticionProcesada();
         }
+    }
+
+    public ProductoViewModel getModelProductos() {
+        return modelProductos;
+    }
+
+    public void setModelProductos(ProductoViewModel modelProductos) {
+        this.modelProductos = modelProductos;
+    }
+
+    public CategoriaViewModel getCategoriaViewModel() {
+        return categoriaViewModel;
+    }
+
+    public void setCategoriaViewModel(CategoriaViewModel categoriaViewModel) {
+        this.categoriaViewModel = categoriaViewModel;
+    }
+
+    public ListasViewModel getListasViewModel() {
+        return listasViewModel;
+    }
+
+    public void setListasViewModel(ListasViewModel listasViewModel) {
+        this.listasViewModel = listasViewModel;
     }
 }

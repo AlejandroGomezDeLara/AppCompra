@@ -12,6 +12,8 @@ import android.widget.Toast;
 
 import com.example.appcompra.Constants;
 import com.example.appcompra.clases.Lista;
+import com.example.appcompra.clases.Singleton;
+import com.example.appcompra.utils.Peticion;
 import com.example.appcompra.utils.QueryUtils;
 
 import java.io.BufferedReader;
@@ -35,14 +37,35 @@ public class ListasViewModel extends AndroidViewModel {
     public LiveData<TreeSet<Lista>> getListas(){
         if(listas==null){
             listas=new MutableLiveData<>();
+            loadListas();
         }
-
         return listas;
     }
 
 
-    public void setListas(MutableLiveData<TreeSet<Lista>> listas) {
-        this.listas = listas;
+    public void loadListas(){
+        this.listas.postValue(Singleton.getInstance().getListas());
+    }
+
+
+    public void añadirNuevaLista(Lista l){
+        listas.getValue().add(l);
+    }
+
+    public void setListas(TreeSet<Lista> listas) {
+        this.listas.postValue(listas);
+    }
+
+    public class EsperarRespuestaTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            while(!Singleton.getInstance().existenListas()){}
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void param) {
+            listas.setValue(Singleton.getInstance().getListas());
+        }
     }
 
 

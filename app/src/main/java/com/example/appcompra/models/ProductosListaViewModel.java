@@ -38,4 +38,15 @@ public class ProductosListaViewModel extends AndroidViewModel {
         super(application);
         this.application = application1;
     }
+
+
+    public LiveData<TreeSet<ProductoLista>> getProductosLista(int idLista){
+        if(productos==null){
+            productos=new MutableLiveData<>();
+            productos.setValue(Singleton.getInstance().getProductosListaLista(idLista));
+        }
+
+        return productos;
+    }
+
 }

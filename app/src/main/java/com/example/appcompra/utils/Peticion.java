@@ -13,7 +13,7 @@ public class Peticion implements Comparable<Peticion> {
     private int idUsuario;
     private String codPeticion;
     private String parametros;
-    private boolean directa;
+    private int importancia;
 
     public Peticion(String codPeticion,int idUsuario){
         this.codPeticion=codPeticion;
@@ -26,18 +26,17 @@ public class Peticion implements Comparable<Peticion> {
         this.parametros=parametros;
     }
 
-    public Peticion( String codPeticion,int idUsuario, String parametros, boolean directa) {
+    public Peticion( String codPeticion,int idUsuario, String parametros, int importancia) {
         this.idUsuario = idUsuario;
         this.codPeticion = codPeticion;
         this.parametros = parametros;
-        this.directa = directa;
+        this.importancia = importancia;
     }
 
-    public Peticion( String codPeticion,int idUsuario, boolean directa) {
+    public Peticion( String codPeticion,int idUsuario, int importancia) {
         this.idUsuario = idUsuario;
         this.codPeticion = codPeticion;
-        this.parametros = parametros;
-        this.directa = directa;
+        this.importancia = importancia;
     }
 
     public String getStringPeticion(){
@@ -48,24 +47,15 @@ public class Peticion implements Comparable<Peticion> {
 
     }
 
-    public boolean isDirecta() {
-        return directa;
-    }
-
-    public void setDirecta(boolean directa) {
-        this.directa = directa;
+    public int getImportancia() {
+        return importancia;
     }
 
     @Override
     public int compareTo(Peticion o) {
-        if(o.isDirecta() && this.isDirecta())
+        if(o.importancia > this.importancia)
             return -1;
-        if(o.isDirecta()){
+        else
             return 1;
-        }
-        if(this.isDirecta()){
-            return -1;
-        }
-        return 0;
     }
 }

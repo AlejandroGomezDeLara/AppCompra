@@ -2,7 +2,7 @@ package com.example.appcompra.clases;
 
 import android.content.Context;
 
-public class Producto {
+public class Producto implements Comparable{
     public int id;
     public String nombre;
     public String url;
@@ -53,5 +53,12 @@ public class Producto {
         }else{
             return nombre;
         }
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if(((Producto)o).getId() == this.getId())
+            return 0;
+        else return 1;
     }
 }
