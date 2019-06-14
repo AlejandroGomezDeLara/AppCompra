@@ -225,6 +225,8 @@ public class ListasFragment extends Fragment {
                 String nombreUsuario=editText.getText().toString();
                 if(!nombreUsuario.isEmpty()){
                     if(!rolElegido.equals("Ninguno") && !nombreUsuario.isEmpty()) {
+                        Singleton.getInstance().enviarPeticion(new Peticion(Constants.COMPARTIR_LISTA_PETICION,QueryUtils.getUsuario().getId(),listaSeleccionada.getId()+Constants.SEPARATOR+nombreUsuario+Constants.SEPARATOR+rolElegido.toLowerCase(),10));
+                        listaSeleccionada.añadirUsuario(new Usuario(nombreUsuario,rolElegido));
                         dialog.dismiss();
                     }else{
                         Toast.makeText(getContext(),"Elige un rol para el usuario",Toast.LENGTH_LONG).show();

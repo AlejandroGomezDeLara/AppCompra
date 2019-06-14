@@ -6,18 +6,16 @@ import org.json.*;
 public class Cambios{
     private String codCambio;
     private int idUsuario;
-    private String cambiosListas;
-    private String cambiosProductosComeciales;
-    private String cambiosTipoProducto;
-    private String cambiosUsuarios;
-    private JSONArray cambiosArray;
-    private JSONObject cambios;
+    private JSONArray cambiosTP;
+    private JSONArray cambiosPC;
+    private JSONArray cambiosUS;
+    private JSONObject todosCambios;
 
     private static Cambios instance;
 
     public static Cambios getInstance () {
         if (instance==null)
-            instance = new Cambios("N",QueryUtils.getUsuario().getId());
+            instance = new Cambios();
 
         return instance;
     }
@@ -34,16 +32,20 @@ public class Cambios{
     }
     */
 
-    public Cambios(String codCambio,int idUsuario){
+    public Cambios(){
         this.codCambio=codCambio;
         this.idUsuario=idUsuario;
-        this.cambiosArray=new JSONArray();
+        this.cambiosPC=new JSONArray();
+        this.cambiosTP=new JSONArray();
+        this.cambiosUS=new JSONArray();
+        this.todosCambios=new JSONObject();
     }
 
-    public void añadirCambioTipoProducto(int id,String operacion,int unidades,int cadena,String receta) {
+    public void añadirCambioTipoProducto(int id,String operacion,int idLista,int unidades,String cadena,String receta) {
         JSONObject o=new JSONObject();
         try{
             o.put("id",id);
+            o.put("idLista",idLista);
             o.put("operacion",operacion);
             o.put("unidades",unidades);
             o.put("cadena",cadena);
@@ -51,13 +53,14 @@ public class Cambios{
         }catch (JSONException e){
             e.printStackTrace();
         }
-        cambiosArray.put(o);
+        cambiosTP.put(o);
     }
 
-    public void añadirCambioProductoComercial(int id,String operacion,int unidades,int cadena,String receta,String marca){
+    public void añadirCambioProductoComercial(int id,String operacion,int idLista,int unidades,String cadena,String receta,String marca){
         JSONObject o=new JSONObject();
         try {
             o.put("id",id);
+            o.put("idLista",idLista);
             o.put("operacion",operacion);
             o.put("unidades",unidades);
             o.put("cadena",cadena);
@@ -67,7 +70,7 @@ public class Cambios{
             e.printStackTrace();
         }
 
-        cambiosArray.put(o);
+        cambiosPC.put(o);
     }
     public void añadirCambioUsuarios(String nombre,String operacion,String rol,int idLista){
         JSONObject o=new JSONObject();
@@ -80,17 +83,31 @@ public class Cambios{
             e.printStackTrace();
         }
 
-        cambiosArray.put(o);
+        cambiosUS.put(o);
     }
 
 
 
     public String getCambiosString(){
-        return codCambio+Constants.SEPARATOR+idUsuario+Constants.SEPARATOR+cambios.toString();
+        try {
+            todosCambios.put("tp",cambiosTP);
+            todosCambios.put("pc",cambiosPC);
+            todosCambios.put("us",cambiosUS);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String cambios=todosCambios.toString();
+        limpiarCambios();
+        return cambios;
     }
 
     public void limpiarCambios(){
-        cambiosArray=new JSONArray();
+        todosCambios=new JSONObject();
+        cambiosUS=new JSONArray();
+        cambiosPC=new JSONArray();
+        cambiosTP=new JSONArray();
     }
-
+    public boolean existenCambios(){
+        return cambiosUS.length()!=0 || cambiosTP.length()!=0 || cambiosTP.length()!=0;
+    }
 }

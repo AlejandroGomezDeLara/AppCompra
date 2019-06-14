@@ -89,5 +89,6 @@ public class Constants {
     public static final String PETICIONES_INDIRECTAS_ENVIADAS ="NC" ;
     public static final String BORRAR_LISTA_ACEPTADA = "SLC";
     public static final String BORRAR_LISTA_FALLIDA = "SLF";
+    public static final String NOTIFICACIONES_CORRECTA = "NC";
 }
 

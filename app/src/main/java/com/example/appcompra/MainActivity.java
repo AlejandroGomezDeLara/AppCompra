@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
@@ -56,6 +58,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -411,11 +414,11 @@ public class MainActivity extends AppCompatActivity
             }
         }
         public synchronized void rellenarColecciones(){
+
             while(Singleton.getInstance().getRespuestasServidor().size()>0){
                 String entrada=Singleton.getInstance().getRespuestaMaxPrioridad();
                 if(entrada.contains(Constants.SEPARATOR))
-                    if(!entrada.split(Constants.SEPARATOR)[0].equals(Constants.PETICIONES_INDIRECTAS_ENVIADAS))
-                        procesarEntrada(entrada);
+                    procesarEntrada(entrada);
             }
         }
         /*  Constants.COMPARTIR_LISTA_CORRECTA;
@@ -431,7 +434,13 @@ public class MainActivity extends AppCompatActivity
             //Esta peticion va a ser directa asi que comprobamos su codigo entre el de las peticiones directas
             switch (codigoRespuesta){
                 case Constants.COMPARTIR_LISTA_CORRECTA:
-                    Log.e("procesar","lista compartida, el id de la lista es"+entrada.split(Constants.SEPARATOR)[1]);
+                    if(entrada.split(Constants.SEPARATOR).length>1) {
+                        Log.e("procesar", "No se ha podido añadir el usuario");
+                    }else{
+                        Log.e("procesar","lista compartida");
+                        listasViewModel.setListas(Singleton.getInstance().getListas());
+                    }
+
                     break;
                 case Constants.CATEGORIAS_RESPUESTA_CORRECTA:
                     Log.e("procesar", entrada);
@@ -476,9 +485,13 @@ public class MainActivity extends AppCompatActivity
                     Singleton.getInstance().borrarLista(Integer.parseInt(entrada.split(Constants.SEPARATOR)[1]));
                     listasViewModel.setListas(Singleton.getInstance().getListas());
                     break;
+                case Constants.NOTIFICACIONES_CORRECTA:
+                    Log.e("procesar", entrada);
+                    break;
                 default:
                     Log.e("procesar","Codigo de respuesta desconocido");
                 break;
+
             }
             Singleton.getInstance().peticionProcesada();
         }

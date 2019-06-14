@@ -131,7 +131,14 @@ public class Singleton {
     }
 
     public void añadirProductosLista(int idLista, TreeSet<ProductoLista> p){
+
         if(productosLista.containsKey(idLista)){
+            for(ProductoLista productoLista: getProductosListaLista(idLista)){
+                for(ProductoLista productoLista1: p){
+                    if(productoLista.getId()==productoLista1.getId())
+                        productoLista.sumarUnidades(productoLista1.getUnidades());
+                }
+            }
             productosLista.get(idLista).addAll(p);
         }else{
             productosLista.put(idLista,p);
@@ -204,6 +211,12 @@ public class Singleton {
     }
 
     public void setDespensa(TreeSet<ProductoLista> despensa) {
+        for(ProductoLista productoLista: getDespensa()){
+            for(ProductoLista productoLista1: despensa){
+                if(productoLista.getId()==productoLista1.getId())
+                    productoLista.sumarUnidades(productoLista1.getUnidades());
+            }
+        }
         this.despensa = despensa;
     }
 
@@ -297,5 +310,19 @@ public class Singleton {
                     p.setSeleccionado(!p.isSeleccionado());
             }
         }
+    }
+
+    public void añadirProductosDespensa(TreeSet<ProductoLista> productosSeleccionados) {
+        Iterator iterator=productosSeleccionados.iterator();
+        for(ProductoLista productoLista: getDespensa()){
+            while (iterator.hasNext()){
+                ProductoLista pro=(ProductoLista)iterator.next();
+                if(productoLista.getId()==pro.getId()){
+                    productoLista.sumarUnidades(pro.getUnidades());
+                    iterator.remove();
+                }
+            }
+        }
+        despensa.addAll(productosSeleccionados);
     }
 }

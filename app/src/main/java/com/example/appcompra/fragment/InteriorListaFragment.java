@@ -40,6 +40,7 @@ import com.example.appcompra.clases.ProductoLista;
 import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.Usuario;
 import com.example.appcompra.models.ProductosListaViewModel;
+import com.example.appcompra.utils.Cambios;
 import com.example.appcompra.utils.Peticion;
 import com.example.appcompra.utils.QueryUtils;
 
@@ -264,6 +265,7 @@ public class InteriorListaFragment extends Fragment {
             @Override
             public void onBorrarUsuario(Usuario u) {
                 listaActual.borrarUsuario(u);
+                Cambios.getInstance().añadirCambioUsuarios(u.getNombre(),"delete",u.getRol(),listaActual.getId());
                 usuariosRecyclerView.setAdapter(usuariosAdapter);
                 usuariosAdapter.notifyDataSetChanged();
             }

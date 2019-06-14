@@ -73,6 +73,7 @@ public class ProductoLista extends Producto{
     @Override
     public int compareTo(Object o) {
         if(((ProductoLista)o).getId() == this.getId()){
+            this.sumarUnidades(((ProductoLista) o).getUnidades());
             return 0;
         }
         else return 1;

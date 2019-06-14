@@ -51,15 +51,6 @@ public class DespensaFragment extends Fragment {
     protected Button addProductos;
     protected Button addProductosCentro;
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if(Singleton.getInstance().existenDespensa()){
-            updateUI(Singleton.getInstance().getDespensa());
-        }else{
-            Singleton.getInstance().enviarPeticion(new Peticion(Constants.PRODUCTOS_DESPENSA_PETICION,QueryUtils.getUsuario().getId(),5));
-        }
-    }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Nullable
@@ -120,6 +111,11 @@ public class DespensaFragment extends Fragment {
 
     public void onResume() {
         super.onResume();
+        if(Singleton.getInstance().existenDespensa()){
+            updateUI(Singleton.getInstance().getDespensa());
+        }else{
+            Singleton.getInstance().enviarPeticion(new Peticion(Constants.PRODUCTOS_DESPENSA_PETICION,QueryUtils.getUsuario().getId(),5));
+        }
         ((MainActivity)getActivity()).getDespensaViewModel().getProductosDespensa().observe(getActivity(), new Observer<TreeSet<ProductoLista>>() {
             @Override
             public void onChanged(@Nullable TreeSet<ProductoLista> p) {

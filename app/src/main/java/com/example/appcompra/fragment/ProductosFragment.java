@@ -34,6 +34,7 @@ import com.example.appcompra.models.ProductoViewModel;
 import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.adapters.ProductoAdapter;
 import com.example.appcompra.clases.Usuario;
+import com.example.appcompra.utils.Cambios;
 import com.example.appcompra.utils.Peticion;
 import com.example.appcompra.utils.QueryUtils;
 
@@ -137,10 +138,16 @@ public class ProductosFragment extends Fragment {
                 }
                 int idListaSeleccionada=Singleton.getInstance().getIdListaSeleccionada();
 
+                for(ProductoLista p: productosSeleccionados) {
+                    Cambios.getInstance().añadirCambioTipoProducto(p.getId(),"add",idListaSeleccionada,Integer.parseInt(cantidadEditText.getText().toString()),null,null);
+                }
+
                 Singleton.getInstance().añadirProductosLista(idListaSeleccionada,productosSeleccionados);
                 Singleton.getInstance().deseleccionarProductos();
-                if(Singleton.getInstance().getIdListaSeleccionada()==0)
+                if(Singleton.getInstance().getIdListaSeleccionada()==0){
+                    Singleton.getInstance().añadirProductosDespensa(productosSeleccionados);
                     ((MainActivity)getActivity()).getViewPager().setCurrentItem(0);
+                }
                 else
                     ((MainActivity)getActivity()).getViewPager().setCurrentItem(5);
 

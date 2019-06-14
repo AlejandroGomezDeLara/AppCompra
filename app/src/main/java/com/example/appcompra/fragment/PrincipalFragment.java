@@ -4,11 +4,17 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.appcompra.Constants;
 import com.example.appcompra.R;
+import com.example.appcompra.clases.Singleton;
+import com.example.appcompra.utils.Cambios;
+import com.example.appcompra.utils.Peticion;
+import com.example.appcompra.utils.QueryUtils;
 
 public class PrincipalFragment extends Fragment {
     @Nullable
@@ -21,6 +27,8 @@ public class PrincipalFragment extends Fragment {
 
     public void onResume() {
         super.onResume();
-
+        if(Cambios.getInstance().existenCambios()){
+            Singleton.getInstance().enviarPeticion(new Peticion(Constants.ENVIAR_NOTIFICACIONES,QueryUtils.getUsuario().getId(),Cambios.getInstance().getCambiosString(),1));
+        }
     }
 }

@@ -21,6 +21,7 @@ import com.example.appcompra.R;
 import com.example.appcompra.clases.Lista;
 import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.Usuario;
+import com.example.appcompra.utils.Cambios;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,17 +93,22 @@ public class UsuariosAdapter extends RecyclerView.Adapter<UsuariosAdapter.ViewHo
             rolesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    usuario.setRol(Singleton.getInstance().getRoles().get(position));
-                    switch (usuario.getRol().toLowerCase()){
-                        case "administrador":
-                            viewHolder.linearUsuario.setBackground(ContextCompat.getDrawable(context,R.drawable.gradient_lista_admin));
-                            break;
-                        case "participante":
-                            viewHolder.linearUsuario.setBackground(ContextCompat.getDrawable(context,R.drawable.gradient_lista_participante));
-                            break;
-                        case "espectador":
-                            viewHolder.linearUsuario.setBackground(ContextCompat.getDrawable(context,R.drawable.gradient_lista_espectador));
-                            break;
+                    if(usuario.getRol()!=Singleton.getInstance().getRoles().get(position)){
+                        usuario.setRol(Singleton.getInstance().getRoles().get(position));
+
+                        switch (usuario.getRol().toLowerCase()){
+                            case "administrador":
+                                viewHolder.linearUsuario.setBackground(ContextCompat.getDrawable(context,R.drawable.gradient_lista_admin));
+                                break;
+                            case "participante":
+                                viewHolder.linearUsuario.setBackground(ContextCompat.getDrawable(context,R.drawable.gradient_lista_participante));
+                                break;
+                            case "espectador":
+                                viewHolder.linearUsuario.setBackground(ContextCompat.getDrawable(context,R.drawable.gradient_lista_espectador));
+                                break;
+                        }
+
+                        Cambios.getInstance().añadirCambioUsuarios(usuario.getNombre(),"change",usuario.getRol(),listaActual.getId());
                     }
                 }
 
