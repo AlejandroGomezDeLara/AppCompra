@@ -17,7 +17,7 @@
         android:background="@drawable/edit_text_background"
         android:drawableLeft="@drawable/ic_search_black_24dp"
         android:drawablePadding="5dp"
-        android:drawableTint="@color/colorProducto"
+        android:drawableTint="@color/white"
         android:hint="Buscar productos"
         android:padding="10dp"
         android:layout_marginHorizontal="10dp"
@@ -58,7 +58,7 @@
                 android:layout_below="@+id/emptyStateView"
                 android:layout_centerInParent="true"
                 android:padding="8dp"
-                android:background="@drawable/shape_naranja"
+                android:background="@drawable/despensa_button_background"
                 />
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView"

@@ -5,7 +5,7 @@
         android:background="@drawable/gradient_lista_participante"
         android:focusable="true"
         android:layout_width="match_parent"
-        android:layout_height="112dp"
+        android:layout_height="94dp"
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="horizontal"
         android:layout_marginBottom="4dp"
@@ -32,7 +32,7 @@
                 android:singleLine="true"
                 android:text="Esta es la fiesta del adria"
                 android:textColor="@android:color/white"
-                android:textSize="32dp"
+                android:textSize="28dp"
                 android:textStyle="bold" />
     <LinearLayout
         android:id="@+id/usuarios"

@@ -466,6 +466,7 @@ public class MainActivity extends AppCompatActivity
                 case Constants.CREACION_NUEVA_LISTA_CORRECTA:
                     Log.e("procesar", entrada);
                     Lista l=new Lista(Integer.parseInt(entrada.split(Constants.SEPARATOR)[1]),entrada.split(Constants.SEPARATOR)[2],"Administrador");
+                    l.añadirUsuario(new Usuario(QueryUtils.getUsuario().getNombre(),"Administrador"));
                     Singleton.getInstance().añadirNuevaLista(l);
                     listasViewModel.añadirNuevaLista(l);
                     break;

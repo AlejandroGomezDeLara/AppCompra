@@ -16,7 +16,7 @@
         android:background="@drawable/edit_text_background"
         android:drawableLeft="@drawable/ic_search_black_24dp"
         android:drawablePadding="5dp"
-        android:drawableTint="@color/colorProducto"
+        android:drawableTint="@color/white"
         android:hint="Buscar productos"
         android:padding="10dp"
         android:layout_marginHorizontal="10dp"
@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:textColor="@color/colorProducto"
+                android:textColor="@color/naranjita"
                 android:text="Añade productos a la despensa!"
                 android:textSize="22dp"
                 />

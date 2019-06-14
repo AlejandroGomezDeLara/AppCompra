@@ -1,14 +1,18 @@
 package com.example.appcompra.fragment;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,6 +27,7 @@ import com.example.appcompra.Constants;
 import com.example.appcompra.MainActivity;
 import com.example.appcompra.R;
 import com.example.appcompra.adapters.DespensaAdapter;
+import com.example.appcompra.clases.Lista;
 import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.ProductoLista;
 import com.example.appcompra.clases.Usuario;
@@ -56,10 +61,12 @@ public class DespensaFragment extends Fragment {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frament_despensa, container, false);
+        Singleton.getInstance().setIdListaSeleccionada(0);
         loadingIndicator = view.findViewById(R.id.loading_indicator);
         recyclerView=view.findViewById(R.id.recyclerView);
         mEmptyStateTextView=view.findViewById(R.id.emptyStateView);
@@ -74,13 +81,34 @@ public class DespensaFragment extends Fragment {
                 intentProductos();
             }
         });
+        loadingIndicator.setVisibility(View.VISIBLE);
         addProductosCentro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 intentProductos();
             }
         });
-
+        Lista li=null;
+        for(Lista l:Singleton.getInstance().getListas()){
+            if(l.getId()==Singleton.getInstance().getIdListaSeleccionada())
+                li=l;
+        }
+        if(li!=null) {
+            switch (li.getRol().toLowerCase()){
+                case "administrador":
+                    addProductos.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.shape_admin));
+                    addProductosCentro.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.shape_admin));
+                    break;
+                case "participante":
+                    addProductos.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.shape_participante));
+                    addProductosCentro.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.shape_participante));
+                    break;
+                case "espectador":
+                    addProductos.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.shape_espectador));
+                    addProductosCentro.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.shape_espectador));
+                    break;
+            }
+        }
         return view;
     }
     public void intentProductos(){
@@ -106,15 +134,22 @@ public class DespensaFragment extends Fragment {
         /*productos.clear();
         productos.addAll(m);
         */
+        if(m.isEmpty()){
+            addProductosCentro.setVisibility(View.VISIBLE);
+            mEmptyStateTextView.setVisibility(View.VISIBLE);
+            addProductos.setVisibility(View.GONE);
+        }else{
+            mEmptyStateTextView.setVisibility(View.GONE);
+            addProductos.setVisibility(View.VISIBLE);
+            addProductosCentro.setVisibility(View.GONE);
+        }
         adapter=new DespensaAdapter(m, getActivity(), R.layout.item_row_despensa, getActivity());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-        mEmptyStateTextView.setVisibility(View.GONE);
-        addProductosCentro.setVisibility(View.GONE);
         loadingIndicator.setVisibility(View.GONE);
-        addProductos.setVisibility(View.VISIBLE);
+
     }
     @Override
     public void onPause() {

@@ -72,6 +72,7 @@ public class ListasFragment extends Fragment {
                 crearNuevaListaPopup();
             }
         });
+        loadingIndicator.setVisibility(View.VISIBLE);
         addListaCentro.setVisibility(View.GONE);
         addLista.setVisibility(View.GONE);
         mEmptyStateTextView.setVisibility(View.GONE);
@@ -123,6 +124,15 @@ public class ListasFragment extends Fragment {
         /*productos.clear();
         productos.addAll(m);
         */
+        if(m.isEmpty()){
+            addListaCentro.setVisibility(View.VISIBLE);
+            mEmptyStateTextView.setVisibility(View.VISIBLE);
+            addLista.setVisibility(View.GONE);
+        }else{
+            mEmptyStateTextView.setVisibility(View.GONE);
+            addLista.setVisibility(View.VISIBLE);
+            addListaCentro.setVisibility(View.GONE);
+        }
         adapter=new ListaAdapter(m, getActivity(), R.layout.item_row_listas, getActivity(), new ListaAdapter.OnItemClickListener() {
             @Override
             public void onBorrarLista(Lista l) {
@@ -138,6 +148,7 @@ public class ListasFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+        loadingIndicator.setVisibility(View.GONE);
     }
 
     public void crearNuevaListaPopup(){
@@ -177,7 +188,7 @@ public class ListasFragment extends Fragment {
         botonAceptarPopUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Singleton.getInstance().enviarPeticion(new Peticion(Constants.BORRAR_LISTA_PETICION,QueryUtils.getUsuario().getId(),10));
+                Singleton.getInstance().enviarPeticion(new Peticion(Constants.BORRAR_LISTA_PETICION,QueryUtils.getUsuario().getId(),listaSeleccionada.getId()+"",10));
 
                 dialog.dismiss();
             }

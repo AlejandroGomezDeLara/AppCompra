@@ -10,6 +10,7 @@ import com.example.appcompra.models.ProductoViewModel;
 import com.example.appcompra.utils.Peticion;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -207,10 +208,11 @@ public class Singleton {
     }
 
     public void borrarLista(int id) {
-        for(Lista l:listas){
-            if(l.getId()==id){
-                listas.remove(l);
-            }
+        Iterator iterator;
+        iterator = listas.iterator();
+        while (iterator.hasNext()) {
+            Lista l=(Lista)iterator.next();
+            if(l.getId()==id)iterator.remove();
         }
     }
     public void setRoles(ArrayList<String> roles) {

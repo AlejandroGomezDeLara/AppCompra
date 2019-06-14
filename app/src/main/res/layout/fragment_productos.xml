@@ -55,7 +55,7 @@
                 style="@style/Widget.AppCompat.ProgressBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:indeterminateTint="@color/navMenuBackgroundColor"
+                android:indeterminateTint="@color/colorProducto"
                 android:layout_centerInParent="true"
                 android:paddingBottom="54dp"
                 android:visibility="gone"/>

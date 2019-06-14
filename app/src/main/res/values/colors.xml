@@ -7,7 +7,7 @@
     <color name="menuBackgroundColor">#444444</color>
     <color name="navMenuBackgroundColor">#9477ce</color>
     <color name="borderColor">#ccc</color>
-    <color name="colorProducto">#762799</color>
+    <color name="colorProducto">#db4a57</color>
     <color name="backgroundProducto">#f1eff9</color>
     <color name="backgroundSpinner">#dfd9f7</color>
     <color name="participante">#1fe03f</color>
@@ -16,4 +16,6 @@
     <color name="popup_background">#11000000</color>
     <color name="white">#fff</color>
     <color name="productoSeleccionado"></color>
+    <color name="naranjita">#db4a57</color>
+
 </resources>

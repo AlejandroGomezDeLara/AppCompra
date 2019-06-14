@@ -1,5 +1,6 @@
 package com.example.appcompra.fragment;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.net.ConnectivityManager;
@@ -58,8 +59,8 @@ public class InteriorListaFragment extends Fragment {
     protected int idLista;
     protected int posLista;
     protected TextView mEmptyStateTextView;
-    protected Button addProducto;
-    protected Button addProductoCentro;
+    protected Button addProductos;
+    protected Button addProductosCentro;
     protected ProductosListaViewModel model;
     protected RecyclerView usuariosRecyclerView;
     protected Lista listaActual;
@@ -73,20 +74,20 @@ public class InteriorListaFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recyclerView);
         mEmptyStateTextView = view.findViewById(R.id.emptyStateView);
         mEmptyStateTextView.setVisibility(View.GONE);
-        addProducto = view.findViewById(R.id.añadir_boton);
-        addProductoCentro = view.findViewById(R.id.añadir_boton_centro);
+        addProductos = view.findViewById(R.id.añadir_boton);
+        addProductosCentro = view.findViewById(R.id.añadir_boton_centro);
         idLista=Singleton.getInstance().getIdListaSeleccionada();
-        addProductoCentro.setVisibility(View.GONE);
-        addProducto.setVisibility(View.GONE);
+        addProductosCentro.setVisibility(View.GONE);
+        addProductos.setVisibility(View.GONE);
         productos = new ArrayList<>();
         usuario = QueryUtils.getUsuario();
-        addProducto.setOnClickListener(new View.OnClickListener() {
+        addProductos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 intentProductos();
             }
         });
-        addProductoCentro.setOnClickListener(new View.OnClickListener() {
+        addProductosCentro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 intentProductos();
@@ -142,11 +143,35 @@ public class InteriorListaFragment extends Fragment {
         }
         adapter=new DespensaAdapter();
         updateEditTextFiltrar(view);
-
-
+        setColores();
         return view;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    @SuppressLint("ResourceAsColor")
+    public void setColores(){
+        Lista li=null;
+        for(Lista l:Singleton.getInstance().getListas()){
+            if(l.getId()==Singleton.getInstance().getIdListaSeleccionada())
+                li=l;
+        }
+        if(li!=null) {
+            switch (li.getRol().toLowerCase()){
+                case "administrador":
+                    addProductos.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.shape_admin));
+                    addProductosCentro.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.shape_admin));
+                    break;
+                case "participante":
+                    addProductos.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.shape_participante));
+                    addProductosCentro.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.shape_participante));
+                    break;
+                case "espectador":
+                    addProductos.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.shape_espectador));
+                    addProductosCentro.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.shape_espectador));
+                    break;
+            }
+        }
+    }
     public void intentProductos(){
         Singleton.getInstance().setPosicionSpinnerListas(Singleton.getInstance().getPosicionSpinnerListas());
         ((MainActivity)getActivity()).getViewPager().setCurrentItem(3);
@@ -187,13 +212,13 @@ public class InteriorListaFragment extends Fragment {
         productos.addAll(m);
         */
         if(m.isEmpty()){
-            addProductoCentro.setVisibility(View.VISIBLE);
+            addProductosCentro.setVisibility(View.VISIBLE);
             mEmptyStateTextView.setVisibility(View.VISIBLE);
-            addProducto.setVisibility(View.GONE);
+            addProductos.setVisibility(View.GONE);
         }else{
             mEmptyStateTextView.setVisibility(View.GONE);
-            addProducto.setVisibility(View.VISIBLE);
-            addProductoCentro.setVisibility(View.GONE);
+            addProductos.setVisibility(View.VISIBLE);
+            addProductosCentro.setVisibility(View.GONE);
         }
         adapter = new DespensaAdapter(m, getActivity(), R.layout.item_row_despensa, getActivity());
         recyclerView.setHasFixedSize(true);

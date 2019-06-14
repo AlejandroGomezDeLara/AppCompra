@@ -1,19 +1,27 @@
 package com.example.appcompra.adapters;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.appcompra.R;
+import com.example.appcompra.clases.Lista;
 import com.example.appcompra.clases.Producto;
 import com.example.appcompra.clases.ProductoLista;
+import com.example.appcompra.clases.Singleton;
+import com.example.appcompra.utils.QueryUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -46,6 +54,8 @@ public class DespensaAdapter extends RecyclerView.Adapter<DespensaAdapter.ViewHo
         return viewHolder;
     }
 
+    @SuppressLint("ResourceAsColor")
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onBindViewHolder(@NonNull final DespensaAdapter.ViewHolder viewHolder,final int i) {
         final ProductoLista producto=(ProductoLista)productos.get(i);
@@ -55,6 +65,29 @@ public class DespensaAdapter extends RecyclerView.Adapter<DespensaAdapter.ViewHo
             Picasso.get().load(producto.getUrl()).into(viewHolder.imagen);
         if(producto.getCadena()==null){
             viewHolder.imagen.setColorFilter(ContextCompat.getColor(context, R.color.white));
+        }
+        if(Singleton.getInstance().getIdListaSeleccionada()==0){
+            viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context,R.drawable.gradient));
+        }else{
+            Lista li=null;
+            for(Lista l:Singleton.getInstance().getListas()){
+                if(l.getId()==Singleton.getInstance().getIdListaSeleccionada())
+                    li=l;
+            }
+            if(li!=null) {
+                switch (li.getRol().toLowerCase()){
+                    case "administrador":
+                        viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context,R.drawable.gradient_lista_admin));
+
+                        break;
+                    case "participante":
+                        viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context,R.drawable.gradient_lista_participante));
+                        break;
+                    case "espectador":
+                        viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context,R.drawable.gradient_lista_espectador));
+                        break;
+                }
+            }
         }
     }
 
@@ -72,11 +105,14 @@ public class DespensaAdapter extends RecyclerView.Adapter<DespensaAdapter.ViewHo
         TextView nombre;
         ImageView imagen;
         TextView unidades;
+        LinearLayout linearProducto;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            linearProducto=itemView.findViewById(R.id.linearProducto);
             nombre=itemView.findViewById(R.id.nombre_producto);
             imagen=itemView.findViewById(R.id.imagen);
             unidades=itemView.findViewById(R.id.unidades);
+
         }
     }
 
