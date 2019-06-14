@@ -143,11 +143,7 @@ public class InteriorListaFragment extends Fragment {
         adapter=new DespensaAdapter();
         updateEditTextFiltrar(view);
 
-        if(Singleton.getInstance().existenProductosLista()){
-            updateUI(Singleton.getInstance().getProductosListaLista(Singleton.getInstance().getIdListaSeleccionada()));
-        }else{
-            Singleton.getInstance().enviarPeticion(new Peticion(Constants.PRODUCTOS_LISTA_PETICION,QueryUtils.getUsuario().getId(),Singleton.getInstance().getIdListaSeleccionada()+"",5));
-        }
+
         return view;
     }
 
@@ -210,6 +206,11 @@ public class InteriorListaFragment extends Fragment {
 
     public void onResume() {
         super.onResume();
+        if(Singleton.getInstance().existenProductosLista()){
+            updateUI(Singleton.getInstance().getProductosListaLista(Singleton.getInstance().getIdListaSeleccionada()));
+        }else{
+            Singleton.getInstance().enviarPeticion(new Peticion(Constants.PRODUCTOS_LISTA_PETICION,QueryUtils.getUsuario().getId(),Singleton.getInstance().getIdListaSeleccionada()+"",5));
+        }
         ((MainActivity)getActivity()).getProductosListaViewModel().getProductosLista().observe(getActivity(), new Observer<TreeSet<ProductoLista>>() {
             @Override
             public void onChanged(@Nullable TreeSet<ProductoLista> p) {

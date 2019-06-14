@@ -62,7 +62,7 @@ import java.util.TreeSet;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    ViewPager viewPager;
+    CustomViewPager viewPager;
     MenuItem prevMenuItem;
     BottomNavigationView menu;
     RecyclerView recyclerView;
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity
         emailUsuario.setText(usuario.getEmail());
         ImageView imagenUsuario = headView.findViewById(R.id.drawer_imagen);
         Picasso.get().load(usuario.getUrlImagenPerfil()).into(imagenUsuario);
-        viewPager = (ViewPager) findViewById(R.id.viewPager);
+        viewPager = (CustomViewPager) findViewById(R.id.swipePager);
         MenuAdapter adapter = new MenuAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
 
@@ -145,7 +145,8 @@ public class MainActivity extends AppCompatActivity
                 crearNuevaListaPopup();
             }
         });
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+        viewPager.setOnPageChangeListener(new CustomViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             }
@@ -252,7 +253,7 @@ public class MainActivity extends AppCompatActivity
         this.usuario = usuario;
     }
 
-    public ViewPager getViewPager() {
+    public CustomViewPager getViewPager() {
         return viewPager;
     }
 
