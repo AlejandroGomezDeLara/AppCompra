@@ -451,6 +451,10 @@ public class MainActivity extends AppCompatActivity
 
                     break;
                 case Constants.PRODUCTOS_DESPENSA_CORRECTA:
+                    Log.e("procesar", entrada);
+                    ProductosListaConID productosLista2 =QueryUtils.productosLista(entrada.split(Constants.SEPARATOR)[1]);
+                    Singleton.getInstance().añadirProductosLista(productosLista2.getId(), productosLista2.getProductosListaConID());
+                    productosListaViewModel.setProductosLista(productosLista2.getProductosListaConID());
                     break;
                 case Constants.CREACION_NUEVA_LISTA_CORRECTA:
                     Log.e("procesar", entrada);

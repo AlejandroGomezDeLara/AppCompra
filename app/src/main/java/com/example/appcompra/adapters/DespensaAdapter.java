@@ -3,6 +3,7 @@ package com.example.appcompra.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,6 +53,9 @@ public class DespensaAdapter extends RecyclerView.Adapter<DespensaAdapter.ViewHo
         viewHolder.unidades.setText(producto.getUnidades()+" u");
         if(producto.getUrl()!=null)
             Picasso.get().load(producto.getUrl()).into(viewHolder.imagen);
+        if(producto.getCadena()==null){
+            viewHolder.imagen.setColorFilter(ContextCompat.getColor(context, R.color.white));
+        }
     }
 
 

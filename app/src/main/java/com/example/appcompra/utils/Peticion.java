@@ -54,7 +54,7 @@ public class Peticion implements Comparable<Peticion> {
 
     @Override
     public int compareTo(Peticion o) {
-        if(o.importancia < this.importancia)
+        if(o.importancia > this.importancia)
             return 1;
         else
             return -1;

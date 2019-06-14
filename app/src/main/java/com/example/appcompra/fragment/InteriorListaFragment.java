@@ -69,13 +69,14 @@ public class InteriorListaFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.interior_lista, container, false);
         loadingIndicator = view.findViewById(R.id.loading_indicator);
+
         recyclerView = view.findViewById(R.id.recyclerView);
         mEmptyStateTextView = view.findViewById(R.id.emptyStateView);
-        mEmptyStateTextView.setVisibility(View.VISIBLE);
+        mEmptyStateTextView.setVisibility(View.GONE);
         addProducto = view.findViewById(R.id.añadir_boton);
         addProductoCentro = view.findViewById(R.id.añadir_boton_centro);
         idLista=Singleton.getInstance().getIdListaSeleccionada();
-        addProductoCentro.setVisibility(View.VISIBLE);
+        addProductoCentro.setVisibility(View.GONE);
         addProducto.setVisibility(View.GONE);
         productos = new ArrayList<>();
         usuario = QueryUtils.getUsuario();
@@ -187,16 +188,21 @@ public class InteriorListaFragment extends Fragment {
         /*productos.clear();
         productos.addAll(m);
         */
-
+        if(m.isEmpty()){
+            addProductoCentro.setVisibility(View.VISIBLE);
+            mEmptyStateTextView.setVisibility(View.VISIBLE);
+            addProducto.setVisibility(View.GONE);
+        }else{
+            mEmptyStateTextView.setVisibility(View.GONE);
+            addProducto.setVisibility(View.VISIBLE);
+            addProductoCentro.setVisibility(View.GONE);
+        }
         adapter = new DespensaAdapter(m, getActivity(), R.layout.item_row_despensa, getActivity());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-        addProducto.setVisibility(View.VISIBLE);
-        addProductoCentro.setVisibility(View.GONE);
         loadingIndicator.setVisibility(View.GONE);
-        mEmptyStateTextView.setVisibility(View.GONE);
 
     }
 

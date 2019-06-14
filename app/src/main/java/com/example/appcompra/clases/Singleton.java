@@ -11,6 +11,7 @@ import com.example.appcompra.utils.Peticion;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -131,6 +132,8 @@ public class Singleton {
     public void añadirProductosLista(int idLista, TreeSet<ProductoLista> p){
         if(productosLista.containsKey(idLista)){
             productosLista.get(idLista).addAll(p);
+        }else{
+            productosLista.put(idLista,p);
         }
     }
 
@@ -281,4 +284,12 @@ public class Singleton {
         return productosCategoria.containsKey(idCategoriaSelecionada);
     }
 
+    public void deseleccionarProductos() {
+        for (Map.Entry<Integer, TreeSet<Producto>> entry :productosCategoria.entrySet()) {
+            for (Producto p: entry.getValue()) {
+                if(p.isSeleccionado())
+                    p.setSeleccionado(!p.isSeleccionado());
+            }
+        }
+    }
 }

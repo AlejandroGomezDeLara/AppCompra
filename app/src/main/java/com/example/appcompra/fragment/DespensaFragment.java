@@ -1,5 +1,6 @@
 package com.example.appcompra.fragment;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -17,6 +18,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.appcompra.Constants;
 import com.example.appcompra.MainActivity;
 import com.example.appcompra.R;
 import com.example.appcompra.adapters.DespensaAdapter;
@@ -24,6 +26,7 @@ import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.ProductoLista;
 import com.example.appcompra.clases.Usuario;
 import com.example.appcompra.models.DespensaViewModel;
+import com.example.appcompra.utils.Peticion;
 import com.example.appcompra.utils.QueryUtils;
 
 import java.util.ArrayList;
@@ -69,9 +72,7 @@ public class DespensaFragment extends Fragment {
                 intentProductos();
             }
         });
-
-        rellenarProductos();
-        updateUI(productos);
+        Singleton.getInstance().setIdListaSeleccionada(0);
         return view;
     }
     public void intentProductos(){
@@ -79,37 +80,30 @@ public class DespensaFragment extends Fragment {
         ((MainActivity)getActivity()).getViewPager().setCurrentItem(3);
     }
 
-    public void rellenarProductos(){
-        productos.add(new ProductoLista(2,"Hamburguesa",2,null,null,false,"https://image.flaticon.com/icons/png/512/93/93104.png",null,null));
-        productos.add(new ProductoLista(4,"Cerveza",3,null,null,false,"https://www.bevald.es/wp-content/uploads/2016/06/modulo_producto_radler1.png",null,"200g"));
-        productos.add(new ProductoLista(3,"Hamburguesa",4,null,"mercadona",false,"https://image.flaticon.com/icons/png/512/93/93104.png","Gula del norte","400g"));
-        productos.add(new ProductoLista(9,"Huevo",1,null,"mercadona",false,"https://image.flaticon.com/icons/png/512/93/93104.png","Gula del norte","400g"));
+    public void añadirPRoductoDespensa(ProductoLista productoLista){
+        boolean existe=false;
+        for(ProductoLista productoLista1: productos){
+            if(productoLista.getId()==productoLista1.getId()){
+                existe=true;
+                productoLista1.sumarUnidades(productoLista.getUnidades());
+            }
+        }
+        if(!existe)productos.add(productoLista);
+
 
     }
 
+
     public void onResume() {
         super.onResume();
-        ConnectivityManager manager=(ConnectivityManager)getActivity().getSystemService(CONNECTIVITY_SERVICE);
-        final NetworkInfo info=manager.getActiveNetworkInfo();
-        boolean isConnected=info!=null && info.isConnected();
-        /*if(isConnected) {
-            model.getProductosDespensa().observe(getActivity(), new Observer<ArrayList<Producto>>() {
-                @Override
-                public void onChanged(@Nullable ArrayList<Producto> p) {
-                    if(p!=null){
-                        updateUI(p);
-                    }else{
-                        mEmptyStateTextView.setVisibility(View.VISIBLE);
-                        addProductosCentro.setVisibility(View.VISIBLE);
-                    }
+        ((MainActivity)getActivity()).getProductosListaViewModel().getProductosLista().observe(getActivity(), new Observer<TreeSet<ProductoLista>>() {
+            @Override
+            public void onChanged(@Nullable TreeSet<ProductoLista> p) {
+                if(p!=null){
+                    updateUI(p);
                 }
-            });
-
-        }else{
-            loadingIndicator.setVisibility(View.GONE);
-            mEmptyStateTextView.setVisibility(View.VISIBLE);
-            mEmptyStateTextView.setText(R.string.no_internet);
-        }*/
+            }
+        });
     }
 
     private void updateUI(TreeSet<ProductoLista> m){

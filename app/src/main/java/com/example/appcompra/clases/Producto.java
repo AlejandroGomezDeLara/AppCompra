@@ -57,8 +57,10 @@ public class Producto implements Comparable{
 
     @Override
     public int compareTo(Object o) {
-        if(((Producto)o).getId() == this.getId())
+        if(((Producto)o).getId() == this.getId()){
             return 0;
+        }
+
         else return 1;
     }
 }

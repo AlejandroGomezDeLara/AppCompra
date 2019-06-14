@@ -135,7 +135,10 @@ public class ProductosFragment extends Fragment {
                 for(ProductoLista p:productosSeleccionados){
                     p.setUnidades(Integer.parseInt(cantidadEditText.getText().toString()));
                 }
-                Singleton.getInstance().añadirProductosLista(Singleton.getInstance().getIdListaSeleccionada(),productosSeleccionados);
+                int idListaSeleccionada=Singleton.getInstance().getIdListaSeleccionada();
+
+                Singleton.getInstance().añadirProductosLista(idListaSeleccionada,productosSeleccionados);
+                Singleton.getInstance().deseleccionarProductos();
                 if(Singleton.getInstance().getIdListaSeleccionada()==0)
                     ((MainActivity)getActivity()).getViewPager().setCurrentItem(0);
                 else

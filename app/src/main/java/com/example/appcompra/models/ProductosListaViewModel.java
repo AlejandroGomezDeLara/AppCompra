@@ -39,9 +39,8 @@ public class ProductosListaViewModel extends AndroidViewModel {
     public LiveData<TreeSet<ProductoLista>> getProductosLista(){
         if(productos==null){
             productos=new MutableLiveData<>();
-            loadProductosLista();
         }
-
+        loadProductosLista();
         return productos;
     }
 
