@@ -1,17 +1,11 @@
 package com.example.appcompra.clases;
 
-import android.arch.lifecycle.ViewModelProviders;
-
 import com.example.appcompra.Constants;
 import com.example.appcompra.MainActivity;
-import com.example.appcompra.models.CategoriaViewModel;
-import com.example.appcompra.models.ListasViewModel;
-import com.example.appcompra.models.ProductoViewModel;
 import com.example.appcompra.utils.Peticion;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.TreeMap;
@@ -282,7 +276,7 @@ public class Singleton {
     }
 
     public synchronized String getPeticionMaxPrioridad(){
-        return peticionesEnviar.peek().getStringPeticion();
+        return peticionesEnviar.poll().getStringPeticion();
     }
 
     public synchronized void añadirRespuestaServidor(String respuesta){

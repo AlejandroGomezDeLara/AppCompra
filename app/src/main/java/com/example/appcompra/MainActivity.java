@@ -4,13 +4,10 @@ import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -38,8 +35,6 @@ import com.example.appcompra.adapters.ListaAdapter;
 import com.example.appcompra.adapters.MenuAdapter;
 import com.example.appcompra.clases.Categoria;
 import com.example.appcompra.clases.Lista;
-import com.example.appcompra.clases.Producto;
-import com.example.appcompra.clases.ProductoLista;
 import com.example.appcompra.clases.ProductosConID;
 import com.example.appcompra.clases.ProductosListaConID;
 import com.example.appcompra.clases.Singleton;
@@ -58,7 +53,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -98,10 +92,19 @@ public class MainActivity extends AppCompatActivity
         } catch (IOException e) {
             e.printStackTrace();
         }
-        PeticionesThread p=new PeticionesThread();
+
+        PeticionesThread p2=new PeticionesThread();
+        p2.setDaemon(true);
+        p2.start();
+
+
+        RespuestasThread p=new RespuestasThread();
         p.setDaemon(true);
         p.start();
-        Singleton.getInstance().setHiloComunicacion(p);
+
+
+        Singleton.getInstance().setHiloComunicacion(p2);
+
         this.categoriaViewModel= ViewModelProviders.of(this).get(CategoriaViewModel.class);
         this.modelProductos= ViewModelProviders.of(this).get(ProductoViewModel.class);
         this.listasViewModel= ViewModelProviders.of(this).get(ListasViewModel.class);
@@ -375,12 +378,40 @@ public class MainActivity extends AppCompatActivity
     public DrawerLayout getDrawerLayout() {
         return drawerLayout;
     }
+    public ProductoViewModel getModelProductos() {
+        return modelProductos;
+    }
+
+    public void setModelProductos(ProductoViewModel modelProductos) {
+        this.modelProductos = modelProductos;
+    }
+
+    public CategoriaViewModel getCategoriaViewModel() {
+        return categoriaViewModel;
+    }
+
+    public void setCategoriaViewModel(CategoriaViewModel categoriaViewModel) {
+        this.categoriaViewModel = categoriaViewModel;
+    }
+
+    public ListasViewModel getListasViewModel() {
+        return listasViewModel;
+    }
+
+    public void setListasViewModel(ListasViewModel listasViewModel) {
+        this.listasViewModel = listasViewModel;
+    }
+
+    public ProductosListaViewModel getProductosListaViewModel() {
+        return productosListaViewModel;
+    }
+
+    public DespensaViewModel getDespensaViewModel() {
+        return despensaViewModel;
+    }
+
 
     public class PeticionesThread extends Thread{
-
-        PeticionesThread(){
-
-        }
 
         @Override
         public void run() {
@@ -388,51 +419,48 @@ public class MainActivity extends AppCompatActivity
                 try {
                     Log.e("enviado","durmiendo");
                     Thread.sleep(6000000);
-
                 } catch (InterruptedException e) {
                     procesarPeticiones();
                     Thread.interrupted();
-                    rellenarColecciones();
                 }
 
             }
         }
         public synchronized void procesarPeticiones(){
             while(Singleton.getInstance().getPeticionesEnviar().size()>0) {
-                try {
-                    String salida = Singleton.getInstance().getPeticionMaxPrioridad();
-
-                    out.println(salida);
-                    Log.e("procesar", salida + " size:" + Singleton.getInstance().getPeticionesEnviar().size());
-
-                    String entrada = in.readLine();
-                    Singleton.getInstance().añadirRespuestaServidor(entrada);
-
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
+                String salida = Singleton.getInstance().getPeticionMaxPrioridad();
+                out.println(salida);
+                Log.e("procesar", salida + " size:" + Singleton.getInstance().getPeticionesEnviar().size());
             }
         }
+
+    }
+
+    public class RespuestasThread extends Thread{
+
+        @Override
+        public void run() {
+            while (working) {
+                rellenarColecciones();
+            }
+        }
+
         public synchronized void rellenarColecciones(){
-
-            while(Singleton.getInstance().getRespuestasServidor().size()>0){
-                String entrada=Singleton.getInstance().getRespuestaMaxPrioridad();
-                if(entrada.contains(Constants.SEPARATOR))
-                    procesarEntrada(entrada);
+            try {
+                procesarEntrada(in.readLine());
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
-        /*  Constants.COMPARTIR_LISTA_CORRECTA;
-            Constants.CATEGORIAS_RESPUESTA_CORRECTA;
-            Constants.PRODUCTOS_CATEGORIA_RESPUESTA_CORRECTA;
-            Constants.PRODUCTOS_LISTA_CORRECTA;
-            Constants.LISTAS_RESPUESTA_CORRECTA;
-            Constants.PRODUCTOS_DESPENSA_CORRECTA;
-            Constants.CREACION_NUEVA_LISTA_CORRECTA;*/
 
         public void procesarEntrada(String entrada){
             String codigoRespuesta=entrada.split(Constants.SEPARATOR)[0];
             //Esta peticion va a ser directa asi que comprobamos su codigo entre el de las peticiones directas
             switch (codigoRespuesta){
+                case Constants.NOTIFICACIONES_PROCESADA_CORRECTA:
+                    Log.e("procesar",entrada.split(Constants.SEPARATOR)[1]);
+                    break;
+
                 case Constants.COMPARTIR_LISTA_CORRECTA:
                     if(entrada.split(Constants.SEPARATOR).length>1) {
                         Log.e("procesar", "No se ha podido añadir el usuario");
@@ -490,42 +518,13 @@ public class MainActivity extends AppCompatActivity
                     break;
                 default:
                     Log.e("procesar","Codigo de respuesta desconocido");
-                break;
+                    break;
 
             }
             Singleton.getInstance().peticionProcesada();
         }
     }
 
-    public ProductoViewModel getModelProductos() {
-        return modelProductos;
-    }
 
-    public void setModelProductos(ProductoViewModel modelProductos) {
-        this.modelProductos = modelProductos;
-    }
 
-    public CategoriaViewModel getCategoriaViewModel() {
-        return categoriaViewModel;
-    }
-
-    public void setCategoriaViewModel(CategoriaViewModel categoriaViewModel) {
-        this.categoriaViewModel = categoriaViewModel;
-    }
-
-    public ListasViewModel getListasViewModel() {
-        return listasViewModel;
-    }
-
-    public void setListasViewModel(ListasViewModel listasViewModel) {
-        this.listasViewModel = listasViewModel;
-    }
-
-    public ProductosListaViewModel getProductosListaViewModel() {
-        return productosListaViewModel;
-    }
-
-    public DespensaViewModel getDespensaViewModel() {
-        return despensaViewModel;
-    }
 }
