@@ -2,6 +2,7 @@ package com.example.appcompra.fragment;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -39,13 +40,21 @@ public class DespensaFragment extends Fragment {
     protected TreeSet<ProductoLista> productos;
     protected RecyclerView recyclerView;
     protected DespensaAdapter adapter;
-    protected DespensaViewModel model;
     protected ProgressBar loadingIndicator;
     protected TextView mEmptyStateTextView;
     protected Usuario usuario;
     protected Button addProductos;
     protected Button addProductosCentro;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(Singleton.getInstance().existenDespensa()){
+            updateUI(Singleton.getInstance().getDespensa());
+        }else{
+            Singleton.getInstance().enviarPeticion(new Peticion(Constants.PRODUCTOS_DESPENSA_PETICION,QueryUtils.getUsuario().getId(),5));
+        }
+    }
 
     @Nullable
     @Override
@@ -53,7 +62,6 @@ public class DespensaFragment extends Fragment {
         View view = inflater.inflate(R.layout.frament_despensa, container, false);
         loadingIndicator = view.findViewById(R.id.loading_indicator);
         recyclerView=view.findViewById(R.id.recyclerView);
-        model= ViewModelProviders.of(getActivity()).get(DespensaViewModel.class);
         mEmptyStateTextView=view.findViewById(R.id.emptyStateView);
         productos=new TreeSet<>();
         usuario= QueryUtils.getUsuario();
@@ -72,7 +80,7 @@ public class DespensaFragment extends Fragment {
                 intentProductos();
             }
         });
-        Singleton.getInstance().setIdListaSeleccionada(0);
+
         return view;
     }
     public void intentProductos(){
@@ -80,23 +88,11 @@ public class DespensaFragment extends Fragment {
         ((MainActivity)getActivity()).getViewPager().setCurrentItem(3);
     }
 
-    public void añadirPRoductoDespensa(ProductoLista productoLista){
-        boolean existe=false;
-        for(ProductoLista productoLista1: productos){
-            if(productoLista.getId()==productoLista1.getId()){
-                existe=true;
-                productoLista1.sumarUnidades(productoLista.getUnidades());
-            }
-        }
-        if(!existe)productos.add(productoLista);
-
-
-    }
 
 
     public void onResume() {
         super.onResume();
-        ((MainActivity)getActivity()).getProductosListaViewModel().getProductosLista().observe(getActivity(), new Observer<TreeSet<ProductoLista>>() {
+        ((MainActivity)getActivity()).getDespensaViewModel().getProductosDespensa().observe(getActivity(), new Observer<TreeSet<ProductoLista>>() {
             @Override
             public void onChanged(@Nullable TreeSet<ProductoLista> p) {
                 if(p!=null){

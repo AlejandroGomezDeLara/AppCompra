@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.example.appcompra.Constants;
 import com.example.appcompra.clases.Producto;
 import com.example.appcompra.clases.ProductoLista;
+import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.utils.QueryUtils;
 
 import java.io.BufferedReader;
@@ -38,12 +39,15 @@ public class DespensaViewModel extends AndroidViewModel {
         if(productos==null){
             productos=new MutableLiveData<>();
         }
-
+        loadDespensa();
         return productos;
     }
 
-    public void setProductosDespensa(MutableLiveData<TreeSet<ProductoLista>> productos) {
-        this.productos = productos;
+    public void loadDespensa(){
+        productos.setValue(Singleton.getInstance().getDespensa());
+    }
+    public void setDespensa(TreeSet<ProductoLista> p){
+        this.productos.postValue(p);
     }
 
 }

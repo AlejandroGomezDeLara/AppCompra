@@ -160,11 +160,10 @@ public class QueryUtils {
                 id=productoActual.getInt("id");
                 nombre=productoActual.getString("nombre");
                 receta=productoActual.getString("receta");
-                cadena=productoActual.getString("cadena");
                 unidades=productoActual.getInt("unidades");
                 comprado=productoActual.getBoolean("comprado");
                 urlImagen=productoActual.getString("urlimagen");
-                ProductoLista p=new ProductoLista(id,nombre,unidades,receta,cadena,comprado,urlImagen,null,null);
+                ProductoLista p=new ProductoLista(id,nombre,unidades,receta,null,comprado,urlImagen,null,null);
                 productos.add(p);
             }
 

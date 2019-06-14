@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedList;
 
-public class Peticion implements Comparable<Peticion> {
+public class Peticion implements Comparable {
     private int idUsuario;
     private String codPeticion;
     private String parametros;
@@ -53,8 +53,12 @@ public class Peticion implements Comparable<Peticion> {
 
 
     @Override
-    public int compareTo(Peticion o) {
-        if(o.importancia > this.importancia)
+    public int compareTo(Object o) {
+        if(((Peticion)o).getCodPeticion().equals(this.getCodPeticion())){
+            return 0;
+
+        }
+        if(((Peticion)o).getImportancia() > this.getImportancia())
             return 1;
         else
             return -1;

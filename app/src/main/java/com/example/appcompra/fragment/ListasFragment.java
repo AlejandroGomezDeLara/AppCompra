@@ -32,6 +32,7 @@ import com.example.appcompra.clases.Lista;
 import com.example.appcompra.models.ListasViewModel;
 import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.Usuario;
+import com.example.appcompra.utils.Cambios;
 import com.example.appcompra.utils.Peticion;
 import com.example.appcompra.utils.QueryUtils;
 
@@ -176,7 +177,8 @@ public class ListasFragment extends Fragment {
         botonAceptarPopUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //peticionBorrarLista();
+                Singleton.getInstance().enviarPeticion(new Peticion(Constants.BORRAR_LISTA_PETICION,QueryUtils.getUsuario().getId(),10));
+
                 dialog.dismiss();
             }
         });

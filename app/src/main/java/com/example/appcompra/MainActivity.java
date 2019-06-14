@@ -43,6 +43,7 @@ import com.example.appcompra.clases.ProductosListaConID;
 import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.Usuario;
 import com.example.appcompra.models.CategoriaViewModel;
+import com.example.appcompra.models.DespensaViewModel;
 import com.example.appcompra.models.ListasViewModel;
 import com.example.appcompra.models.ProductoViewModel;
 import com.example.appcompra.models.ProductosListaViewModel;
@@ -81,6 +82,7 @@ public class MainActivity extends AppCompatActivity
     protected CategoriaViewModel categoriaViewModel;
     protected ListasViewModel listasViewModel;
     protected ProductosListaViewModel productosListaViewModel;
+    protected DespensaViewModel despensaViewModel;
 
 
     @Override
@@ -101,6 +103,8 @@ public class MainActivity extends AppCompatActivity
         this.modelProductos= ViewModelProviders.of(this).get(ProductoViewModel.class);
         this.listasViewModel= ViewModelProviders.of(this).get(ListasViewModel.class);
         this.productosListaViewModel= ViewModelProviders.of(this).get(ProductosListaViewModel.class);
+        this.despensaViewModel= ViewModelProviders.of(this).get(DespensaViewModel.class);
+
 
         usuario = (Usuario) getIntent().getExtras().getSerializable("Usuario");
         QueryUtils.setUsuario(usuario);
@@ -130,6 +134,7 @@ public class MainActivity extends AppCompatActivity
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         MenuAdapter adapter = new MenuAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
+
         //menu de abajo
         menu = findViewById(R.id.menu_bottom);
         menu.setOnNavigationItemSelectedListener(navListener);
@@ -382,9 +387,10 @@ public class MainActivity extends AppCompatActivity
 
                 } catch (InterruptedException e) {
                     procesarPeticiones();
+                    Thread.interrupted();
                     rellenarColecciones();
                 }
-                Thread.interrupted();
+
             }
         }
         public synchronized void procesarPeticiones(){
@@ -452,15 +458,21 @@ public class MainActivity extends AppCompatActivity
                     break;
                 case Constants.PRODUCTOS_DESPENSA_CORRECTA:
                     Log.e("procesar", entrada);
-                    ProductosListaConID productosLista2 =QueryUtils.productosLista(entrada.split(Constants.SEPARATOR)[1]);
-                    Singleton.getInstance().añadirProductosLista(productosLista2.getId(), productosLista2.getProductosListaConID());
-                    productosListaViewModel.setProductosLista(productosLista2.getProductosListaConID());
+                    ProductosListaConID productosLista1 =QueryUtils.productosLista(entrada.split(Constants.SEPARATOR)[1]);
+                    Singleton.getInstance().setDespensa(productosLista1.getProductosListaConID());
+                    despensaViewModel.setDespensa(productosLista1.getProductosListaConID());
                     break;
                 case Constants.CREACION_NUEVA_LISTA_CORRECTA:
                     Log.e("procesar", entrada);
                     Lista l=new Lista(Integer.parseInt(entrada.split(Constants.SEPARATOR)[1]),entrada.split(Constants.SEPARATOR)[2],"Administrador");
                     Singleton.getInstance().añadirNuevaLista(l);
                     listasViewModel.añadirNuevaLista(l);
+                    break;
+                case Constants.BORRAR_LISTA_ACEPTADA:
+                    Log.e("procesar", entrada);
+
+                    Singleton.getInstance().borrarLista(Integer.parseInt(entrada.split(Constants.SEPARATOR)[1]));
+                    listasViewModel.setListas(Singleton.getInstance().getListas());
                     break;
                 default:
                     Log.e("procesar","Codigo de respuesta desconocido");
@@ -496,5 +508,9 @@ public class MainActivity extends AppCompatActivity
 
     public ProductosListaViewModel getProductosListaViewModel() {
         return productosListaViewModel;
+    }
+
+    public DespensaViewModel getDespensaViewModel() {
+        return despensaViewModel;
     }
 }

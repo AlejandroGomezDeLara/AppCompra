@@ -93,6 +93,7 @@ public class InteriorListaFragment extends Fragment {
             }
         });
         String usuarios="";
+
         for(Lista l: Singleton.getInstance().getListas()){
             if(l.getId()==idLista){
                 listaActual=l;
@@ -141,6 +142,7 @@ public class InteriorListaFragment extends Fragment {
         }
         adapter=new DespensaAdapter();
         updateEditTextFiltrar(view);
+
         if(Singleton.getInstance().existenProductosLista()){
             updateUI(Singleton.getInstance().getProductosListaLista(Singleton.getInstance().getIdListaSeleccionada()));
         }else{

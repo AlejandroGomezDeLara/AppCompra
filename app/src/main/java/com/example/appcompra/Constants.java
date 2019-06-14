@@ -47,7 +47,7 @@ public class Constants {
 
     //Productos de la despensa
     public static final String PRODUCTOS_DESPENSA_PETICION="DP";
-    public static final String PRODUCTOS_DESPENSA_CORRECTA="DC";
+    public static final String PRODUCTOS_DESPENSA_CORRECTA="DPC";
     public static final String PRODUCTOS_DESPENSA_FALLIDA="DF";
 
     //Compartir listas
@@ -87,5 +87,7 @@ public class Constants {
 
 
     public static final String PETICIONES_INDIRECTAS_ENVIADAS ="NC" ;
+    public static final String BORRAR_LISTA_ACEPTADA = "SLC";
+    public static final String BORRAR_LISTA_FALLIDA = "SLF";
 }
 

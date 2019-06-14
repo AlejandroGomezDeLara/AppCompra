@@ -34,7 +34,7 @@ public class Singleton {
 
     private ArrayList<String> caracteresPeticionesDirectas;
 
-    private TreeSet<Producto> despensa;
+    private TreeSet<ProductoLista> despensa;
 
     private int posicionSpinnerCategorias;
 
@@ -198,16 +198,20 @@ public class Singleton {
     }
 
 
-    public TreeSet<Producto> getDespensa() {
+    public TreeSet<ProductoLista> getDespensa() {
         return despensa;
     }
 
-    public void setDespensa(TreeSet<Producto> despensa) {
+    public void setDespensa(TreeSet<ProductoLista> despensa) {
         this.despensa = despensa;
     }
 
-    public void borrarLista(Lista l) {
-        listas.remove(l);
+    public void borrarLista(int id) {
+        for(Lista l:listas){
+            if(l.getId()==id){
+                listas.remove(l);
+            }
+        }
     }
     public void setRoles(ArrayList<String> roles) {
         this.roles = roles;
