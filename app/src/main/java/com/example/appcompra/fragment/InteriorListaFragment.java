@@ -13,6 +13,7 @@ import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -65,6 +66,7 @@ public class InteriorListaFragment extends Fragment {
     protected ProductosListaViewModel model;
     protected RecyclerView usuariosRecyclerView;
     protected Lista listaActual;
+    private SwipeRefreshLayout refreshLayout;
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Nullable
     @Override
@@ -142,6 +144,16 @@ public class InteriorListaFragment extends Fragment {
 
 
         }
+        refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
+        refreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        Singleton.getInstance().enviarPeticion(new Peticion(Constants.PRODUCTOS_LISTA_PETICION,QueryUtils.getUsuario().getId(),Singleton.getInstance().getIdListaSeleccionada()+"",5));
+                        refreshLayout.setRefreshing(false);
+                    }
+                }
+        );
         adapter=new DespensaAdapter();
         updateEditTextFiltrar(view);
         setColores();

@@ -44,6 +44,8 @@ import com.example.appcompra.models.DespensaViewModel;
 import com.example.appcompra.models.ListasViewModel;
 import com.example.appcompra.models.ProductoViewModel;
 import com.example.appcompra.models.ProductosListaViewModel;
+import com.example.appcompra.utils.Notificacion;
+import com.example.appcompra.utils.Peticion;
 import com.example.appcompra.utils.QueryUtils;
 import com.squareup.picasso.Picasso;
 
@@ -459,6 +461,8 @@ public class MainActivity extends AppCompatActivity
             switch (codigoRespuesta){
                 case Constants.NOTIFICACIONES_PROCESADA_CORRECTA:
                     Log.e("procesar",entrada.split(Constants.SEPARATOR)[1]);
+                    Singleton.getInstance().setNotificaciones(QueryUtils.procesarNotificacion(entrada.split(Constants.SEPARATOR)[1]));
+                    procesarNotificaciones();
                     break;
 
                 case Constants.COMPARTIR_LISTA_CORRECTA:
@@ -522,6 +526,18 @@ public class MainActivity extends AppCompatActivity
 
             }
             Singleton.getInstance().peticionProcesada();
+        }
+
+        public void procesarNotificaciones(){
+            for(Notificacion n:Singleton.getInstance().getNotificaciones()){
+                if(n.getTipoNotificacion().equals("usuarios")){
+                    //peticion listas
+                    Singleton.getInstance().enviarPeticion(new Peticion(Constants.LISTAS_PETICION,QueryUtils.getUsuario().getId(),4));
+                }else{
+                    Singleton.getInstance().enviarPeticion(new Peticion(Constants.PRODUCTOS_LISTA_PETICION,QueryUtils.getUsuario().getId(),n.getIdLista()+"",5));
+                    //peticion productos lista
+                }
+            }
         }
     }
 

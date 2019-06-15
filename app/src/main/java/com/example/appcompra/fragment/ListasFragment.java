@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -53,7 +54,7 @@ public class ListasFragment extends Fragment {
     protected String nombreNuevaLista;
     protected TextView mEmptyStateTextView;
     protected Lista listaSeleccionada;
-
+    private SwipeRefreshLayout refreshLayout;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -83,6 +84,16 @@ public class ListasFragment extends Fragment {
             }
         });
         adapter=new ListaAdapter();
+        refreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipeRefreshLayout);
+        refreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        Singleton.getInstance().enviarPeticion(new Peticion(Constants.LISTAS_PETICION,QueryUtils.getUsuario().getId(),4));
+                        refreshLayout.setRefreshing(false);
+                    }
+                }
+        );
         return view;
     }
 
@@ -116,8 +127,11 @@ public class ListasFragment extends Fragment {
             mEmptyStateTextView.setText(R.string.no_internet);
             mEmptyStateTextView.setVisibility(View.VISIBLE);
         }
+
         if(!Singleton.getInstance().existenListas())
             Singleton.getInstance().enviarPeticion(new Peticion(Constants.LISTAS_PETICION,QueryUtils.getUsuario().getId(),4));
+
+
     }
 
     public void updateUI(TreeSet<Lista> m){

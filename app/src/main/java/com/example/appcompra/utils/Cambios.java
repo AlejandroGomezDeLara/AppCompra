@@ -1,5 +1,7 @@
 package com.example.appcompra.utils;
 
+import android.util.Log;
+
 import com.example.appcompra.Constants;
 import org.json.*;
 
@@ -69,8 +71,23 @@ public class Cambios{
         }catch (JSONException e){
             e.printStackTrace();
         }
-
-        cambiosPC.put(o);
+        JSONObject ob;
+        boolean existe=false;
+        try {
+            for (int i=0;i<cambiosTP.length();i++) {
+                ob = cambiosTP.getJSONObject(i);
+                if(ob.getString("id").equals(o.getString("id"))){
+                    Log.e("xd","entra");
+                    ob.remove("unidades");
+                    ob.put("unidades",o.get("unidades"));
+                    existe=true;
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if(!existe)
+            cambiosPC.put(o);
     }
     public void añadirCambioUsuarios(String nombre,String operacion,String rol,int idLista){
         JSONObject o=new JSONObject();

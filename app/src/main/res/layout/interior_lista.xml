@@ -60,12 +60,17 @@
                 android:padding="8dp"
                 android:background="@drawable/despensa_button_background"
                 />
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/swipeRefreshLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-
             </android.support.v7.widget.RecyclerView>
+            </android.support.v4.widget.SwipeRefreshLayout>
+
             <Button
                 android:id="@+id/añadir_boton"
                 android:layout_width="52dp"

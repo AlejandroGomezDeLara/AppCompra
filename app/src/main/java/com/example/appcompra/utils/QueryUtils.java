@@ -17,6 +17,7 @@ import org.json.JSONObject;
 
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.TreeSet;
 
 public class QueryUtils {
@@ -190,4 +191,43 @@ public class QueryUtils {
         return new ProductosListaConID(idLista,productos);
     }
 
+    public static LinkedList<Notificacion> procesarNotificacion(String json) {
+        LinkedList<Notificacion> notificaciones =new LinkedList<>();
+        String autor="";
+        String tipoNotificacion;
+        String operacion;
+        String rol="";
+        int idLista;
+
+        try{
+            JSONObject raiz=new JSONObject(json);
+            JSONArray data=raiz.getJSONArray("notificaciones");
+            JSONObject notificacionActual;
+            for (int i=0;i<data.length();i++){
+                notificacionActual=data.getJSONObject(i);
+                if(notificacionActual.has("autor"))
+                    autor=notificacionActual.getString("autor");
+                else
+                    autor=notificacionActual.getString("usuario");
+                operacion=notificacionActual.getString("operacion");
+
+                if(notificacionActual.has("rol")){
+                    rol=notificacionActual.getString("rol");
+                    tipoNotificacion="usuarios";
+                }else{
+                    tipoNotificacion="listas";
+                }
+
+                idLista=notificacionActual.getInt("idLista");
+                Notificacion n=new Notificacion(autor,tipoNotificacion,operacion,rol,idLista);
+                if(!autor.equals(QueryUtils.getUsuario().getNombre()))
+                    notificaciones.add(n);
+            }
+
+        }catch (JSONException e){
+            Log.e("JSONException ","JSON mal formado "+e.getMessage());
+        }
+
+        return notificaciones;
+    }
 }
