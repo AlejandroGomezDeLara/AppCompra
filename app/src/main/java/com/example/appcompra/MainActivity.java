@@ -530,6 +530,7 @@ public class MainActivity extends AppCompatActivity
 
         public void procesarNotificaciones(){
             for(Notificacion n:Singleton.getInstance().getNotificaciones()){
+
                 if(n.getTipoNotificacion().equals("usuarios")){
                     //peticion listas
                     Singleton.getInstance().enviarPeticion(new Peticion(Constants.LISTAS_PETICION,QueryUtils.getUsuario().getId(),4));
@@ -541,6 +542,24 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Singleton.getInstance().enviarPeticion(new Peticion(Constants.LOGOUT,QueryUtils.getUsuario().getId(),20));
+        Log.e("logout","logout enviado");
+    }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Singleton.getInstance().enviarPeticion(new Peticion(Constants.LOGOUT,QueryUtils.getUsuario().getId(),20));
+        Log.e("logout","logout enviado");
+    }
 
+    @Override
+    public void finish() {
+        super.finish();
+        Singleton.getInstance().enviarPeticion(new Peticion(Constants.LOGOUT,QueryUtils.getUsuario().getId(),20));
+        Log.e("logout","logout enviado");
+    }
 }

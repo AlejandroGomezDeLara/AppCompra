@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -50,7 +51,7 @@ public class DespensaFragment extends Fragment {
     protected Usuario usuario;
     protected Button addProductos;
     protected Button addProductosCentro;
-
+    protected ImageView deleteProductos;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Nullable
@@ -139,7 +140,14 @@ public class DespensaFragment extends Fragment {
             addProductos.setVisibility(View.VISIBLE);
             addProductosCentro.setVisibility(View.GONE);
         }
-        adapter=new DespensaAdapter(m, getActivity(), R.layout.item_row_despensa, getActivity());
+        adapter=new DespensaAdapter(m, getActivity(), R.layout.item_row_despensa, getActivity(), new DespensaAdapter.OnItemClickListener() {
+            @Override
+            public void onSeleccionarLista() {
+                if(Singleton.getInstance().hayProductosListaSeleccionados()){
+                    deleteProductos.setVisibility(View.VISIBLE);
+                }
+            }
+        });
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);

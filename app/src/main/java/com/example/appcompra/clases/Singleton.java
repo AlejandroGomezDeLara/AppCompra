@@ -189,5 +189,33 @@ public class Singleton {
     }
 
 
+    public void limpiarProductosLista() {
+        this.productosLista.clear();
+    }
+    public TreeSet<ProductoLista> getProductosListaSeleccionados(){
+        TreeSet<ProductoLista> seleccionados=new TreeSet<>();
+        if(productosLista.containsKey(Singleton.getInstance().getIdListaSeleccionada()))
+            for(ProductoLista p:getProductosListaLista(Singleton.getInstance().getIdListaSeleccionada())){
+                if(p.isSeleccionado())seleccionados.add(p);
+            }
+        return seleccionados;
+    }
+    public boolean hayProductosListaSeleccionados(){
+        boolean cierto=false;
+        if(productosLista.containsKey(Singleton.getInstance().getIdListaSeleccionada()))
+            for(ProductoLista p:getProductosListaLista(Singleton.getInstance().getIdListaSeleccionada())){
+                if(p.isSeleccionado())cierto=true;
+            }
+        return cierto;
+    }
 
+    public void borrarProductosSeleccionados() {
+        if (productosLista.containsKey(Singleton.getInstance().getIdListaSeleccionada())){
+            Iterator iterator=getProductosListaLista(Singleton.getInstance().getIdListaSeleccionada()).iterator();
+            while (iterator.hasNext()){
+                ProductoLista pro=(ProductoLista)iterator.next();
+                if(pro.isSeleccionado())iterator.remove();
+            }
+        }
+    }
 }

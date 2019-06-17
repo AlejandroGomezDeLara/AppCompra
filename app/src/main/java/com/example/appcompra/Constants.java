@@ -91,5 +91,12 @@ public class Constants {
     public static final String BORRAR_LISTA_FALLIDA = "SLF";
     public static final String NOTIFICACIONES_CORRECTA = "NC";
     public static final String NOTIFICACIONES_PROCESADA_CORRECTA ="NPC" ;
+
+    //Comprobar si estoy logueado
+    public static final String COMPROBAR_LOGUEO="LD";
+    public static final String COMPROBAR_LOGUEO_CORRECTA ="LDC" ;
+    public static final String COMPROBAR_LOGUEO_FALLIDA ="LDF" ;
+    public static final String LOGOUT="LO";
+
 }
 

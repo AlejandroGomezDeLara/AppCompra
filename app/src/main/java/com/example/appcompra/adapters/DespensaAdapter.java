@@ -7,7 +7,10 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,12 +37,13 @@ public class DespensaAdapter extends RecyclerView.Adapter<DespensaAdapter.ViewHo
     private Activity activity;
     private int layout;
     private Context context;
-
-    public DespensaAdapter(TreeSet<ProductoLista> productos, Activity activity, int layout, Context context) {
+    private OnItemClickListener listener;
+    public DespensaAdapter(TreeSet<ProductoLista> productos, Activity activity, int layout, Context context,OnItemClickListener listener) {
         this.productos = new ArrayList<>(productos);
         this.activity = activity;
         this.layout = layout;
         this.context = context;
+        this.listener=listener;
     }
 
     public DespensaAdapter() {
@@ -59,10 +63,12 @@ public class DespensaAdapter extends RecyclerView.Adapter<DespensaAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull final DespensaAdapter.ViewHolder viewHolder,final int i) {
         final ProductoLista producto=(ProductoLista)productos.get(i);
+        Lista li=null;
         String nombre=producto.getNombre();
         nombre=nombre.substring(0,1).toUpperCase() + nombre.substring(1);
         viewHolder.nombre.setText(corregirNombre(nombre));
         viewHolder.unidades.setText(producto.getUnidades()+" u");
+
         if(producto.getUrl()!=null)
             Picasso.get().load(producto.getUrl()).into(viewHolder.imagen);
         if(producto.getCadena()==null){
@@ -71,26 +77,52 @@ public class DespensaAdapter extends RecyclerView.Adapter<DespensaAdapter.ViewHo
         if(Singleton.getInstance().getIdListaSeleccionada()==0){
             viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context,R.drawable.gradient));
         }else{
-            Lista li=null;
+
             for(Lista l:Singleton.getInstance().getListas()){
                 if(l.getId()==Singleton.getInstance().getIdListaSeleccionada())
                     li=l;
             }
-            if(li!=null) {
-                switch (li.getRol().toLowerCase()){
-                    case "administrador":
-                        viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context,R.drawable.gradient_lista_admin));
 
+            final Lista finalLi = li;
+
+            if(finalLi !=null) {
+                Log.e("xd", "cambiado");
+                switch (finalLi.getRol().toLowerCase()) {
+                    case "administrador":
+                        viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_lista_admin));
                         break;
                     case "participante":
-                        viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context,R.drawable.gradient_lista_participante));
+                        viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_lista_participante));
                         break;
                     case "espectador":
-                        viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context,R.drawable.gradient_lista_espectador));
+                        viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_lista_espectador));
                         break;
                 }
+                viewHolder.linearProducto.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        producto.setSeleccionado(!producto.isSeleccionado());
+                        if (producto.isSeleccionado()) {
+                            viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.producto_seleccionado));
+                        } else {
+                            switch (finalLi.getRol().toLowerCase()) {
+                                case "administrador":
+                                    viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_lista_admin));
+                                    break;
+                                case "participante":
+                                    viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_lista_participante));
+                                    break;
+                                case "espectador":
+                                    viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_lista_espectador));
+                                    break;
+                            }
+                        }
+                        listener.onSeleccionarLista();
+                    }
+                });
             }
         }
+
     }
 
 
@@ -122,6 +154,9 @@ public class DespensaAdapter extends RecyclerView.Adapter<DespensaAdapter.ViewHo
         if(nombre.contains("_"))
             nombre=nombre.replaceAll("_"," ");
         return nombre;
+    }
+    public interface OnItemClickListener{
+        void onSeleccionarLista();
     }
 
 }

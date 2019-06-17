@@ -32,4 +32,6 @@ public class RecetasFragment extends Fragment {
     public void onResume() {
         super.onResume();
     }
+
+
 }

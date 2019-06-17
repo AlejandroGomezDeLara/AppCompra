@@ -22,14 +22,20 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.appcompra.Constants;
 import com.example.appcompra.MainActivity;
@@ -57,12 +63,13 @@ public class InteriorListaFragment extends Fragment {
     protected ProgressBar loadingIndicator;
     protected DespensaAdapter adapter;
     protected UsuariosAdapter usuariosAdapter;
-    protected Usuario usuario;
     protected int idLista;
     protected int posLista;
     protected TextView mEmptyStateTextView;
     protected Button addProductos;
     protected Button addProductosCentro;
+    protected ImageView deleteProductos;
+    protected ImageView markProductos;
     protected ProductosListaViewModel model;
     protected RecyclerView usuariosRecyclerView;
     protected Lista listaActual;
@@ -79,11 +86,12 @@ public class InteriorListaFragment extends Fragment {
         mEmptyStateTextView.setVisibility(View.GONE);
         addProductos = view.findViewById(R.id.añadir_boton);
         addProductosCentro = view.findViewById(R.id.añadir_boton_centro);
+        deleteProductos=view.findViewById(R.id.eliminar_boton);
+        markProductos=view.findViewById(R.id.mark_boton);
         idLista=Singleton.getInstance().getIdListaSeleccionada();
         addProductosCentro.setVisibility(View.GONE);
         addProductos.setVisibility(View.GONE);
         productos = new ArrayList<>();
-        usuario = QueryUtils.getUsuario();
         addProductos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,6 +105,27 @@ public class InteriorListaFragment extends Fragment {
             }
         });
         String usuarios="";
+
+        deleteProductos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for(ProductoLista p: Singleton.getInstance().getProductosListaSeleccionados()){
+                    Cambios.getInstance().añadirCambioTipoProducto(p.getId(),"delete",listaActual.getId(),0,null,null);
+                    Singleton.getInstance().borrarProductosSeleccionados();
+                    updateUI(Singleton.getInstance().getProductosListaLista(Singleton.getInstance().getIdListaSeleccionada()));
+                }
+            }
+        });
+
+        markProductos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for(ProductoLista p: Singleton.getInstance().getProductosListaSeleccionados()){
+                    Cambios.getInstance().añadirCambioTipoProducto(p.getId(),"mark",listaActual.getId(),0,null,null);
+                }
+            }
+        });
+
 
         for(Lista l: Singleton.getInstance().getListas()){
             if(l.getId()==idLista){
@@ -149,6 +178,7 @@ public class InteriorListaFragment extends Fragment {
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
+                        Singleton.getInstance().limpiarProductosLista();
                         Singleton.getInstance().enviarPeticion(new Peticion(Constants.PRODUCTOS_LISTA_PETICION,QueryUtils.getUsuario().getId(),Singleton.getInstance().getIdListaSeleccionada()+"",5));
                         refreshLayout.setRefreshing(false);
                     }
@@ -173,14 +203,20 @@ public class InteriorListaFragment extends Fragment {
                 case "administrador":
                     addProductos.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.shape_admin));
                     addProductosCentro.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.shape_admin));
+                    deleteProductos.setBackgroundResource(R.drawable.shape_admin);
+                    markProductos.setBackgroundResource(R.drawable.shape_admin);
                     break;
                 case "participante":
                     addProductos.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.shape_participante));
                     addProductosCentro.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.shape_participante));
+                    deleteProductos.setBackgroundResource(R.drawable.shape_participante);
+                    markProductos.setBackgroundResource(R.drawable.shape_participante);
                     break;
                 case "espectador":
                     addProductos.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.shape_espectador));
                     addProductosCentro.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.shape_espectador));
+                    deleteProductos.setBackgroundResource(R.drawable.shape_espectador);
+                    markProductos.setBackgroundResource(R.drawable.shape_espectador);
                     break;
             }
         }
@@ -233,7 +269,21 @@ public class InteriorListaFragment extends Fragment {
             addProductos.setVisibility(View.VISIBLE);
             addProductosCentro.setVisibility(View.GONE);
         }
-        adapter = new DespensaAdapter(m, getActivity(), R.layout.item_row_despensa, getActivity());
+        adapter = new DespensaAdapter(m, getActivity(), R.layout.item_row_despensa, getActivity(), new DespensaAdapter.OnItemClickListener() {
+            @Override
+            public void onSeleccionarLista() {
+                Log.e("xd",Singleton.getInstance().hayProductosListaSeleccionados()+"");
+                if(Singleton.getInstance().hayProductosListaSeleccionados()){
+                    deleteProductos.setVisibility(View.VISIBLE);
+                    markProductos.setVisibility(View.VISIBLE);
+                    addProductos.setVisibility(View.GONE);
+                }else{
+                    deleteProductos.setVisibility(View.GONE);
+                    markProductos.setVisibility(View.GONE);
+                    addProductos.setVisibility(View.VISIBLE);
+                }
+            }
+        });
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
@@ -272,6 +322,7 @@ public class InteriorListaFragment extends Fragment {
         final AlertDialog dialog=builder.create();
         dialog.show();
         dialog.getWindow().setBackgroundDrawableResource(R.color.backgroundColor);
+        ImageView compartir=view.findViewById(R.id.compartir);
         usuariosRecyclerView=view.findViewById(R.id.recyclerView);
         usuariosAdapter=new UsuariosAdapter(listaActual,listaActual.getUsuarios(), getActivity(), R.layout.item_row_popup_usuarios, getContext(), new UsuariosAdapter.OnItemClickListener() {
             @Override
@@ -285,6 +336,58 @@ public class InteriorListaFragment extends Fragment {
         usuariosRecyclerView.setHasFixedSize(true);
         usuariosRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         usuariosRecyclerView.setAdapter(usuariosAdapter);
+        if(!listaActual.getRol().toLowerCase().equals("administrador")){
+            compartir.setVisibility(View.GONE);
+        }
+        compartir.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                compartirListaPopup(listaActual);
+            }
+        });
         usuariosAdapter.notifyDataSetChanged();
     }
+    public void compartirListaPopup( Lista l){
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.popup_compartir, null);
+        AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
+        final AutoCompleteTextView editText=view.findViewById(R.id.editText);
+        final Spinner spinnerRoles=view.findViewById(R.id.spinnerRoles);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                getContext(),R.layout.spinner_item,Singleton.getInstance().getRoles()
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerRoles.setAdapter(adapter);
+        builder.setView(view);
+        final AlertDialog dialog=builder.create();
+        listaActual=l;
+        dialog.show();
+        dialog.getWindow().setBackgroundDrawableResource(R.color.backgroundColor);
+        Button botonAceptarPopUp=view.findViewById(R.id.botonAceptarPopup);
+        Button botonCancelarPopUp=view.findViewById(R.id.botonCancelarPopup);
+        botonAceptarPopUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String rolElegido=spinnerRoles.getSelectedItem().toString();
+                String nombreUsuario=editText.getText().toString();
+                if(!nombreUsuario.isEmpty()){
+                    if(!rolElegido.equals("Ninguno") && !nombreUsuario.isEmpty()) {
+                        Singleton.getInstance().enviarPeticion(new Peticion(Constants.COMPARTIR_LISTA_PETICION,QueryUtils.getUsuario().getId(),listaActual.getId()+Constants.SEPARATOR+nombreUsuario+Constants.SEPARATOR+rolElegido.toLowerCase(),10));
+                        listaActual.añadirUsuario(new Usuario(nombreUsuario,rolElegido));
+                        dialog.dismiss();
+                    }else{
+                        Toast.makeText(getContext(),"Elige un rol para el usuario",Toast.LENGTH_LONG).show();
+                    }
+                }else{
+                    Toast.makeText(getContext(),"Introduce algún nombre",Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+        botonCancelarPopUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+    }
+
 }

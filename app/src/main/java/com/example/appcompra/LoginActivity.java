@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
@@ -42,6 +43,8 @@ import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,13 +57,18 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
     private View mLoginFormView;
     public Socket socket=null;
     public Usuario usuario;
-
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Iniciar servicio de comunicación con el servidor
-        /*Intent serviceIntent = new Intent(this, ServerComunicationService.class);
-        startService(serviceIntent);*/
+
+        sharedPreferences=getPreferences(MODE_PRIVATE);
+        editor=sharedPreferences.edit();
+        /*
+        editor.clear();
+        editor.apply();
+        */
 
         setContentView(R.layout.login);
         // Set up the login form.
@@ -99,6 +107,21 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
         });
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+        if(comprobarSharedPreferences()) {
+            mAuthTask=new UserLoginTask(sharedPreferences.getString("email",""),sharedPreferences.getString("pass",""));
+            mAuthTask.execute();
+            showProgress(true);
+        }
+
+    }
+
+    private boolean comprobarSharedPreferences() {
+        int id=sharedPreferences.getInt("id",0);
+        Log.e("xd",id+"");
+        if (id==0) return false;
+            return true;
+
     }
 
 
@@ -123,6 +146,7 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
             }
         });
     }
+
     private void attemptLogin() {
         if (mAuthTask != null) {
             return;
@@ -163,8 +187,9 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
         } else {
             // Muestra el spinner del progreso, crea el async task y lo ejecutamos
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            String pass=encryptPassword(mPasswordView.getText().toString());
+            mAuthTask=new UserLoginTask(mEmailView.getText().toString(),pass);
+            mAuthTask.execute();
         }
     }
 
@@ -266,6 +291,52 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
     /**
      * Async task para conectar a los sockets
      */
+
+    public class ComprobarLoginTask extends  AsyncTask<Void, Void, Boolean>{
+        private BufferedReader in;
+        private PrintWriter out;
+        private String entrada;
+        private boolean respuesta;
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try {
+                if(QueryUtils.getSocket()==null)
+                    socket=new Socket(InetAddress.getByName(QueryUtils.getIP()),Constants.PORT);
+                else
+                    socket=QueryUtils.getSocket();
+
+                in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                out=new PrintWriter(socket.getOutputStream(),true);
+                out.println(Constants.COMPROBAR_LOGUEO);
+                entrada=in.readLine();
+
+                if(entrada.split(Constants.SEPARATOR)[0].equals(Constants.COMPROBAR_LOGUEO_CORRECTA)){
+                    respuesta=true;
+                }else{
+                    respuesta=false;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return respuesta;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean respuesta) {
+            if(respuesta){
+                Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("Usuario", getUsuarioFromSharedPreferences());
+                intent.putExtras(bundle);
+                finish();
+                startActivity(intent);
+            }else{
+                attemptLogin();
+            }
+        }
+
+    }
+
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
         private final String mEmail;
@@ -314,6 +385,7 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
             showProgress(false);
 
             if (success) {
+                saveSharedPreferences(usuario,mPassword);
                 Intent intent=new Intent(LoginActivity.this,MainActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("Usuario", usuario);
@@ -325,7 +397,8 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
                 startActivity(getIntent());
                 mPasswordView.setError("Email o contraseña incorrectos");
                 mPasswordView.requestFocus();
-
+                editor.clear();
+                editor.apply();
             }
         }
 
@@ -384,6 +457,41 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
             mAuthTask = null;
             showProgress(false);
         }
+    }
+
+    public void saveSharedPreferences(Usuario usuario,String pass){
+        editor.putInt("id",usuario.getId());
+        editor.putString("nombre",usuario.getNombre());
+        editor.putString("email",usuario.getEmail());
+        editor.putString("pass",pass);
+        editor.apply();
+    }
+
+    public Usuario getUsuarioFromSharedPreferences(){
+        int id=sharedPreferences.getInt("id",0);
+        String nombre=sharedPreferences.getString("nombre","");
+        String email=sharedPreferences.getString("email","");
+        return new Usuario(id,nombre,email,"https://cdn.computerhoy.com/sites/navi.axelspringer.es/public/styles/480/public/media/image/2018/08/fotos-perfil-whatsapp_16.jpg?itok=aqeTumbO");
+    }
+
+    public String encryptPassword(String pass){
+        String hash=null;
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(pass.getBytes());
+            byte[] bytes = md.digest();
+            StringBuilder sb = new StringBuilder();
+            for(int i=0; i< bytes.length ;i++)
+            {
+                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            hash = sb.toString();
+        }
+        catch (NoSuchAlgorithmException e)
+        {
+            e.printStackTrace();
+        }
+        return hash;
     }
 }
 
