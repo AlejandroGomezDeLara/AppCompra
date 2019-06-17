@@ -27,6 +27,11 @@ public class Constants {
     public static final String CATEGORIAS_RESPUESTA_CORRECTA="CC";
     public static final String CATEGORIAS_RESPUESTA_FALLIDA="CF";
 
+    //Pedir categorias recetas
+    public static final String CATEGORIAS_RECETAS_PETICION="CR";
+    public static final String CATEGORIAS_RECETAS_CORRECTA="CRC";
+    public static final String CATEGORIAS_RECETAS_FALLIDA="CRF";
+
     //Pedir listas
     public static final String LISTAS_PETICION="LL";
     public static final String LISTAS_RESPUESTA_CORRECTA ="LLC";
@@ -54,24 +59,11 @@ public class Constants {
     public static final String COMPARTIR_LISTA_PETICION="AL";
     public static final String COMPARTIR_LISTA_CORRECTA="ALC";
     public static final String COMPARTIR_LISTA_FALLIDA="ALF";
-    //Editar listas
+
+
+    //Enviar Notificaciones
     public static final String ENVIAR_NOTIFICACIONES="N";
-    // idLista=0 si es despensa
-    // N;ID;{        tp:[
-    //                  {id,remove,idlista},
-    //                  {id,add,idlista},
-    //                  {id,mark,idlista}
-    //                ],
-    //                pc:[
-    //                  {id,remove,idlista},
-    //                  {id,add,idlista},
-    //                  {id,mark,idlista}
-    //                ],
-    //                ls:[
-    //                  {id,remove,idLista},
-    //                  {id,add,idLista}
-    //                  ]
-    //               }
+
 
 
     //tests
@@ -98,5 +90,10 @@ public class Constants {
     public static final String COMPROBAR_LOGUEO_FALLIDA ="LDF" ;
     public static final String LOGOUT="LO";
 
+    public static final String RECETAS_CATEGORIA_PETICION ="RCC" ;
+    public static final String RECETAS_CATEGORIA_CORRECTA ="RCCC" ;
+    public static final String RECETAS_CATEGORIA_FALLIDA ="RCCF" ;
+    public static final String RECETA_ALEATORIA_PETICION ="RA" ;
+    public static final String RECETA_ALEATORIA_CORRECTA ="RAC";
 }
 

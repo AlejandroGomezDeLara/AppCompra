@@ -3,6 +3,7 @@ package com.example.appcompra.adapters;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -87,16 +88,22 @@ public class DespensaAdapter extends RecyclerView.Adapter<DespensaAdapter.ViewHo
 
             if(finalLi !=null) {
                 Log.e("xd", "cambiado");
-                switch (finalLi.getRol().toLowerCase()) {
-                    case "administrador":
-                        viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_lista_admin));
-                        break;
-                    case "participante":
-                        viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_lista_participante));
-                        break;
-                    case "espectador":
-                        viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_lista_espectador));
-                        break;
+                if(producto.isComprado()){
+                    viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_comprado));
+                    viewHolder.nombre.setText(producto.getNombre()+" (Comprado)");
+                    viewHolder.nombre.setTypeface(null, Typeface.ITALIC);
+                }else {
+                    switch (finalLi.getRol().toLowerCase()) {
+                        case "administrador":
+                            viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_lista_admin));
+                            break;
+                        case "participante":
+                            viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_lista_participante));
+                            break;
+                        case "espectador":
+                            viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_lista_espectador));
+                            break;
+                    }
                 }
                 viewHolder.linearProducto.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -105,16 +112,22 @@ public class DespensaAdapter extends RecyclerView.Adapter<DespensaAdapter.ViewHo
                         if (producto.isSeleccionado()) {
                             viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.producto_seleccionado));
                         } else {
-                            switch (finalLi.getRol().toLowerCase()) {
-                                case "administrador":
-                                    viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_lista_admin));
-                                    break;
-                                case "participante":
-                                    viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_lista_participante));
-                                    break;
-                                case "espectador":
-                                    viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_lista_espectador));
-                                    break;
+                            if(producto.isComprado()){
+                                viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_comprado));
+                                viewHolder.nombre.setText(producto.getNombre()+" (Comprado)");
+                                viewHolder.nombre.setTypeface(null, Typeface.ITALIC);
+                            }else {
+                                switch (finalLi.getRol().toLowerCase()) {
+                                    case "administrador":
+                                        viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_lista_admin));
+                                        break;
+                                    case "participante":
+                                        viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_lista_participante));
+                                        break;
+                                    case "espectador":
+                                        viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_lista_espectador));
+                                        break;
+                                }
                             }
                         }
                         listener.onSeleccionarLista();

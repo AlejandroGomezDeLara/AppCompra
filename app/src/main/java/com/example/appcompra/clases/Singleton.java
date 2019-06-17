@@ -18,6 +18,7 @@ public class Singleton {
     //Declaramos todas las colecciones
 
     private TreeSet<Categoria> categorias;
+    private TreeSet<Categoria> categoriasRecetas;
     private PriorityQueue<Peticion> peticionesEnviar;
     private PriorityQueue<String> respuestasServidor;
     private LinkedList<Notificacion> notificaciones;
@@ -27,11 +28,14 @@ public class Singleton {
     private TreeSet<Lista> listas;
     private TreeSet<ProductoLista> despensa;
     private int posicionSpinnerCategorias;
+    private int posicionSpinnerCategoriasRecetas;
     private int posicionSpinnerListas;
     private int idListaSeleccionada;
     private int idCategoriaSelecionada;
+    private int idCategoriaRecetaSeleccionada;
     private ArrayList<String> roles;
     private static Singleton instance;
+    private TreeMap<Integer, TreeSet<Receta>> recetas;
 
     public static Singleton getInstance () {
         if (instance==null)
@@ -41,14 +45,18 @@ public class Singleton {
     }
 
     public Singleton () {
+        recetas=new TreeMap<>();
         categorias=new TreeSet<>();
+        categoriasRecetas=new TreeSet<>();
         listas=new TreeSet<>();
         productosCategoria=new TreeMap<>();
         productosLista=new TreeMap<>();
         notificaciones=new LinkedList<>();
         posicionSpinnerCategorias =0;
+        posicionSpinnerCategoriasRecetas =0;
         idListaSeleccionada=0;
         idCategoriaSelecionada=0;
+        idCategoriaRecetaSeleccionada=0;
         despensa=new TreeSet<>();
         peticionesEnviar=new PriorityQueue<>();
         respuestasServidor=new PriorityQueue<>();
@@ -192,14 +200,16 @@ public class Singleton {
     public void limpiarProductosLista() {
         this.productosLista.clear();
     }
+
     public TreeSet<ProductoLista> getProductosListaSeleccionados(){
         TreeSet<ProductoLista> seleccionados=new TreeSet<>();
         if(productosLista.containsKey(Singleton.getInstance().getIdListaSeleccionada()))
-            for(ProductoLista p:getProductosListaLista(Singleton.getInstance().getIdListaSeleccionada())){
+            for(ProductoLista p:getProductosListaLista(idListaSeleccionada)){
                 if(p.isSeleccionado())seleccionados.add(p);
             }
         return seleccionados;
     }
+
     public boolean hayProductosListaSeleccionados(){
         boolean cierto=false;
         if(productosLista.containsKey(Singleton.getInstance().getIdListaSeleccionada()))
@@ -216,6 +226,62 @@ public class Singleton {
                 ProductoLista pro=(ProductoLista)iterator.next();
                 if(pro.isSeleccionado())iterator.remove();
             }
+        }
+    }
+
+    public boolean existenRecetas(){
+        return recetas.size()> 0;
+    }
+
+    public boolean existenCategoriasRecetas(){
+        return this.categoriasRecetas.size()> 0;
+    }
+    public TreeSet<Categoria> getCategoriasRecetas() {
+        return categoriasRecetas;
+    }
+
+    public void setCategoriasRecetas(TreeSet<Categoria> categoriasRecetas) {
+        this.categoriasRecetas = categoriasRecetas;
+    }
+
+    public int getIdCategoriaRecetaSeleccionada() {
+        return idCategoriaRecetaSeleccionada;
+    }
+
+    public void setIdCategoriaRecetaSeleccionada(int idCategoriaRecetaSeleccionada) {
+        this.idCategoriaRecetaSeleccionada = idCategoriaRecetaSeleccionada;
+    }
+
+    public int getPosicionSpinnerCategoriasRecetas() {
+        return posicionSpinnerCategoriasRecetas;
+    }
+
+    public void setPosicionSpinnerCategoriasRecetas(int posicionSpinnerCategoriasRecetas) {
+        this.posicionSpinnerCategoriasRecetas = posicionSpinnerCategoriasRecetas;
+    }
+
+    public boolean existenRecetasCategoria() {
+        return recetas.containsKey(idCategoriaRecetaSeleccionada);
+    }
+
+    public TreeSet<Receta> getRecetasCategoriaSeleccionada() {
+        return recetas.get(idCategoriaRecetaSeleccionada);
+    }
+
+    public boolean existenRecetaCategoria(){
+        return recetas.containsKey(idCategoriaRecetaSeleccionada);
+    }
+
+
+    public void añadirNuevasRecetasCategoriaSeleccionada(int idCategoria,TreeSet<Receta> recetas){ this.recetas.put(idCategoria,recetas);}
+
+    public TreeSet<Receta> getRecetasCategoriaSelecionada() {
+        return this.recetas.get(idCategoriaRecetaSeleccionada);
+    }
+
+    public void limpiarProductosSeleccionados() {
+        for(ProductoLista p: getProductosListaLista(idListaSeleccionada)){
+            p.setSeleccionado(false);
         }
     }
 }

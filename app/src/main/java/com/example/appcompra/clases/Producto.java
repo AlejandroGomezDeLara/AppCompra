@@ -8,6 +8,11 @@ public class Producto implements Comparable{
     public String url;
     public boolean seleccionado;
 
+    public Producto(int id, String nombre) {
+        this.id=id;
+        this.nombre=nombre;
+    }
+
     public boolean isSeleccionado() {
         return seleccionado;
     }

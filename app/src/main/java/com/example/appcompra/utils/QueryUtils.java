@@ -7,6 +7,8 @@ import com.example.appcompra.clases.Lista;
 import com.example.appcompra.clases.Producto;
 import com.example.appcompra.clases.ProductosConID;
 import com.example.appcompra.clases.ProductosListaConID;
+import com.example.appcompra.clases.Receta;
+import com.example.appcompra.clases.RecetasConID;
 import com.example.appcompra.clases.TipoProducto;
 import com.example.appcompra.clases.ProductoLista;
 import com.example.appcompra.clases.Usuario;
@@ -229,5 +231,65 @@ public class QueryUtils {
         }
 
         return notificaciones;
+    }
+    /*JSON RECETAS
+     * {"id":12,
+           "recetas":[
+              {
+                 "id":"24",
+                 "nombre":"pastas",
+                 "descripcion":"esta es la descripcion de la receta",
+                 "preparacion":"1.-Añadir huevos, 2.- Añadir pastas, 3.- añadir tomate a la pasta",
+                 "urlimagen":"https://image.flaticon.com/icons/png/512/108/108976.png",
+                 "ingredientes":[  ]
+              },
+              {
+                 "id":"24",
+                 "nombre":"pastas",
+                 "descripcion":"esta es la descripcion de la receta",
+                 "preparacion":"1.-Añadir huevos, 2.- Añadir pastas, 3.- añadir tomate a la pasta",
+                 "urlimagen":"https://image.flaticon.com/icons/png/512/108/108976.png",
+                 "ingredientes":[  ]
+              }
+           ]
+        } */
+    public static RecetasConID recetasJSON(String entrada) {
+        int id;
+        String nombre;
+        String urlImagen;
+        String descripcion;
+        String preparacion;
+        TreeSet<Receta> recetas =new TreeSet<>();
+        int idCategoria=0;
+        try{
+            JSONObject raiz=new JSONObject(entrada);
+            idCategoria=raiz.getInt("id");
+            JSONArray data=raiz.getJSONArray("recetas");
+            JSONObject recetaActual;
+            for (int i=0;i<data.length();i++){
+                recetaActual=data.getJSONObject(i);
+                id=recetaActual.getInt("id");
+                nombre=recetaActual.getString("nombre");
+                urlImagen=recetaActual.getString("urlimagen");
+                descripcion=recetaActual.getString("descripcion");
+                preparacion=recetaActual.getString("preparacion");
+                JSONArray ing=recetaActual.getJSONArray("ingredientes");
+                LinkedList<TipoProducto> ingredientes=new LinkedList<>();
+                for(int j=0;j<ing.length();j++){
+                    JSONObject ingre=ing.getJSONObject(j);
+                    TipoProducto tp=new TipoProducto(ingre.getInt("id"),ingre.getString("nombre"));
+                    ingredientes.add(tp);
+                }
+                Receta r=new Receta(id,nombre,descripcion,preparacion,urlImagen);
+                if(!ingredientes.isEmpty())
+                    r.setIngredientes(ingredientes);
+                recetas.add(r);
+            }
+
+        }catch (JSONException e){
+            Log.e("JSONException ","JSON mal formado "+e.getMessage());
+        }
+
+        return new RecetasConID(idCategoria,recetas);
     }
 }

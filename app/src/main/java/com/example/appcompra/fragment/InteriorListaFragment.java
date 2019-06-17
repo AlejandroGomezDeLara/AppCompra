@@ -121,8 +121,14 @@ public class InteriorListaFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 for(ProductoLista p: Singleton.getInstance().getProductosListaSeleccionados()){
-                    Cambios.getInstance().añadirCambioTipoProducto(p.getId(),"mark",listaActual.getId(),0,null,null);
+                    if(p.isComprado())
+                        Cambios.getInstance().añadirCambioTipoProducto(p.getId(),"unmark",listaActual.getId(),0,null,null);
+                    else
+                        Cambios.getInstance().añadirCambioTipoProducto(p.getId(),"mark",listaActual.getId(),0,null,null);
+                    p.setComprado(!p.isComprado());
                 }
+                Singleton.getInstance().limpiarProductosSeleccionados();
+                updateUI(Singleton.getInstance().getProductosListaLista(Singleton.getInstance().getIdListaSeleccionada()));
             }
         });
 
@@ -257,9 +263,8 @@ public class InteriorListaFragment extends Fragment {
     }
 
     private void updateUI(TreeSet<ProductoLista> m) {
-        /*productos.clear();
+        productos.clear();
         productos.addAll(m);
-        */
         if(m.isEmpty()){
             addProductosCentro.setVisibility(View.VISIBLE);
             mEmptyStateTextView.setVisibility(View.VISIBLE);

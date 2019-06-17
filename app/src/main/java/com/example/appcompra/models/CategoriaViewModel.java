@@ -26,6 +26,7 @@ import java.util.TreeSet;
 
 public class CategoriaViewModel extends AndroidViewModel {
     private MutableLiveData<TreeSet<Categoria>> categorias;
+    private MutableLiveData<TreeSet<Categoria>> categoriasRecetas;
     private Application application;
 
 
@@ -42,23 +43,29 @@ public class CategoriaViewModel extends AndroidViewModel {
 
         return categorias;
     }
+
+    public LiveData<TreeSet<Categoria>> getCategoriasRecetas(){
+        if(categoriasRecetas==null){
+            categoriasRecetas=new MutableLiveData<>();
+            loadCategoriasRecetas();
+        }
+        return categoriasRecetas;
+    }
+
     public void loadCategorias(){
         this.categorias.postValue(Singleton.getInstance().getCategorias());
+    }
+
+    public void loadCategoriasRecetas(){
+        this.categoriasRecetas.postValue(Singleton.getInstance().getCategoriasRecetas());
     }
 
     public void setCategorias(TreeSet<Categoria> categorias) {
         this.categorias.postValue(categorias);
     }
 
-    public class EsperarRespuestaTask extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... params) {
-            while(!Singleton.getInstance().existenCategorias()){}
-            return null;
-        }
-        @Override
-        protected void onPostExecute(Void param) {
-            categorias.setValue(Singleton.getInstance().getCategorias());
-        }
+    public void setCategoriasRecetas(TreeSet<Categoria> categorias) {
+        this.categoriasRecetas.postValue(categorias);
     }
+
 }

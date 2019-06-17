@@ -10,4 +10,7 @@ public class TipoProducto extends Producto {
         super(id,nombre,url);
     }
 
+    public TipoProducto(int id, String nombre) {
+        super(id,nombre);
+    }
 }

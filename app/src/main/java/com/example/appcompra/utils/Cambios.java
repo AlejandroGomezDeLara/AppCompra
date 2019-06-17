@@ -45,6 +45,7 @@ public class Cambios{
 
     public void añadirCambioTipoProducto(int id,String operacion,int idLista,int unidades,String cadena,String receta) {
         JSONObject o=new JSONObject();
+        boolean existe=false;
         try{
             o.put("id",id);
             o.put("idLista",idLista);
@@ -52,14 +53,24 @@ public class Cambios{
             o.put("unidades",unidades);
             o.put("cadena",cadena);
             o.put("receta",receta);
+            JSONObject ob;
+            for (int i=0;i<cambiosTP.length();i++) {
+                ob = cambiosTP.getJSONObject(i);
+                if(ob.toString().equals(o.toString())){
+                    Log.e("xd","entra");
+                    existe=true;
+                }
+            }
         }catch (JSONException e){
             e.printStackTrace();
         }
-        cambiosTP.put(o);
+        if(!existe)
+            cambiosTP.put(o);
     }
 
     public void añadirCambioProductoComercial(int id,String operacion,int idLista,int unidades,String cadena,String receta,String marca){
         JSONObject o=new JSONObject();
+        boolean existe=false;
         try {
             o.put("id",id);
             o.put("idLista",idLista);
@@ -68,22 +79,15 @@ public class Cambios{
             o.put("cadena",cadena);
             o.put("receta",receta);
             o.put("receta",marca);
-        }catch (JSONException e){
-            e.printStackTrace();
-        }
-        JSONObject ob;
-        boolean existe=false;
-        try {
-            for (int i=0;i<cambiosTP.length();i++) {
-                ob = cambiosTP.getJSONObject(i);
-                if(ob.getString("id").equals(o.getString("id"))){
+            JSONObject ob;
+            for (int i=0;i<cambiosPC.length();i++) {
+                ob = cambiosPC.getJSONObject(i);
+                if(ob.toString().equals(o.toString())){
                     Log.e("xd","entra");
-                    ob.remove("unidades");
-                    ob.put("unidades",o.get("unidades"));
                     existe=true;
                 }
             }
-        } catch (JSONException e) {
+        }catch (JSONException e){
             e.printStackTrace();
         }
         if(!existe)

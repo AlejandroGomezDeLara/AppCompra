@@ -1,0 +1,85 @@
+package com.example.appcompra.clases;
+
+import java.util.LinkedList;
+
+public class Receta implements Comparable{
+    private int id;
+    private String nombre;
+    private String descripcion;
+    private String preparacion;
+    private String url;
+    private LinkedList<TipoProducto> ingredientes;
+
+    public Receta(int id, String nombre, String descripcion, String preparacion, String url) {
+        this.id = id;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.preparacion = preparacion;
+        this.url = url;
+    }
+
+    public Receta(int id, String nombre, String descripcion, String preparacion, String url,LinkedList<TipoProducto> ingredientes ) {
+        this.id = id;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.preparacion = preparacion;
+        this.url = url;
+        this.ingredientes=ingredientes;
+    }
+
+    public LinkedList<TipoProducto> getIngredientes() {
+        return ingredientes;
+    }
+
+    public void setIngredientes(LinkedList<TipoProducto> ingredientes) {
+        this.ingredientes = ingredientes;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public String getPreparacion() {
+        return preparacion;
+    }
+
+    public void setPreparacion(String preparacion) {
+        this.preparacion = preparacion;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if(((Receta)o).getId() == this.getId()){
+            return 0;
+        }
+        else return 1;
+    }
+}

@@ -37,6 +37,8 @@ import com.example.appcompra.clases.Categoria;
 import com.example.appcompra.clases.Lista;
 import com.example.appcompra.clases.ProductosConID;
 import com.example.appcompra.clases.ProductosListaConID;
+import com.example.appcompra.clases.Receta;
+import com.example.appcompra.clases.RecetasConID;
 import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.Usuario;
 import com.example.appcompra.models.CategoriaViewModel;
@@ -44,6 +46,7 @@ import com.example.appcompra.models.DespensaViewModel;
 import com.example.appcompra.models.ListasViewModel;
 import com.example.appcompra.models.ProductoViewModel;
 import com.example.appcompra.models.ProductosListaViewModel;
+import com.example.appcompra.models.RecetaViewModel;
 import com.example.appcompra.utils.Notificacion;
 import com.example.appcompra.utils.Peticion;
 import com.example.appcompra.utils.QueryUtils;
@@ -82,7 +85,7 @@ public class MainActivity extends AppCompatActivity
     protected ListasViewModel listasViewModel;
     protected ProductosListaViewModel productosListaViewModel;
     protected DespensaViewModel despensaViewModel;
-
+    protected RecetaViewModel recetaViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +115,7 @@ public class MainActivity extends AppCompatActivity
         this.listasViewModel= ViewModelProviders.of(this).get(ListasViewModel.class);
         this.productosListaViewModel= ViewModelProviders.of(this).get(ProductosListaViewModel.class);
         this.despensaViewModel= ViewModelProviders.of(this).get(DespensaViewModel.class);
-
+        this.recetaViewModel= ViewModelProviders.of(this).get(RecetaViewModel.class);
 
         usuario = (Usuario) getIntent().getExtras().getSerializable("Usuario");
         QueryUtils.setUsuario(usuario);
@@ -458,72 +461,90 @@ public class MainActivity extends AppCompatActivity
         public void procesarEntrada(String entrada){
             String codigoRespuesta=entrada.split(Constants.SEPARATOR)[0];
             //Esta peticion va a ser directa asi que comprobamos su codigo entre el de las peticiones directas
-            switch (codigoRespuesta){
-                case Constants.NOTIFICACIONES_PROCESADA_CORRECTA:
-                    Log.e("procesar",entrada.split(Constants.SEPARATOR)[1]);
-                    Singleton.getInstance().setNotificaciones(QueryUtils.procesarNotificacion(entrada.split(Constants.SEPARATOR)[1]));
-                    procesarNotificaciones();
-                    break;
+            try {
+                switch (codigoRespuesta) {
+                    case Constants.NOTIFICACIONES_PROCESADA_CORRECTA:
+                        Log.e("procesar", entrada.split(Constants.SEPARATOR)[1]);
+                        Singleton.getInstance().setNotificaciones(QueryUtils.procesarNotificacion(entrada.split(Constants.SEPARATOR)[1]));
+                        procesarNotificaciones();
+                        break;
 
-                case Constants.COMPARTIR_LISTA_CORRECTA:
-                    if(entrada.split(Constants.SEPARATOR).length>1) {
-                        Log.e("procesar", "No se ha podido añadir el usuario");
-                    }else{
-                        Log.e("procesar","lista compartida");
+                    case Constants.COMPARTIR_LISTA_CORRECTA:
+                        if (entrada.split(Constants.SEPARATOR).length > 1) {
+                            Log.e("procesar", "No se ha podido añadir el usuario");
+                        } else {
+                            Log.e("procesar", "lista compartida");
+                            listasViewModel.setListas(Singleton.getInstance().getListas());
+                        }
+
+                        break;
+                    case Constants.CATEGORIAS_RESPUESTA_CORRECTA:
+                        Log.e("procesar", entrada);
+                        TreeSet<Categoria> c = QueryUtils.categoriasJson(entrada.split(Constants.SEPARATOR)[1]);
+                        Singleton.getInstance().setCategorias(c);
+                        categoriaViewModel.setCategorias(c);
+                        break;
+                    case Constants.PRODUCTOS_CATEGORIA_RESPUESTA_CORRECTA:
+                        Log.e("procesar", entrada);
+                        ProductosConID productosCategoria = QueryUtils.tipoProductosJson(entrada.split(Constants.SEPARATOR)[1]);
+                        Singleton.getInstance().añadirNuevosProductosCategoria(productosCategoria.getId(), productosCategoria.getProductosConID());
+                        modelProductos.setProductos(productosCategoria.getProductosConID());
+                        break;
+                    case Constants.PRODUCTOS_LISTA_CORRECTA:
+                        Log.e("procesar", entrada);
+                        ProductosListaConID productosLista = QueryUtils.productosLista(entrada.split(Constants.SEPARATOR)[1]);
+                        Singleton.getInstance().añadirProductosLista(productosLista.getId(), productosLista.getProductosListaConID());
+                        productosListaViewModel.setProductosLista(productosLista.getProductosListaConID());
+                        break;
+                    case Constants.LISTAS_RESPUESTA_CORRECTA:
+                        Log.e("procesar", entrada);
+                        Singleton.getInstance().setListas(QueryUtils.listasJson(entrada.split(Constants.SEPARATOR)[1]));
                         listasViewModel.setListas(Singleton.getInstance().getListas());
-                    }
 
-                    break;
-                case Constants.CATEGORIAS_RESPUESTA_CORRECTA:
-                    Log.e("procesar", entrada);
-                    TreeSet<Categoria> c=QueryUtils.categoriasJson(entrada.split(Constants.SEPARATOR)[1]);
-                    Singleton.getInstance().setCategorias(c);
-                    categoriaViewModel.setCategorias(c);
-                    break;
-                case Constants.PRODUCTOS_CATEGORIA_RESPUESTA_CORRECTA:
-                    Log.e("procesar", entrada);
-                    ProductosConID productosCategoria =QueryUtils.tipoProductosJson(entrada.split(Constants.SEPARATOR)[1]);
-                    Singleton.getInstance().añadirNuevosProductosCategoria(productosCategoria.getId(), productosCategoria.getProductosConID());
-                    modelProductos.setProductos(productosCategoria.getProductosConID());
-                    break;
-                case Constants.PRODUCTOS_LISTA_CORRECTA:
-                    Log.e("procesar", entrada);
-                    ProductosListaConID productosLista =QueryUtils.productosLista(entrada.split(Constants.SEPARATOR)[1]);
-                    Singleton.getInstance().añadirProductosLista(productosLista.getId(), productosLista.getProductosListaConID());
-                    productosListaViewModel.setProductosLista(productosLista.getProductosListaConID());
-                    break;
-                case Constants.LISTAS_RESPUESTA_CORRECTA:
-                    Log.e("procesar", entrada);
-                    Singleton.getInstance().setListas(QueryUtils.listasJson(entrada.split(Constants.SEPARATOR)[1]));
-                    listasViewModel.setListas(Singleton.getInstance().getListas());
+                        break;
+                    case Constants.PRODUCTOS_DESPENSA_CORRECTA:
+                        Log.e("procesar", entrada);
+                        ProductosListaConID productosLista1 = QueryUtils.productosLista(entrada.split(Constants.SEPARATOR)[1]);
+                        Singleton.getInstance().setDespensa(productosLista1.getProductosListaConID());
+                        despensaViewModel.setDespensa(productosLista1.getProductosListaConID());
+                        break;
+                    case Constants.CREACION_NUEVA_LISTA_CORRECTA:
+                        Log.e("procesar", entrada);
+                        Lista l = new Lista(Integer.parseInt(entrada.split(Constants.SEPARATOR)[1]), entrada.split(Constants.SEPARATOR)[2], "Administrador");
+                        l.añadirUsuario(new Usuario(QueryUtils.getUsuario().getNombre(), "Administrador"));
+                        Singleton.getInstance().añadirNuevaLista(l);
+                        listasViewModel.añadirNuevaLista(l);
+                        break;
+                    case Constants.BORRAR_LISTA_ACEPTADA:
+                        Log.e("procesar", entrada);
 
-                    break;
-                case Constants.PRODUCTOS_DESPENSA_CORRECTA:
-                    Log.e("procesar", entrada);
-                    ProductosListaConID productosLista1 =QueryUtils.productosLista(entrada.split(Constants.SEPARATOR)[1]);
-                    Singleton.getInstance().setDespensa(productosLista1.getProductosListaConID());
-                    despensaViewModel.setDespensa(productosLista1.getProductosListaConID());
-                    break;
-                case Constants.CREACION_NUEVA_LISTA_CORRECTA:
-                    Log.e("procesar", entrada);
-                    Lista l=new Lista(Integer.parseInt(entrada.split(Constants.SEPARATOR)[1]),entrada.split(Constants.SEPARATOR)[2],"Administrador");
-                    l.añadirUsuario(new Usuario(QueryUtils.getUsuario().getNombre(),"Administrador"));
-                    Singleton.getInstance().añadirNuevaLista(l);
-                    listasViewModel.añadirNuevaLista(l);
-                    break;
-                case Constants.BORRAR_LISTA_ACEPTADA:
-                    Log.e("procesar", entrada);
+                        Singleton.getInstance().borrarLista(Integer.parseInt(entrada.split(Constants.SEPARATOR)[1]));
+                        listasViewModel.setListas(Singleton.getInstance().getListas());
+                        break;
+                    case Constants.NOTIFICACIONES_CORRECTA:
+                        Log.e("procesar", entrada);
+                        break;
 
-                    Singleton.getInstance().borrarLista(Integer.parseInt(entrada.split(Constants.SEPARATOR)[1]));
-                    listasViewModel.setListas(Singleton.getInstance().getListas());
-                    break;
-                case Constants.NOTIFICACIONES_CORRECTA:
-                    Log.e("procesar", entrada);
-                    break;
-                default:
-                    Log.e("procesar","Codigo de respuesta desconocido");
-                    break;
+                    case Constants.CATEGORIAS_RECETAS_CORRECTA:
+                        Log.e("procesar", entrada);
+                        Singleton.getInstance().setCategoriasRecetas(QueryUtils.categoriasJson(entrada.split(Constants.SEPARATOR)[1]));
+                        categoriaViewModel.setCategoriasRecetas(Singleton.getInstance().getCategoriasRecetas());
+                        break;
+                    case Constants.RECETAS_CATEGORIA_CORRECTA:
+                        RecetasConID recetasCategoria = QueryUtils.recetasJSON(entrada.split(Constants.SEPARATOR)[1]);
+                        Singleton.getInstance().añadirNuevasRecetasCategoriaSeleccionada(recetasCategoria.getId(), recetasCategoria.getRecetasConID());
+                        recetaViewModel.setRecetas(Singleton.getInstance().getRecetasCategoriaSeleccionada());
+                        break;
+                    case Constants.RECETA_ALEATORIA_CORRECTA:
 
+                        break;
+                    default:
+                        Log.e("procesar", "Codigo de respuesta desconocido");
+                        break;
+
+                }
+            }catch (ArrayIndexOutOfBoundsException e){
+                Log.e("error",e.getMessage());
             }
             Singleton.getInstance().peticionProcesada();
         }
@@ -550,16 +571,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        Singleton.getInstance().enviarPeticion(new Peticion(Constants.LOGOUT,QueryUtils.getUsuario().getId(),20));
-        Log.e("logout","logout enviado");
-    }
-
-    @Override
     public void finish() {
         super.finish();
         Singleton.getInstance().enviarPeticion(new Peticion(Constants.LOGOUT,QueryUtils.getUsuario().getId(),20));
         Log.e("logout","logout enviado");
+    }
+
+    public RecetaViewModel getRecetaViewModel() {
+        return recetaViewModel;
     }
 }
