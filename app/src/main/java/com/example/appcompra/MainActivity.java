@@ -2,8 +2,11 @@ package com.example.appcompra;
 
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
@@ -106,6 +109,10 @@ public class MainActivity extends AppCompatActivity
         RespuestasThread p=new RespuestasThread();
         p.setDaemon(true);
         p.start();
+
+        PedirNotificacionesThread p3=new PedirNotificacionesThread();
+        p3.setDaemon(true);
+        p3.start();
 
 
         Singleton.getInstance().setHiloComunicacion(p2);
@@ -441,6 +448,30 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    public class PedirNotificacionesThread extends Thread{
+
+        @Override
+        public void run() {
+            while (working) {
+                try {
+                    Log.e("pedir","esperando");
+                    Thread.sleep(15000);
+                    pedirNotificaciones();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+        public synchronized void pedirNotificaciones(){
+            Peticion p=new Peticion(Constants.PEDIR_NOTIFICACIONES,QueryUtils.getUsuario().getId());
+            String salida=p.getStringPeticion();
+            out.println(salida);
+            Log.e("procesar", salida );
+        }
+
+    }
+
     public class RespuestasThread extends Thread{
 
         @Override
@@ -468,7 +499,11 @@ public class MainActivity extends AppCompatActivity
                         Singleton.getInstance().setNotificaciones(QueryUtils.procesarNotificacion(entrada.split(Constants.SEPARATOR)[1]));
                         procesarNotificaciones();
                         break;
-
+                    case Constants.PEDIR_NOTIFICACIONES_CORRECTA:
+                        Log.e("procesar", entrada.split(Constants.SEPARATOR)[1]);
+                        Singleton.getInstance().setNotificaciones(QueryUtils.procesarNotificacion(entrada.split(Constants.SEPARATOR)[1]));
+                        procesarNotificaciones();
+                        break;
                     case Constants.COMPARTIR_LISTA_CORRECTA:
                         if (entrada.split(Constants.SEPARATOR).length > 1) {
                             Log.e("procesar", "No se ha podido añadir el usuario");
@@ -541,7 +576,6 @@ public class MainActivity extends AppCompatActivity
                     default:
                         Log.e("procesar", "Codigo de respuesta desconocido");
                         break;
-
                 }
             }catch (ArrayIndexOutOfBoundsException e){
                 Log.e("error",e.getMessage());
@@ -551,7 +585,25 @@ public class MainActivity extends AppCompatActivity
 
         public void procesarNotificaciones(){
             for(Notificacion n:Singleton.getInstance().getNotificaciones()){
-
+                String nombreLista="";
+                for(Lista l:Singleton.getInstance().getListas()){
+                    if(n.getIdLista()==l.getId())
+                        nombreLista=l.getTitulo();
+                }
+                switch (n.getOperacion()){
+                    case "add":
+                        backgroundToast(getApplicationContext(),n.getAutor()+" ha añadido un productos a la lista "+nombreLista);
+                        break;
+                    case "delete":
+                        backgroundToast(getApplicationContext(),n.getAutor()+" ha borrado un productos en la lista "+nombreLista);
+                        break;
+                    case "mark":
+                        backgroundToast(getApplicationContext(),n.getAutor()+" ha comprado productos de la lista "+nombreLista);
+                        break;
+                    case "unmark":
+                        backgroundToast(getApplicationContext(),n.getAutor()+" ha desmarcado productos de la lista "+nombreLista);
+                        break;
+                }
                 if(n.getTipoNotificacion().equals("usuarios")){
                     //peticion listas
                     Singleton.getInstance().enviarPeticion(new Peticion(Constants.LISTAS_PETICION,QueryUtils.getUsuario().getId(),4));
@@ -559,6 +611,16 @@ public class MainActivity extends AppCompatActivity
                     Singleton.getInstance().enviarPeticion(new Peticion(Constants.PRODUCTOS_LISTA_PETICION,QueryUtils.getUsuario().getId(),n.getIdLista()+"",5));
                     //peticion productos lista
                 }
+            }
+        }
+        public void backgroundToast(final Context context, final String msg) {
+            if (context != null && msg != null) {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         }
     }

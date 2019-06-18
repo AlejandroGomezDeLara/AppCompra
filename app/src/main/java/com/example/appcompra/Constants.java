@@ -1,5 +1,7 @@
 package com.example.appcompra;
 
+import com.example.appcompra.utils.Peticion;
+
 public class Constants {
     //Constantes para la conexion
     public static final int PORT=7777;
@@ -88,12 +90,23 @@ public class Constants {
     public static final String COMPROBAR_LOGUEO="LD";
     public static final String COMPROBAR_LOGUEO_CORRECTA ="LDC" ;
     public static final String COMPROBAR_LOGUEO_FALLIDA ="LDF" ;
+
+    //Loguout
     public static final String LOGOUT="LO";
 
-    public static final String RECETAS_CATEGORIA_PETICION ="RCC" ;
-    public static final String RECETAS_CATEGORIA_CORRECTA ="RCCC" ;
-    public static final String RECETAS_CATEGORIA_FALLIDA ="RCCF" ;
+    //Recetas
+    public static final String RECETAS_CATEGORIA_PETICION ="REC" ;
+    public static final String RECETAS_CATEGORIA_CORRECTA ="RECC" ;
+    public static final String RECETAS_CATEGORIA_FALLIDA ="RECF" ;
+
     public static final String RECETA_ALEATORIA_PETICION ="RA" ;
     public static final String RECETA_ALEATORIA_CORRECTA ="RAC";
+
+    public static final String INTERIOR_RECETA_PETICION="IRE";
+    public static final String INTERIOR_RECETA_CORRECTA="IREC";
+
+    //Notificaciones
+    public static final String PEDIR_NOTIFICACIONES ="MN" ;
+    public static final String PEDIR_NOTIFICACIONES_CORRECTA ="MNC" ;
 }
 

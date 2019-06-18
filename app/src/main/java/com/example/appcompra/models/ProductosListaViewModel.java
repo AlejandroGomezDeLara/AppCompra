@@ -33,13 +33,13 @@ public class ProductosListaViewModel extends AndroidViewModel {
     public ProductosListaViewModel(@NonNull Application application) {
         super(application);
         this.application = application;
+        if(productos==null){
+            productos=new MutableLiveData<>();
+        }
     }
 
 
     public LiveData<TreeSet<ProductoLista>> getProductosLista(){
-        if(productos==null){
-            productos=new MutableLiveData<>();
-        }
         loadProductosLista();
         return productos;
     }
