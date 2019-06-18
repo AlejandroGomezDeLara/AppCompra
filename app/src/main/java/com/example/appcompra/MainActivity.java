@@ -46,6 +46,7 @@ import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.Usuario;
 import com.example.appcompra.models.CategoriaViewModel;
 import com.example.appcompra.models.DespensaViewModel;
+import com.example.appcompra.models.InteriorRecetaViewModel;
 import com.example.appcompra.models.ListasViewModel;
 import com.example.appcompra.models.ProductoViewModel;
 import com.example.appcompra.models.ProductosListaViewModel;
@@ -89,6 +90,7 @@ public class MainActivity extends AppCompatActivity
     protected ProductosListaViewModel productosListaViewModel;
     protected DespensaViewModel despensaViewModel;
     protected RecetaViewModel recetaViewModel;
+    protected InteriorRecetaViewModel interiorRecetaViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +125,7 @@ public class MainActivity extends AppCompatActivity
         this.productosListaViewModel= ViewModelProviders.of(this).get(ProductosListaViewModel.class);
         this.despensaViewModel= ViewModelProviders.of(this).get(DespensaViewModel.class);
         this.recetaViewModel= ViewModelProviders.of(this).get(RecetaViewModel.class);
+        this.interiorRecetaViewModel= ViewModelProviders.of(this).get(InteriorRecetaViewModel.class);
 
         usuario = (Usuario) getIntent().getExtras().getSerializable("Usuario");
         QueryUtils.setUsuario(usuario);
@@ -176,14 +179,13 @@ public class MainActivity extends AppCompatActivity
                 } else {
                     menu.getMenu().getItem(0).setChecked(false);
                 }
-                if (position != 5) {
+                if (position < 5) {
                     menu.getMenu().getItem(position).setChecked(true);
                     prevMenuItem = menu.getMenu().getItem(position);
                 }
 
 
             }
-
             @Override
             public void onPageScrollStateChanged(int state) {
             }
@@ -570,8 +572,14 @@ public class MainActivity extends AppCompatActivity
                         Singleton.getInstance().añadirNuevasRecetasCategoriaSeleccionada(recetasCategoria.getId(), recetasCategoria.getRecetasConID());
                         recetaViewModel.setRecetas(Singleton.getInstance().getRecetasCategoriaSeleccionada());
                         break;
+
                     case Constants.RECETA_ALEATORIA_CORRECTA:
 
+                        break;
+                    case Constants.INTERIOR_RECETA_CORRECTA:
+                        Log.e("procesar",entrada);
+                        Singleton.getInstance().setRecetaActual(QueryUtils.interiorRecetaJSON(entrada.split(Constants.SEPARATOR)[1]));
+                        interiorRecetaViewModel.setReceta(Singleton.getInstance().getRecetaActual());
                         break;
                     default:
                         Log.e("procesar", "Codigo de respuesta desconocido");
@@ -641,5 +649,9 @@ public class MainActivity extends AppCompatActivity
 
     public RecetaViewModel getRecetaViewModel() {
         return recetaViewModel;
+    }
+
+    public InteriorRecetaViewModel getInteriorRecetaViewModel() {
+        return interiorRecetaViewModel;
     }
 }

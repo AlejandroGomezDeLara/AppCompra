@@ -59,28 +59,28 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
         nombre=nombre.substring(0,1).toUpperCase() + nombre.substring(1);
         viewHolder.nombre.setText(corregirNombre(nombre));
         Picasso.get().load(producto.getUrl()).into(viewHolder.imagen);
-
-        viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-            @Override
-            public void onClick(View v) {
-                if(producto.isSeleccionado()){
-                    producto.setSeleccionado(false);
-                }else {
-                    producto.setSeleccionado(true);
+        if(viewHolder.cardView!=null){
+            viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
+                @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+                @Override
+                public void onClick(View v) {
+                    if(producto.isSeleccionado()){
+                        producto.setSeleccionado(false);
+                    }else {
+                        producto.setSeleccionado(true);
+                    }
+                    if(producto.isSeleccionado()){
+                        viewHolder.cardView.setCardBackgroundColor(getContext().getResources().getColor(R.color.colorProducto));
+                        viewHolder.nombre.setTextColor(getContext().getResources().getColor(R.color.white));
+                        viewHolder.imagen.setImageTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.white)));
+                    }else{
+                        viewHolder.imagen.setImageTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorProducto)));
+                        viewHolder.cardView.setCardBackgroundColor(getContext().getResources().getColor(R.color.white));
+                        viewHolder.nombre.setTextColor(getContext().getResources().getColor(R.color.colorProducto));
+                    }
                 }
-                if(producto.isSeleccionado()){
-                    viewHolder.cardView.setCardBackgroundColor(getContext().getResources().getColor(R.color.colorProducto));
-                    viewHolder.nombre.setTextColor(getContext().getResources().getColor(R.color.white));
-                    viewHolder.imagen.setImageTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.white)));
-                }else{
-                    viewHolder.imagen.setImageTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorProducto)));
-                    viewHolder.cardView.setCardBackgroundColor(getContext().getResources().getColor(R.color.white));
-                    viewHolder.nombre.setTextColor(getContext().getResources().getColor(R.color.colorProducto));
-                }
-            }
-        });
-
+            });
+        }
 
     }
 

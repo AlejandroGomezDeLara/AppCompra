@@ -33,6 +33,8 @@ public class Singleton {
     private int idListaSeleccionada;
     private int idCategoriaSelecionada;
     private int idCategoriaRecetaSeleccionada;
+    private int idRecetaSeleccionada;
+    private Receta recetaActual;
     private ArrayList<String> roles;
     private static Singleton instance;
     private TreeMap<Integer, TreeSet<Receta>> recetas;
@@ -49,12 +51,14 @@ public class Singleton {
         categorias=new TreeSet<>();
         categoriasRecetas=new TreeSet<>();
         listas=new TreeSet<>();
+        recetaActual=null;
         productosCategoria=new TreeMap<>();
         productosLista=new TreeMap<>();
         notificaciones=new LinkedList<>();
         posicionSpinnerCategorias =0;
         posicionSpinnerCategoriasRecetas =0;
         idListaSeleccionada=0;
+        idRecetaSeleccionada=0;
         idCategoriaSelecionada=0;
         idCategoriaRecetaSeleccionada=0;
         despensa=new TreeSet<>();
@@ -283,5 +287,21 @@ public class Singleton {
         for(ProductoLista p: getProductosListaLista(idListaSeleccionada)){
             p.setSeleccionado(false);
         }
+    }
+
+    public int getIdRecetaSeleccionada() {
+        return idRecetaSeleccionada;
+    }
+
+    public void setIdRecetaSeleccionada(int idRecetaSeleccionada) {
+        this.idRecetaSeleccionada = idRecetaSeleccionada;
+    }
+
+    public Receta getRecetaActual() {
+        return recetaActual;
+    }
+
+    public void setRecetaActual(Receta receta) {
+        this.recetaActual=receta;
     }
 }

@@ -270,7 +270,8 @@ public class QueryUtils {
                 recetaActual=data.getJSONObject(i);
                 id=recetaActual.getInt("id");
                 nombre=recetaActual.getString("nombre");
-                urlImagen=recetaActual.getString("urlimagen");
+                urlImagen=recetaActual.getString("url");
+                /*
                 descripcion=recetaActual.getString("descripcion");
                 preparacion=recetaActual.getString("preparacion");
                 JSONArray ing=recetaActual.getJSONArray("ingredientes");
@@ -280,9 +281,10 @@ public class QueryUtils {
                     TipoProducto tp=new TipoProducto(ingre.getInt("id"),ingre.getString("nombre"));
                     ingredientes.add(tp);
                 }
-                Receta r=new Receta(id,nombre,descripcion,preparacion,urlImagen);
                 if(!ingredientes.isEmpty())
                     r.setIngredientes(ingredientes);
+                    */
+                Receta r=new Receta(id,nombre,urlImagen);
                 recetas.add(r);
             }
 
@@ -292,4 +294,35 @@ public class QueryUtils {
 
         return new RecetasConID(idCategoria,recetas);
     }
+    public static Receta interiorRecetaJSON(String entrada) {
+        Receta r=null;
+        int id;
+        String nombre;
+        String urlImagen;
+        String descripcion;
+        String preparacion;
+        try{
+            JSONObject raiz=new JSONObject(entrada);
+            id=raiz.getInt("id");
+            nombre=raiz.getString("nombre");
+            preparacion=raiz.getString("preparacion");
+            descripcion=raiz.getString("descripcion");
+            urlImagen=raiz.getString("url");
+            TreeSet<Producto> ingredientes=new TreeSet<>();
+            JSONArray ing=raiz.getJSONArray("ingredientes");
+            for(int j=0;j<ing.length();j++){
+                JSONObject ingre=ing.getJSONObject(j);
+                TipoProducto tp=new TipoProducto(ingre.getInt("id"),ingre.getString("nombre"),ingre.getString("urlimagen"));
+                ingredientes.add(tp);
+            }
+            r=new Receta(id,nombre,descripcion,preparacion,urlImagen);
+            if(!ingredientes.isEmpty())
+                r.setIngredientes(ingredientes);
+
+        }catch (JSONException e){
+            Log.e("JSONException ","JSON mal formado "+e.getMessage());
+        }
+        return  r;
+    }
+
 }

@@ -150,6 +150,6 @@ public class RecetasFragment extends Fragment {
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         categoriasSpinner.setAdapter(adapter);
-        categoriasSpinner.setSelection(Singleton.getInstance().getPosicionSpinnerCategorias());
+        categoriasSpinner.setSelection(Singleton.getInstance().getPosicionSpinnerCategoriasRecetas());
     }
 }

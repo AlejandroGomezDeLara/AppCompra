@@ -1,6 +1,7 @@
 package com.example.appcompra.clases;
 
 import java.util.LinkedList;
+import java.util.TreeSet;
 
 public class Receta implements Comparable{
     private int id;
@@ -8,7 +9,7 @@ public class Receta implements Comparable{
     private String descripcion;
     private String preparacion;
     private String url;
-    private LinkedList<TipoProducto> ingredientes;
+    private TreeSet<Producto> ingredientes;
 
     public Receta(int id, String nombre, String descripcion, String preparacion, String url) {
         this.id = id;
@@ -18,7 +19,7 @@ public class Receta implements Comparable{
         this.url = url;
     }
 
-    public Receta(int id, String nombre, String descripcion, String preparacion, String url,LinkedList<TipoProducto> ingredientes ) {
+    public Receta(int id, String nombre, String descripcion, String preparacion, String url,TreeSet<Producto> ingredientes ) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -27,11 +28,17 @@ public class Receta implements Comparable{
         this.ingredientes=ingredientes;
     }
 
-    public LinkedList<TipoProducto> getIngredientes() {
+    public Receta(int id, String nombre, String urlImagen) {
+        this.id=id;
+        this.nombre=nombre;
+        this.url=urlImagen;
+    }
+
+    public TreeSet<Producto> getIngredientes() {
         return ingredientes;
     }
 
-    public void setIngredientes(LinkedList<TipoProducto> ingredientes) {
+    public void setIngredientes(TreeSet<Producto> ingredientes) {
         this.ingredientes = ingredientes;
     }
 

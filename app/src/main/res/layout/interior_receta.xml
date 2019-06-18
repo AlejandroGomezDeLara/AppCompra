@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_lista_participante"
+    android:id="@+id/fragment_productos"
+    tools:context=".MainActivity"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="14dp"
+        >
+        <TextView
+            android:textStyle="bold"
+            android:id="@+id/nombre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:textSize="32dp"
+            android:layout_marginBottom="8dp"
+            />
+        <ImageView
+            android:id="@+id/imagen"
+            android:layout_width="248dp"
+            android:layout_gravity="center"
+            android:layout_height="248dp">
+
+        </ImageView>
+
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/descripcion_label"
+            android:layout_marginVertical="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_gravity="center"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:text="Descripción:"/>
+        <TextView
+            android:layout_marginBottom="8dp"
+            android:id="@+id/descripcion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:textStyle="italic"
+            android:textSize="18dp"/>
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/preparacion_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_gravity="center"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"
+            android:text="Preparación:"/>
+        <TextView
+            android:id="@+id/preparacion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:layout_marginBottom="8dp"
+            android:textStyle="italic"
+            android:padding="12dp"
+            android:textSize="18dp"
+            />
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/ingredientes_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_gravity="center"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"
+            android:text="Ingredientes:"/>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </android.support.v7.widget.RecyclerView>
+    </LinearLayout>
+
+
+
+</ScrollView>

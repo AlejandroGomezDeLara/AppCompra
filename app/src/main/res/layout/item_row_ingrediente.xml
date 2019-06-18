@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+
+    android:focusable="true"
+    android:layout_width="match_parent"
+    android:layout_height="42dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_marginBottom="4dp"
+    >
+    <LinearLayout
+        android:id="@+id/linearProducto"
+        android:background="?android:attr/selectableItemBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/imagen_producto"
+            android:layout_width="68dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_productos"
+            android:tint="@color/white"
+            android:padding="4dp"/>
+            <TextView
+                android:id="@+id/nombre_producto"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Patatas"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:textAlignment="center"
+                android:textSize="14dp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                />
+    </LinearLayout>
+</LinearLayout>
