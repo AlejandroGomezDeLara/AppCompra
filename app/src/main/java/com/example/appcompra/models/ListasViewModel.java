@@ -61,18 +61,6 @@ public class ListasViewModel extends AndroidViewModel {
         this.listas.postValue(listas);
     }
 
-    public class EsperarRespuestaTask extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... params) {
-            while(!Singleton.getInstance().existenListas()){}
-            return null;
-        }
-        @Override
-        protected void onPostExecute(Void param) {
-            listas.setValue(Singleton.getInstance().getListas());
-        }
-    }
-
 
 
 }

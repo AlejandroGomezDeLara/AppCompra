@@ -30,6 +30,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.Usuario;
 import com.example.appcompra.utils.QueryUtils;
 
@@ -40,6 +41,8 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -100,7 +103,7 @@ public class RegisterActivity extends AppCompatActivity implements Serializable,
             @Override
             public void onClick(View v) {
                 c=Calendar.getInstance();
-                c.add(Calendar.YEAR,-80);
+                c.add(Calendar.YEAR,-32);
                 final int day=c.get(Calendar.DAY_OF_MONTH);
                 final int month=c.get(Calendar.MONTH);
                 final int year=c.get(Calendar.YEAR);
@@ -108,7 +111,8 @@ public class RegisterActivity extends AppCompatActivity implements Serializable,
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         mFechaNacView.setText(dayOfMonth+"/"+(month+1)+"/"+year);
-                        edad=year-Calendar.getInstance().get(Calendar.YEAR);
+                        edad=Calendar.getInstance().get(Calendar.YEAR)-year;
+                        Log.e("registar",edad+""+year);
                     }
                 },day,month,year);
                 dpd.getDatePicker().setMinDate(c.getTimeInMillis());
@@ -297,7 +301,7 @@ public class RegisterActivity extends AppCompatActivity implements Serializable,
 
                 in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out=new PrintWriter(socket.getOutputStream(),true);
-                out.println(Constants.REGISTER_PETICION +Constants.SEPARATOR+mNombre+Constants.SEPARATOR+mEmail+Constants.SEPARATOR+mDireccion+Constants.SEPARATOR+mEdad+Constants.SEPARATOR+mPassword);
+                out.println(Constants.REGISTER_PETICION +Constants.SEPARATOR+mNombre+Constants.SEPARATOR+mEmail+Constants.SEPARATOR+mDireccion+Constants.SEPARATOR+mEdad+Constants.SEPARATOR+encryptPassword(mPassword));
                 respuesta=in.readLine();
                 Log.e("xd",respuesta);
             } catch (UnknownHostException e) {
@@ -306,23 +310,8 @@ public class RegisterActivity extends AppCompatActivity implements Serializable,
                 e.printStackTrace();
             }
             if(respuesta.split(Constants.SEPARATOR)[0].equals(Constants.REGISTER_RESPUESTA_CORRECTA)) {
-                try {
-                    out.println(Constants.LOGIN_RESPUESTA_CORRECTA +Constants.SEPARATOR+mEmail+Constants.SEPARATOR+mPassword);
-                    respuesta=in.readLine();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                if(respuesta.split(Constants.SEPARATOR)[0].equals(Constants.LOGIN_RESPUESTA_CORRECTA)) {
-                    usuario=new Usuario(Integer.parseInt(respuesta.split(Constants.SEPARATOR)[1]),respuesta.split(Constants.SEPARATOR)[2],mEmail,respuesta.split(Constants.SEPARATOR)[3]);
-                    try {
-                        in.close();
-                        out.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    return true;
-                }else
-                    return false;
+                usuario=new Usuario(Integer.parseInt(respuesta.split(Constants.SEPARATOR)[1]),respuesta.split(Constants.SEPARATOR)[2],mEmail);
+                return true;
             }else
                 return false;
         }
@@ -332,6 +321,7 @@ public class RegisterActivity extends AppCompatActivity implements Serializable,
             showProgress(false);
 
             if (success) {
+                saveSharedPreferences(usuario,mPassword);
                 Intent intent=new Intent(RegisterActivity.this,MainActivity.class);
                 intent.putExtra("Usuario", (Serializable) usuario);
                 finish();
@@ -349,6 +339,33 @@ public class RegisterActivity extends AppCompatActivity implements Serializable,
             mAuthTask = null;
             showProgress(false);
         }
+    }
+    public String encryptPassword(String pass){
+        String hash=null;
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(pass.getBytes());
+            byte[] bytes = md.digest();
+            StringBuilder sb = new StringBuilder();
+            for(int i=0; i< bytes.length ;i++)
+            {
+                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            hash = sb.toString();
+        }
+        catch (NoSuchAlgorithmException e)
+        {
+            e.printStackTrace();
+        }
+        return hash;
+    }
+
+    public void saveSharedPreferences(Usuario usuario,String pass){
+        Singleton.getInstance().getEditor().putInt("id",usuario.getId());
+        Singleton.getInstance().getEditor().putString("nombre",usuario.getNombre());
+        Singleton.getInstance().getEditor().putString("email",usuario.getEmail());
+        Singleton.getInstance().getEditor().putString("pass",pass);
+        Singleton.getInstance().getEditor().apply();
     }
 }
 

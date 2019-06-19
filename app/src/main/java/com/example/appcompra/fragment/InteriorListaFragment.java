@@ -51,6 +51,8 @@ import com.example.appcompra.utils.Cambios;
 import com.example.appcompra.utils.Peticion;
 import com.example.appcompra.utils.QueryUtils;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.TreeSet;
 
@@ -70,6 +72,7 @@ public class InteriorListaFragment extends Fragment {
     protected Button addProductosCentro;
     protected ImageView deleteProductos;
     protected ImageView markProductos;
+    protected ImageView vincular;
     protected ProductosListaViewModel model;
     protected RecyclerView usuariosRecyclerView;
     protected Lista listaActual;
@@ -196,11 +199,23 @@ public class InteriorListaFragment extends Fragment {
         adapter=new DespensaAdapter();
         updateEditTextFiltrar(view);
         setColores();
-
-        Singleton.getInstance().getEditor().putInt("idUltimaLista",listaActual.getId());
-        Singleton.getInstance().getEditor().putString("nombreUltimaLista",listaActual.getTitulo());
-        Singleton.getInstance().getEditor().putString("rolUltimaLista",listaActual.getRol());
-        Singleton.getInstance().getEditor().apply();
+        if(listaActual!=null){
+            Singleton.getInstance().getEditor().putInt("idUltimaLista",listaActual.getId());
+            Singleton.getInstance().getEditor().putString("nombreUltimaLista",listaActual.getTitulo());
+            Singleton.getInstance().getEditor().putString("rolUltimaLista",listaActual.getRol());
+            Singleton.getInstance().getEditor().putInt("usuariosUltimaLista",listaActual.getNumeroUsuarios());
+            Singleton.getInstance().getEditor().apply();
+        }
+        Toolbar toolbar= (Toolbar)((AppCompatActivity) getActivity()).findViewById(R.id.toolbar);
+        vincular=toolbar.findViewById(R.id.vincular);
+        vincular=toolbar.findViewById(R.id.vincular);
+        vincular.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vincularConfirmacionPopup();
+            }
+        });
+        vincular.setVisibility(View.VISIBLE);
         return view;
     }
 
@@ -338,6 +353,7 @@ public class InteriorListaFragment extends Fragment {
 
     @Override
     public void onPause() {
+        vincular.setVisibility(View.GONE);
         super.onPause();
     }
 
@@ -354,7 +370,7 @@ public class InteriorListaFragment extends Fragment {
             @Override
             public void onBorrarUsuario(Usuario u) {
                 listaActual.borrarUsuario(u);
-                Cambios.getInstance().añadirCambioUsuarios(u.getNombre(),"delete",u.getRol(),listaActual.getId());
+                Cambios.getInstance().añadirCambioUsuarios(u.getNombre(),"delete",u.getRol(),listaActual.getId(),listaActual.getTitulo());
                 usuariosRecyclerView.setAdapter(usuariosAdapter);
                 usuariosAdapter.notifyDataSetChanged();
             }
@@ -415,5 +431,29 @@ public class InteriorListaFragment extends Fragment {
             }
         });
     }
-
+    public void vincularConfirmacionPopup(){
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.popup_confirmacion, null);
+        AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
+        builder.setView(view);
+        final AlertDialog dialog=builder.create();
+        dialog.show();
+        dialog.getWindow().setBackgroundDrawableResource(R.color.backgroundColor);
+        TextView texto=view.findViewById(R.id.texto_popup);
+        texto.setText("¿Quieres vincular esta lista a tu despensa?");
+        Button botonAceptarPopUp=view.findViewById(R.id.botonAceptarPopup);
+        Button botonCancelarPopUp=view.findViewById(R.id.botonCancelarPopup);
+        botonAceptarPopUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Singleton.getInstance().enviarPeticion(new Peticion(Constants.VINCULAR_LISTA_PETICION,QueryUtils.getUsuario().getId(),idLista+"",10));
+                dialog.dismiss();
+            }
+        });
+        botonCancelarPopUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+    }
 }

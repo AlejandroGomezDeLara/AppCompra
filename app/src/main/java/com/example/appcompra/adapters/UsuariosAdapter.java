@@ -108,7 +108,7 @@ public class UsuariosAdapter extends RecyclerView.Adapter<UsuariosAdapter.ViewHo
                                 break;
                         }
 
-                        Cambios.getInstance().añadirCambioUsuarios(usuario.getNombre(),"modify",usuario.getRol(),listaActual.getId());
+                        Cambios.getInstance().añadirCambioUsuarios(usuario.getNombre(),"modify",usuario.getRol(),listaActual.getId(),listaActual.getTitulo());
                     }
                 }
 

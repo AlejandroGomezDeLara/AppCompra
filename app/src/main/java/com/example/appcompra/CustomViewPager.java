@@ -1087,6 +1087,8 @@ public class CustomViewPager extends ViewGroup {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
+        return false;
+        /*
         if (mFakeDragging) {
             // A fake drag is in progress already, ignore this real one
             // but still eat the touch events.
@@ -1118,7 +1120,7 @@ public class CustomViewPager extends ViewGroup {
                 /*
                  * If being flinged and user touches, stop the fling. isFinished
                  * will be false if being flinged.
-                 */
+
                 completeScroll();
 
                 // Remember where the motion event started
@@ -1225,7 +1227,8 @@ public class CustomViewPager extends ViewGroup {
         if (needsInvalidate) {
             invalidate();
         }
-        return true;
+        return true;*/
+
     }
 
     @Override

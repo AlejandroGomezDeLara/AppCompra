@@ -63,6 +63,13 @@ public class Constants {
     public static final String COMPARTIR_LISTA_CORRECTA="ALC";
     public static final String COMPARTIR_LISTA_FALLIDA="ALF";
 
+    //Vincular listas
+    public static final String VINCULAR_LISTA_PETICION="VD";
+    public static final String VINCULAR_LISTA_CORRECTA="VDC";
+
+    //Pedir ofertas
+    public static final String PEDIR_OFERTAS_PETICION="PO";
+    public static final String PEDIR_OFERTAS_CORRECTA="POC";
 
     //Enviar Notificaciones
     public static final String ENVIAR_NOTIFICACIONES="N";

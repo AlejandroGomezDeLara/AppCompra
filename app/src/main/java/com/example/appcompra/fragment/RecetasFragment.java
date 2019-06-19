@@ -66,15 +66,21 @@ public class RecetasFragment extends Fragment {
         categoriasSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, final long id) {
-                Singleton.getInstance().setIdCategoriaRecetaSeleccionada( position + 1);
+                if(position==0)
+                    Singleton.getInstance().setIdCategoriaRecetaSeleccionada(position+1);
+                else
+                    Singleton.getInstance().setIdCategoriaRecetaSeleccionada(position);
                 Singleton.getInstance().setPosicionSpinnerCategoriasRecetas(position);
                 int idCategoria=Singleton.getInstance().getIdCategoriaRecetaSeleccionada();
                 if(!Singleton.getInstance().existenRecetasCategoria()){
-                    Singleton.getInstance().enviarPeticion(new Peticion(Constants.RECETAS_CATEGORIA_PETICION,QueryUtils.getUsuario().getId(),idCategoria+"",3));
+                    if(Singleton.getInstance().getIdCategoriaRecetaSeleccionada()!=0)
+                        Singleton.getInstance().enviarPeticion(new Peticion(Constants.RECETAS_CATEGORIA_PETICION,QueryUtils.getUsuario().getId(),idCategoria+"",3));
+                    else
+                        Singleton.getInstance().enviarPeticion(new Peticion(Constants.RECETA_ALEATORIA_PETICION,QueryUtils.getUsuario().getId()));
                     updateUI(new TreeSet<Receta>());
                     loadingIndicator.setVisibility(View.VISIBLE);
                 }else{
-                    recetas=Singleton.getInstance().getRecetasCategoriaSeleccionada();
+                    recetas=Singleton.getInstance().getRecetasCategoriaSelecionada();
                     updateUI(recetas);
                 }
                 mEmptyStateTextView.setVisibility(View.GONE);
@@ -142,6 +148,7 @@ public class RecetasFragment extends Fragment {
     private void updateSpinnerCategorias(TreeSet<Categoria> c) {
         List<String> valoresSpinner=new ArrayList<>();
         List<Categoria> ci=new ArrayList<>(c);
+        valoresSpinner.add("Recetas recomendadas");
         for (int i=0;i<ci.size();i++){
             valoresSpinner.add(ci.get(i).getNombre());
         }

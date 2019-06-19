@@ -28,7 +28,7 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="368dp"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/header"
            />
         <Button
@@ -39,7 +39,7 @@
             android:textAllCaps="false"
             android:textSize="18dp"
             android:background="@drawable/gradient"
-            android:layout_above="@+id/logout"/>
+            android:layout_below="@id/recyclerView"/>
         <Button
             android:id="@+id/logout"
             android:layout_width="match_parent"
@@ -48,7 +48,7 @@
             android:textAllCaps="false"
             android:textSize="18dp"
             android:background="@drawable/producto_seleccionado"
-            android:layout_below="@+id/recyclerView"/>
+            android:layout_below="@+id/boton_nueva_lista"/>
 
         </RelativeLayout>
     </android.support.design.widget.NavigationView>

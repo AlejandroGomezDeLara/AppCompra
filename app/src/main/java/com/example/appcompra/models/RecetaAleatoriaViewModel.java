@@ -11,33 +11,33 @@ import com.example.appcompra.clases.Singleton;
 
 import java.util.TreeSet;
 
-public class InteriorRecetaViewModel extends AndroidViewModel {
-    private MutableLiveData<Receta> recetaActual;
+public class RecetaAleatoriaViewModel extends AndroidViewModel {
+    private MutableLiveData<Receta> recetaAaleatoria;
     private Application application;
 
 
-    public InteriorRecetaViewModel(@NonNull Application application) {
+    public RecetaAleatoriaViewModel(@NonNull Application application) {
         super(application);
         this.application=application;
     }
 
-    public LiveData<Receta> getRecetaActual(){
-        if(recetaActual==null){
-            recetaActual=new MutableLiveData<>();
+    public LiveData<Receta> getRecetaAleatoria(){
+        if(recetaAaleatoria==null){
+            recetaAaleatoria=new MutableLiveData<>();
             loadReceta();
         }
 
-        return recetaActual;
+        return recetaAaleatoria;
     }
     public void loadReceta(){
-        this.recetaActual.postValue(Singleton.getInstance().getRecetaActual());
+        this.recetaAaleatoria.postValue(Singleton.getInstance().getRecetaActual());
     }
 
     public void setReceta(Receta receta) {
-        if(this.recetaActual==null){
-            this.recetaActual=new MutableLiveData<>();
+        if(this.recetaAaleatoria==null){
+            this.recetaAaleatoria=new MutableLiveData<>();
         }
-        this.recetaActual.postValue(receta);
+        this.recetaAaleatoria.postValue(receta);
     }
 
 }

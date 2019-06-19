@@ -48,12 +48,14 @@ import com.example.appcompra.clases.Receta;
 import com.example.appcompra.clases.RecetasConID;
 import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.Usuario;
+import com.example.appcompra.fragment.PrincipalFragment;
 import com.example.appcompra.models.CategoriaViewModel;
 import com.example.appcompra.models.DespensaViewModel;
 import com.example.appcompra.models.InteriorRecetaViewModel;
 import com.example.appcompra.models.ListasViewModel;
 import com.example.appcompra.models.ProductoViewModel;
 import com.example.appcompra.models.ProductosListaViewModel;
+import com.example.appcompra.models.RecetaAleatoriaViewModel;
 import com.example.appcompra.models.RecetaViewModel;
 import com.example.appcompra.utils.Notificacion;
 import com.example.appcompra.utils.Peticion;
@@ -68,6 +70,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.TreeSet;
 
 
@@ -97,6 +100,8 @@ public class MainActivity extends AppCompatActivity
     protected DespensaViewModel despensaViewModel;
     protected RecetaViewModel recetaViewModel;
     protected InteriorRecetaViewModel interiorRecetaViewModel;
+    protected RecetaAleatoriaViewModel recetaAleatoriaViewModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,7 +142,7 @@ public class MainActivity extends AppCompatActivity
         this.despensaViewModel= ViewModelProviders.of(this).get(DespensaViewModel.class);
         this.recetaViewModel= ViewModelProviders.of(this).get(RecetaViewModel.class);
         this.interiorRecetaViewModel= ViewModelProviders.of(this).get(InteriorRecetaViewModel.class);
-
+        this.recetaAleatoriaViewModel= ViewModelProviders.of(this).get(RecetaAleatoriaViewModel.class);
 
 
 
@@ -168,7 +173,6 @@ public class MainActivity extends AppCompatActivity
         TextView emailUsuario = headView.findViewById(R.id.drawer_email);
         emailUsuario.setText(usuario.getEmail());
         ImageView imagenUsuario = headView.findViewById(R.id.drawer_imagen);
-        Picasso.get().load(usuario.getUrlImagenPerfil()).into(imagenUsuario);
         viewPager = (CustomViewPager) findViewById(R.id.swipePager);
         MenuAdapter adapter = new MenuAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
@@ -327,8 +331,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
-
-
     public void crearNuevaListaPopup() {
         View view = LayoutInflater.from(this).inflate(R.layout.popup_crear_lista, null);
         final AutoCompleteTextView editText = view.findViewById(R.id.crear_lista_editText);
@@ -352,6 +354,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
+
 
     public void borrarListaPopup(Lista l) {
         View view = LayoutInflater.from(this).inflate(R.layout.popup_confirmacion, null);
@@ -511,7 +514,6 @@ public class MainActivity extends AppCompatActivity
         public synchronized void rellenarColecciones(){
             try {
                 String entrada=in.readLine();
-                Log.e("procesar",entrada);
                 procesarEntrada(entrada);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -588,12 +590,30 @@ public class MainActivity extends AppCompatActivity
                     case Constants.RECETAS_CATEGORIA_CORRECTA:
                         RecetasConID recetasCategoria = QueryUtils.recetasJSON(entrada.split(Constants.SEPARATOR)[1]);
                         Singleton.getInstance().añadirNuevasRecetasCategoriaSeleccionada(recetasCategoria.getId(), recetasCategoria.getRecetasConID());
-                        recetaViewModel.setRecetas(Singleton.getInstance().getRecetasCategoriaSeleccionada());
+                        recetaViewModel.setRecetas(Singleton.getInstance().getRecetasCategoriaSelecionada());
                         break;
 
                     case Constants.RECETA_ALEATORIA_CORRECTA:
                         Log.e("procesar", entrada);
-
+                        RecetasConID recetasCategoriaAleatoria = QueryUtils.recetasJSON(entrada.split(Constants.SEPARATOR)[1]);
+                        Singleton.getInstance().añadirNuevasRecetasCategoriaSeleccionada(recetasCategoriaAleatoria.getId(), recetasCategoriaAleatoria.getRecetasConID());
+                        recetaViewModel.setRecetas(Singleton.getInstance().getRecetasCategoriaSelecionada());
+                        int size = recetasCategoriaAleatoria.getRecetasConID().size();
+                        if(recetasCategoriaAleatoria.getRecetasConID().size()>0){
+                            int item = new Random().nextInt(size); // In real life, the Random object should be rather more shared than this
+                            int i = 0;
+                            for(Receta r : recetasCategoriaAleatoria.getRecetasConID())
+                            {
+                                if (i == item){
+                                    recetaAleatoriaViewModel.setReceta(r);
+                                    break;
+                                }
+                                i++;
+                            }
+                        }
+                        break;
+                    case Constants.VINCULAR_LISTA_CORRECTA:
+                        Log.e("procesar", entrada);
                         break;
                     case Constants.INTERIOR_RECETA_CORRECTA:
                         Log.e("procesar", entrada);
@@ -630,6 +650,10 @@ public class MainActivity extends AppCompatActivity
 
     public InteriorRecetaViewModel getInteriorRecetaViewModel() {
         return interiorRecetaViewModel;
+    }
+
+    public RecetaAleatoriaViewModel getRecetaAleatoriaViewModel() {
+        return recetaAleatoriaViewModel;
     }
 
     public void logout(){

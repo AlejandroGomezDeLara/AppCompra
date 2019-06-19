@@ -1,6 +1,7 @@
 package com.example.appcompra.clases;
 
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.example.appcompra.Constants;
 import com.example.appcompra.MainActivity;
@@ -118,16 +119,16 @@ public class Singleton {
             }
             productosLista.get(idLista).addAll(p);
         }else{
-            String nombreLista="";
-            for(Lista l:listas){
-                if(l.getId()==idLista){
-                    nombreLista=l.getTitulo();
-                }
-            }
-            for(ProductoLista pro:p){
-                Cambios.getInstance().añadirCambioTipoProducto(pro.getId(),"add",idLista,pro.getUnidades(),pro.getCadena(),pro.getReceta(),nombreLista);
-            }
             productosLista.put(idLista,p);
+        }
+        String nombreLista="";
+        for(Lista l:listas){
+            if(l.getId()==idLista){
+                nombreLista=l.getTitulo();
+            }
+        }
+        for(ProductoLista pro:p){
+            Cambios.getInstance().añadirCambioTipoProducto(pro.getId(),"add",idLista,pro.getUnidades(),pro.getCadena(),pro.getReceta(),nombreLista);
         }
     }
     public synchronized boolean existenProductosLista(){
@@ -335,16 +336,14 @@ public class Singleton {
         return recetas.containsKey(idCategoriaRecetaSeleccionada);
     }
 
-    public TreeSet<Receta> getRecetasCategoriaSeleccionada() {
-        return recetas.get(idCategoriaRecetaSeleccionada);
-    }
-
     public boolean existenRecetaCategoria(){
         return recetas.containsKey(idCategoriaRecetaSeleccionada);
     }
 
 
-    public void añadirNuevasRecetasCategoriaSeleccionada(int idCategoria,TreeSet<Receta> recetas){ this.recetas.put(idCategoria,recetas);}
+    public void añadirNuevasRecetasCategoriaSeleccionada(int idCategoria,TreeSet<Receta> recetas){
+        Log.e("Xd","añadido "+recetas.size()+" productos a la categoria "+idCategoria);
+        this.recetas.put(idCategoria,recetas);}
 
     public TreeSet<Receta> getRecetasCategoriaSelecionada() {
         return this.recetas.get(idCategoriaRecetaSeleccionada);

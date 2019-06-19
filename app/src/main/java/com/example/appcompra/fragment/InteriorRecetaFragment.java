@@ -32,7 +32,6 @@ import com.example.appcompra.clases.Producto;
 import com.example.appcompra.clases.ProductoLista;
 import com.example.appcompra.clases.Receta;
 import com.example.appcompra.clases.Singleton;
-import com.example.appcompra.utils.Cambios;
 import com.example.appcompra.utils.Peticion;
 import com.example.appcompra.utils.QueryUtils;
 import com.squareup.picasso.Picasso;
@@ -192,8 +191,6 @@ public class InteriorRecetaFragment extends Fragment {
         ArrayList<Lista> li=new ArrayList<>(listasPermisos);
         List<String> valoresSpinner=new ArrayList<>();
         idListas.clear();
-        valoresSpinner.add("Despensa");
-        idListas.add(0);
         for (int i=0;i<li.size();i++){
             valoresSpinner.add(li.get(i).getTitulo());
             idListas.add(li.get(i).getId());

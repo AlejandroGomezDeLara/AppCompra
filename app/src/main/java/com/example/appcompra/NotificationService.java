@@ -110,7 +110,7 @@ public class NotificationService extends Service {
                         notificaciones=procesarNotificacionJSON(entrada);
                         if(!notificaciones.isEmpty()){
                             String mensaje=mensajeNotificaciones(notificaciones);
-                            mostrarNotificacion("AppCompra",mensaje);
+                            mostrarNotificacion(mensaje,mensaje);
                         }
                     }
                 }
@@ -138,8 +138,14 @@ public class NotificationService extends Service {
                 case "unmark":
                     mensaje+="reañadido ";
                     break;
+                case "modify":
+                    mensaje+="modificado ";
+                    break;
             }
-            mensaje+="productos a la lista "+n.getNombreLista();
+            if(n.getTipoNotificacion().equals("usuarios"))
+                mensaje+="los permisos de la lista"+n.getNombreLista();
+            else
+                mensaje+="productos a la lista "+n.getNombreLista();
         }
         return mensaje;
     }

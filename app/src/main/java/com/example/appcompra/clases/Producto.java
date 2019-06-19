@@ -24,7 +24,7 @@ public class Producto implements Comparable{
     public Producto(int id,String nombre,String url) {
         this.id=id;
         this.url=url;
-        this.nombre = corregirNombre(nombre);
+        this.nombre = nombre;
         this.seleccionado=false;
     }
 
@@ -52,13 +52,6 @@ public class Producto implements Comparable{
         this.url = url;
     }
 
-    public String corregirNombre(String nombre){
-        if(nombre.contains("ñ")){
-            return nombre.replaceAll("ñ","niio");
-        }else{
-            return nombre;
-        }
-    }
 
     @Override
     public int compareTo(Object o) {

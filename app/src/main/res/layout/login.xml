@@ -83,17 +83,8 @@
                     android:drawableTint="@color/backgroundColor"
                     android:hint="Contraseña"
                     android:inputType="textPassword"
-
+        android:layout_marginBottom="20dp"
                     android:padding="10dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="20dp"
-                    android:text="¿Olvidaste la contraseña?"
-                    android:textStyle="italic" />
 
                 <Button
                     android:id="@+id/email_sign_in_button"

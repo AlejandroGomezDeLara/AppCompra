@@ -45,10 +45,13 @@ public class RecetaViewModel extends AndroidViewModel {
         return recetas;
     }
     public void loadRecetas(){
-        this.recetas.postValue(Singleton.getInstance().getRecetasCategoriaSeleccionada());
+        this.recetas.postValue(Singleton.getInstance().getRecetasCategoriaSelecionada());
     }
 
     public void setRecetas(TreeSet<Receta> recetas) {
+        if(this.recetas==null){
+            this.recetas=new MutableLiveData<>();
+        }
         this.recetas.postValue(recetas);
     }
 

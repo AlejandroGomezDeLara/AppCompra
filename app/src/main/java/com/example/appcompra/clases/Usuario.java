@@ -21,11 +21,10 @@ public class Usuario implements Serializable {
         this.rol = rol;
     }
 
-    public Usuario(int id, String nombre, String email, String urlImagenPerfil) {
+    public Usuario(int id, String nombre, String email) {
         this.id=id;
         this.nombre = nombre;
         this.email=email;
-        this.urlImagenPerfil=urlImagenPerfil;
     }
 
     public Usuario(String nombre,String rol) {

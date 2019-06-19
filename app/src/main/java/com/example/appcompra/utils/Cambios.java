@@ -96,13 +96,14 @@ public class Cambios{
         if(!existe)
             cambiosPC.put(o);
     }
-    public void añadirCambioUsuarios(String nombre,String operacion,String rol,int idLista){
+    public void añadirCambioUsuarios(String nombre,String operacion,String rol,int idLista,String nombreLista){
         JSONObject o=new JSONObject();
         try{
             o.put("nombre",nombre);
             o.put("operacion",operacion);
             o.put("rol",rol);
             o.put("idLista",idLista);
+            o.put("nombreLista",nombreLista);
         }catch (JSONException e){
             e.printStackTrace();
         }

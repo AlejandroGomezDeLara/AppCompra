@@ -6,6 +6,7 @@
     android:paddingVertical="32dp"
     android:paddingHorizontal="18dp">
     <TextView
+        android:id="@+id/texto_popup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Seguro que quieres borrar la lista?"
