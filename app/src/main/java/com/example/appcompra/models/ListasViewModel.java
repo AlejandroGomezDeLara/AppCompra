@@ -55,6 +55,9 @@ public class ListasViewModel extends AndroidViewModel {
     }
 
     public void setListas(TreeSet<Lista> listas) {
+        if(this.listas==null){
+            this.listas=new MutableLiveData<>();
+        }
         this.listas.postValue(listas);
     }
 

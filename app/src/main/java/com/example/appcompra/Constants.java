@@ -5,6 +5,7 @@ import com.example.appcompra.utils.Peticion;
 public class Constants {
     //Constantes para la conexion
     public static final int PORT=7777;
+    public static final int PORTSERVICE = 7776;
 
     //Caracteres para el servidor
     public static final String SEPARATOR=";";
@@ -108,5 +109,6 @@ public class Constants {
     //Notificaciones
     public static final String PEDIR_NOTIFICACIONES ="MN" ;
     public static final String PEDIR_NOTIFICACIONES_CORRECTA ="MNC" ;
+
 }
 

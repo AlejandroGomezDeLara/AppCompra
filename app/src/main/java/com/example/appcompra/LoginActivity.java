@@ -32,7 +32,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.appcompra.clases.Singleton;
 import com.example.appcompra.clases.Usuario;
+import com.example.appcompra.utils.Peticion;
 import com.example.appcompra.utils.QueryUtils;
 
 import java.io.BufferedReader;
@@ -41,6 +43,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.MessageDigest;
@@ -57,14 +60,12 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
     private View mLoginFormView;
     public Socket socket=null;
     public Usuario usuario;
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Singleton.getInstance().setSharedPreferences(getPreferences(MODE_PRIVATE));
+        Singleton.getInstance().setEditor(Singleton.getInstance().getSharedPreferences().edit());
 
-        sharedPreferences=getPreferences(MODE_PRIVATE);
-        editor=sharedPreferences.edit();
         /*
         editor.clear();
         editor.apply();
@@ -109,7 +110,7 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
         mProgressView = findViewById(R.id.login_progress);
 
         if(comprobarSharedPreferences()) {
-            mAuthTask=new UserLoginTask(sharedPreferences.getString("email",""),sharedPreferences.getString("pass",""));
+            mAuthTask=new UserLoginTask(Singleton.getInstance().getSharedPreferences().getString("email",""),Singleton.getInstance().getSharedPreferences().getString("pass",""));
             mAuthTask.execute();
             showProgress(true);
         }
@@ -117,7 +118,7 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
     }
 
     private boolean comprobarSharedPreferences() {
-        int id=sharedPreferences.getInt("id",0);
+        int id=Singleton.getInstance().getSharedPreferences().getInt("id",0);
         Log.e("xd",id+"");
         if (id==0) return false;
             return true;
@@ -356,6 +357,9 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
 
 
             try {
+                if(QueryUtils.getUsuario()!=null)
+                    logout();
+
                 if(QueryUtils.getSocket()==null)
                     socket=new Socket(InetAddress.getByName(QueryUtils.getIP()),Constants.PORT);
                 else
@@ -390,6 +394,8 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("Usuario", usuario);
                 intent.putExtras(bundle);
+                //stopService(new Intent(getApplicationContext(), NotificationService.class));
+                startService(new Intent(getApplicationContext(), NotificationService.class));
                 finish();
                 startActivity(intent);
             } else {
@@ -397,8 +403,8 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
                 startActivity(getIntent());
                 mPasswordView.setError("Email o contraseña incorrectos");
                 mPasswordView.requestFocus();
-                editor.clear();
-                editor.apply();
+                Singleton.getInstance().getEditor().clear();
+                Singleton.getInstance().getEditor().apply();
             }
         }
 
@@ -460,17 +466,17 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
     }
 
     public void saveSharedPreferences(Usuario usuario,String pass){
-        editor.putInt("id",usuario.getId());
-        editor.putString("nombre",usuario.getNombre());
-        editor.putString("email",usuario.getEmail());
-        editor.putString("pass",pass);
-        editor.apply();
+        Singleton.getInstance().getEditor().putInt("id",usuario.getId());
+        Singleton.getInstance().getEditor().putString("nombre",usuario.getNombre());
+        Singleton.getInstance().getEditor().putString("email",usuario.getEmail());
+        Singleton.getInstance().getEditor().putString("pass",pass);
+        Singleton.getInstance().getEditor().apply();
     }
 
     public Usuario getUsuarioFromSharedPreferences(){
-        int id=sharedPreferences.getInt("id",0);
-        String nombre=sharedPreferences.getString("nombre","");
-        String email=sharedPreferences.getString("email","");
+        int id=Singleton.getInstance().getSharedPreferences().getInt("id",0);
+        String nombre=Singleton.getInstance().getSharedPreferences().getString("nombre","");
+        String email=Singleton.getInstance().getSharedPreferences().getString("email","");
         return new Usuario(id,nombre,email,"https://cdn.computerhoy.com/sites/navi.axelspringer.es/public/styles/480/public/media/image/2018/08/fotos-perfil-whatsapp_16.jpg?itok=aqeTumbO");
     }
 
@@ -492,6 +498,10 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
             e.printStackTrace();
         }
         return hash;
+    }
+
+    public void logout(){
+        Singleton.getInstance().enviarPeticion(new Peticion(Constants.LOGOUT,QueryUtils.getUsuario().getId(),20));
     }
 }
 

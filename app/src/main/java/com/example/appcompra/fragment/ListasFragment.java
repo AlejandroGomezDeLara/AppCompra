@@ -99,6 +99,11 @@ public class ListasFragment extends Fragment {
 
     public void onResume() {
         super.onResume();
+        if(Singleton.getInstance().existenNotificaciones())
+            Log.e("not",Singleton.getInstance().mostrarNotificaciones());
+        if(Cambios.getInstance().existenCambios()){
+            Singleton.getInstance().enviarPeticion(new Peticion(Constants.ENVIAR_NOTIFICACIONES,QueryUtils.getUsuario().getId(),Cambios.getInstance().getCambiosString(),1));
+        }
         ConnectivityManager manager=(ConnectivityManager)getActivity().getSystemService(CONNECTIVITY_SERVICE);
         final NetworkInfo info=manager.getActiveNetworkInfo();
         boolean isConnected=info!=null && info.isConnected();

@@ -105,12 +105,13 @@ public class InteriorListaFragment extends Fragment {
             }
         });
         String usuarios="";
-
+        if(Singleton.getInstance().hayProductosListaSeleccionados())
+            Singleton.getInstance().borrarProductosSeleccionados();
         deleteProductos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 for(ProductoLista p: Singleton.getInstance().getProductosListaSeleccionados()){
-                    Cambios.getInstance().añadirCambioTipoProducto(p.getId(),"delete",listaActual.getId(),0,null,null);
+                    Cambios.getInstance().añadirCambioTipoProducto(p.getId(),"delete",listaActual.getId(),0,0,0,listaActual.getTitulo());
                     Singleton.getInstance().borrarProductosSeleccionados();
                     updateUI(Singleton.getInstance().getProductosListaLista(Singleton.getInstance().getIdListaSeleccionada()));
                 }
@@ -122,9 +123,9 @@ public class InteriorListaFragment extends Fragment {
             public void onClick(View v) {
                 for(ProductoLista p: Singleton.getInstance().getProductosListaSeleccionados()){
                     if(p.isComprado())
-                        Cambios.getInstance().añadirCambioTipoProducto(p.getId(),"unmark",listaActual.getId(),0,null,null);
+                        Cambios.getInstance().añadirCambioTipoProducto(p.getId(),"unmark",listaActual.getId(),0,0,p.getReceta(),listaActual.getTitulo());
                     else
-                        Cambios.getInstance().añadirCambioTipoProducto(p.getId(),"mark",listaActual.getId(),0,null,null);
+                        Cambios.getInstance().añadirCambioTipoProducto(p.getId(),"mark",listaActual.getId(),0,0,p.getReceta(),listaActual.getTitulo());
                     p.setComprado(!p.isComprado());
                 }
                 Singleton.getInstance().limpiarProductosSeleccionados();
@@ -162,6 +163,8 @@ public class InteriorListaFragment extends Fragment {
                 case "espectador":
                     toolbar.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.gradient_lista_espectador));
                     menu.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.gradient_lista_espectador));
+                    addProductos.setVisibility(View.GONE);
+                    addProductosCentro.setVisibility(View.GONE);
                     break;
             }
             TextView titulo=toolbar.findViewById(R.id.title);
@@ -193,6 +196,11 @@ public class InteriorListaFragment extends Fragment {
         adapter=new DespensaAdapter();
         updateEditTextFiltrar(view);
         setColores();
+
+        Singleton.getInstance().getEditor().putInt("idUltimaLista",listaActual.getId());
+        Singleton.getInstance().getEditor().putString("nombreUltimaLista",listaActual.getTitulo());
+        Singleton.getInstance().getEditor().putString("rolUltimaLista",listaActual.getRol());
+        Singleton.getInstance().getEditor().apply();
         return view;
     }
 
@@ -265,27 +273,40 @@ public class InteriorListaFragment extends Fragment {
     private void updateUI(TreeSet<ProductoLista> m) {
         productos.clear();
         productos.addAll(m);
-        if(m.isEmpty()){
-            addProductosCentro.setVisibility(View.VISIBLE);
-            mEmptyStateTextView.setVisibility(View.VISIBLE);
-            addProductos.setVisibility(View.GONE);
+        if(!listaActual.getRol().toLowerCase().equals("espectador")) {
+
+
+            if (m.isEmpty()) {
+                addProductosCentro.setVisibility(View.VISIBLE);
+                mEmptyStateTextView.setVisibility(View.VISIBLE);
+                addProductos.setVisibility(View.GONE);
+            } else {
+                mEmptyStateTextView.setVisibility(View.GONE);
+                addProductos.setVisibility(View.VISIBLE);
+                addProductosCentro.setVisibility(View.GONE);
+            }
         }else{
-            mEmptyStateTextView.setVisibility(View.GONE);
-            addProductos.setVisibility(View.VISIBLE);
+            addProductos.setVisibility(View.GONE);
             addProductosCentro.setVisibility(View.GONE);
         }
         adapter = new DespensaAdapter(m, getActivity(), R.layout.item_row_despensa, getActivity(), new DespensaAdapter.OnItemClickListener() {
             @Override
             public void onSeleccionarLista() {
                 Log.e("xd",Singleton.getInstance().hayProductosListaSeleccionados()+"");
-                if(Singleton.getInstance().hayProductosListaSeleccionados()){
-                    deleteProductos.setVisibility(View.VISIBLE);
-                    markProductos.setVisibility(View.VISIBLE);
-                    addProductos.setVisibility(View.GONE);
+                if(!listaActual.getRol().toLowerCase().equals("espectador")) {
+                    if (Singleton.getInstance().hayProductosListaSeleccionados()) {
+                        deleteProductos.setVisibility(View.VISIBLE);
+                        markProductos.setVisibility(View.VISIBLE);
+                        addProductos.setVisibility(View.GONE);
+                    } else {
+                        deleteProductos.setVisibility(View.GONE);
+                        markProductos.setVisibility(View.GONE);
+                        addProductos.setVisibility(View.VISIBLE);
+                    }
                 }else{
                     deleteProductos.setVisibility(View.GONE);
                     markProductos.setVisibility(View.GONE);
-                    addProductos.setVisibility(View.VISIBLE);
+                    addProductos.setVisibility(View.GONE);
                 }
             }
         });

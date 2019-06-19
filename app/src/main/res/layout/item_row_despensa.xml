@@ -2,7 +2,7 @@
 
 <LinearLayout
 
-    android:background="@drawable/gradient_lista_participante"
+    android:background="@drawable/gradient_lista_admin"
     android:focusable="true"
     android:layout_width="match_parent"
     android:layout_height="92dp"

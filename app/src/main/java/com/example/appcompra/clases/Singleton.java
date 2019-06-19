@@ -1,7 +1,10 @@
 package com.example.appcompra.clases;
 
+import android.content.SharedPreferences;
+
 import com.example.appcompra.Constants;
 import com.example.appcompra.MainActivity;
+import com.example.appcompra.utils.Cambios;
 import com.example.appcompra.utils.Notificacion;
 import com.example.appcompra.utils.Peticion;
 
@@ -38,6 +41,24 @@ public class Singleton {
     private ArrayList<String> roles;
     private static Singleton instance;
     private TreeMap<Integer, TreeSet<Receta>> recetas;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
+
+    public SharedPreferences getSharedPreferences() {
+        return sharedPreferences;
+    }
+
+    public void setSharedPreferences(SharedPreferences sharedPreferences) {
+        this.sharedPreferences = sharedPreferences;
+    }
+
+    public SharedPreferences.Editor getEditor() {
+        return editor;
+    }
+
+    public void setEditor(SharedPreferences.Editor editor) {
+        this.editor = editor;
+    }
 
     public static Singleton getInstance () {
         if (instance==null)
@@ -83,6 +104,29 @@ public class Singleton {
             }
             productosLista.get(idLista).addAll(p);
         }else{
+            productosLista.put(idLista,p);
+        }
+    }
+
+    public synchronized void añadirProductosListaRecetas(int idLista, TreeSet<ProductoLista> p){
+        if(productosLista.containsKey(idLista)){
+            for(ProductoLista productoLista: getProductosListaLista(idLista)){
+                for(ProductoLista productoLista1: p){
+                    if(productoLista.getId()==productoLista1.getId())
+                        productoLista.sumarUnidades(productoLista1.getUnidades());
+                }
+            }
+            productosLista.get(idLista).addAll(p);
+        }else{
+            String nombreLista="";
+            for(Lista l:listas){
+                if(l.getId()==idLista){
+                    nombreLista=l.getTitulo();
+                }
+            }
+            for(ProductoLista pro:p){
+                Cambios.getInstance().añadirCambioTipoProducto(pro.getId(),"add",idLista,pro.getUnidades(),pro.getCadena(),pro.getReceta(),nombreLista);
+            }
             productosLista.put(idLista,p);
         }
     }
@@ -207,30 +251,53 @@ public class Singleton {
 
     public TreeSet<ProductoLista> getProductosListaSeleccionados(){
         TreeSet<ProductoLista> seleccionados=new TreeSet<>();
-        if(productosLista.containsKey(Singleton.getInstance().getIdListaSeleccionada()))
-            for(ProductoLista p:getProductosListaLista(idListaSeleccionada)){
+        if(Singleton.getInstance().getIdListaSeleccionada()!=0){
+            if(productosLista.containsKey(Singleton.getInstance().getIdListaSeleccionada()))
+                for(ProductoLista p:getProductosListaLista(idListaSeleccionada)){
+                    if(p.isSeleccionado())seleccionados.add(p);
+                }
+        }else{
+            for(ProductoLista p:despensa){
                 if(p.isSeleccionado())seleccionados.add(p);
             }
+        }
+
         return seleccionados;
     }
 
     public boolean hayProductosListaSeleccionados(){
         boolean cierto=false;
-        if(productosLista.containsKey(Singleton.getInstance().getIdListaSeleccionada()))
-            for(ProductoLista p:getProductosListaLista(Singleton.getInstance().getIdListaSeleccionada())){
+        if(Singleton.getInstance().getIdListaSeleccionada()!=0) {
+            if(productosLista.containsKey(Singleton.getInstance().getIdListaSeleccionada()))
+                for(ProductoLista p:getProductosListaLista(Singleton.getInstance().getIdListaSeleccionada())){
+                    if(p.isSeleccionado())cierto=true;
+                }
+        }else{
+            for(ProductoLista p:despensa){
                 if(p.isSeleccionado())cierto=true;
             }
+        }
+
         return cierto;
     }
 
     public void borrarProductosSeleccionados() {
-        if (productosLista.containsKey(Singleton.getInstance().getIdListaSeleccionada())){
-            Iterator iterator=getProductosListaLista(Singleton.getInstance().getIdListaSeleccionada()).iterator();
-            while (iterator.hasNext()){
+        if(idListaSeleccionada!=0){
+            if (productosLista.containsKey(Singleton.getInstance().getIdListaSeleccionada())){
+                Iterator iterator=getProductosListaLista(Singleton.getInstance().getIdListaSeleccionada()).iterator();
+                while (iterator.hasNext()){
+                    ProductoLista pro=(ProductoLista)iterator.next();
+                    if(pro.isSeleccionado())iterator.remove();
+                }
+            }
+        }else{
+            Iterator iterator=despensa.iterator();
+            while(iterator.hasNext()){
                 ProductoLista pro=(ProductoLista)iterator.next();
                 if(pro.isSeleccionado())iterator.remove();
             }
         }
+
     }
 
     public boolean existenRecetas(){
@@ -284,8 +351,14 @@ public class Singleton {
     }
 
     public void limpiarProductosSeleccionados() {
-        for(ProductoLista p: getProductosListaLista(idListaSeleccionada)){
-            p.setSeleccionado(false);
+        if(idListaSeleccionada==0){
+            for(ProductoLista p:despensa){
+                p.setSeleccionado(false);
+            }
+        }else{
+            for(ProductoLista p: getProductosListaLista(idListaSeleccionada)){
+                p.setSeleccionado(false);
+            }
         }
     }
 

@@ -9,7 +9,7 @@ public class Receta implements Comparable{
     private String descripcion;
     private String preparacion;
     private String url;
-    private TreeSet<Producto> ingredientes;
+    private TreeSet<ProductoLista> ingredientes;
 
     public Receta(int id, String nombre, String descripcion, String preparacion, String url) {
         this.id = id;
@@ -19,7 +19,7 @@ public class Receta implements Comparable{
         this.url = url;
     }
 
-    public Receta(int id, String nombre, String descripcion, String preparacion, String url,TreeSet<Producto> ingredientes ) {
+    public Receta(int id, String nombre, String descripcion, String preparacion, String url,TreeSet<ProductoLista> ingredientes ) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -34,11 +34,11 @@ public class Receta implements Comparable{
         this.url=urlImagen;
     }
 
-    public TreeSet<Producto> getIngredientes() {
+    public TreeSet<ProductoLista> getIngredientes() {
         return ingredientes;
     }
 
-    public void setIngredientes(TreeSet<Producto> ingredientes) {
+    public void setIngredientes(TreeSet<ProductoLista> ingredientes) {
         this.ingredientes = ingredientes;
     }
 

@@ -39,6 +39,7 @@ import com.example.appcompra.utils.Peticion;
 import com.example.appcompra.utils.QueryUtils;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +60,7 @@ public class ProductosFragment extends Fragment {
     protected Spinner listasSpinner;
     protected ArrayList<Integer> idListas;
     protected EditText cantidadEditText;
+    protected String nombreListaSeleccionada;
 
     @Nullable
     @Override
@@ -93,6 +95,10 @@ public class ProductosFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Singleton.getInstance().setIdListaSeleccionada(idListas.get(position));
+                for(Lista l:Singleton.getInstance().getListas()){
+                    if(l.getId()==Singleton.getInstance().getIdListaSeleccionada())
+                        nombreListaSeleccionada=l.getTitulo();
+                }
             }
 
             @Override
@@ -130,7 +136,7 @@ public class ProductosFragment extends Fragment {
                 for (Map.Entry<Integer, TreeSet<Producto>> entry : Singleton.getInstance().getProductosCategoria().entrySet()) {
                     for (Producto p: entry.getValue()) {
                         if(p.isSeleccionado())
-                            productosSeleccionados.add(new ProductoLista(p.getId(),p.getNombre(),1,null,null,false,p.getUrl(),null,null));
+                            productosSeleccionados.add(new ProductoLista(p.getId(),p.getNombre(),1,0,0,false,p.getUrl(),"null","null"));
                     }
                 }
                 for(ProductoLista p:productosSeleccionados){
@@ -139,7 +145,7 @@ public class ProductosFragment extends Fragment {
                 int idListaSeleccionada=Singleton.getInstance().getIdListaSeleccionada();
 
                 for(ProductoLista p: productosSeleccionados) {
-                    Cambios.getInstance().añadirCambioTipoProducto(p.getId(),"add",idListaSeleccionada,Integer.parseInt(cantidadEditText.getText().toString()),null,null);
+                    Cambios.getInstance().añadirCambioTipoProducto(p.getId(),"add",idListaSeleccionada,Integer.parseInt(cantidadEditText.getText().toString()),0,0,nombreListaSeleccionada);
                 }
 
                 Singleton.getInstance().añadirProductosLista(idListaSeleccionada,productosSeleccionados);
@@ -156,6 +162,7 @@ public class ProductosFragment extends Fragment {
         adapter=new ProductoAdapter();
         if(!Singleton.getInstance().existenCategorias())
             Singleton.getInstance().enviarPeticion(new Peticion(Constants.CATEGORIAS_PETICION,QueryUtils.getUsuario().getId(),3));
+
         return view;
     }
     private void updateSpinnerCategorias(TreeSet<Categoria> c) {
@@ -180,8 +187,14 @@ public class ProductosFragment extends Fragment {
     }
 
     private void updateSpinnerListas(TreeSet<Lista> l) {
+        TreeSet<Lista> listasPermisos=new TreeSet<>();
+        listasPermisos.addAll(l);
+        Iterator iterator=listasPermisos.iterator();
+        while (iterator.hasNext()) {
+            if(((Lista)iterator.next()).getRol().toLowerCase().equals("espectador"))iterator.remove();
+        }
+        ArrayList<Lista> li=new ArrayList<>(listasPermisos);
         List<String> valoresSpinner=new ArrayList<>();
-        ArrayList<Lista> li=new ArrayList<>(l);
         idListas.clear();
         valoresSpinner.add("Despensa");
         idListas.add(0);
@@ -218,6 +231,11 @@ public class ProductosFragment extends Fragment {
 
     public void onResume() {
         super.onResume();
+        if(Singleton.getInstance().existenNotificaciones())
+            Log.e("not",Singleton.getInstance().mostrarNotificaciones());
+        if(Cambios.getInstance().existenCambios()){
+            Singleton.getInstance().enviarPeticion(new Peticion(Constants.ENVIAR_NOTIFICACIONES,QueryUtils.getUsuario().getId(),Cambios.getInstance().getCambiosString(),1));
+        }
         updateSpinnerListas(Singleton.getInstance().getListas());
         idCategoria=Singleton.getInstance().getPosicionSpinnerCategorias()+1;
         ((MainActivity)getActivity()).getCategoriaViewModel().getCategorias().observe(getActivity(),new Observer<TreeSet<Categoria>>(){
@@ -233,6 +251,13 @@ public class ProductosFragment extends Fragment {
             public void onChanged(@Nullable TreeSet<Producto> p) {
             if(p!=null)
                 updateUI(p);
+            }
+        });
+        ((MainActivity) getActivity()).getListasViewModel().getListas().observe(getActivity(), new Observer<TreeSet<Lista>>() {
+            @Override
+            public void onChanged(@Nullable TreeSet<Lista> l) {
+                if(l!=null)
+                    updateSpinnerListas(l);
             }
         });
     }

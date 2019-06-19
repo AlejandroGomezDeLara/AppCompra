@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView
-android:layout_width="94dp"
+android:layout_width="match_parent"
 android:layout_height="98dp"
 xmlns:app="http://schemas.android.com/apk/res-auto"
 android:id="@+id/item_row_cardView"
@@ -8,7 +8,7 @@ android:orientation="horizontal"
 app:cardCornerRadius="10dp"
 xmlns:android="http://schemas.android.com/apk/res/android"
 app:cardBackgroundColor="#fff"
-android:layout_marginHorizontal="4dp"
+android:layout_marginHorizontal="2dp"
     android:layout_marginBottom="4dp"
     >
 <RelativeLayout

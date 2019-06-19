@@ -46,7 +46,7 @@
                 android:layout_centerVertical="true"
                 android:textColor="@color/naranjita"
                 android:text="Añade productos a la despensa!"
-                android:textSize="22dp"
+                android:textSize="20dp"
                 />
             <Button
                 android:id="@+id/añadir_boton_centro"
@@ -58,13 +58,32 @@
                 android:layout_centerInParent="true"
                 android:padding="8dp"
                 android:background="@drawable/shape_naranja"
+                android:layout_marginBottom="20dp"
                 />
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerView"
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/swipeRefreshLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-
-            </android.support.v7.widget.RecyclerView>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                </android.support.v7.widget.RecyclerView>
+            </android.support.v4.widget.SwipeRefreshLayout>
+            <ImageView
+                android:visibility="gone"
+                android:layout_margin="22dp"
+                android:id="@+id/eliminar_boton"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:src="@drawable/ic_delete_black_24dp"
+                android:textAlignment="center"
+                android:tint="@color/backgroundColor"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginHorizontal="22dp"
+                android:background="@drawable/shape_naranja"
+                />
             <Button
                 android:id="@+id/añadir_boton"
                 android:layout_width="52dp"

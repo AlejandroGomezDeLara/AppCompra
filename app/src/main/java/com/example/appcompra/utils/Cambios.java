@@ -43,17 +43,19 @@ public class Cambios{
         this.todosCambios=new JSONObject();
     }
 
-    public void añadirCambioTipoProducto(int id,String operacion,int idLista,int unidades,String cadena,String receta) {
+    public void añadirCambioTipoProducto(int id,String operacion,int idLista,int unidades,int cadena,int receta,String nombreLista) {
         JSONObject o=new JSONObject();
         boolean existe=false;
         try{
             o.put("id",id);
             o.put("idLista",idLista);
+            o.put("nombreLista",nombreLista);
             o.put("operacion",operacion);
             o.put("unidades",unidades);
             o.put("cadena",cadena);
             o.put("receta",receta);
             JSONObject ob;
+
             for (int i=0;i<cambiosTP.length();i++) {
                 ob = cambiosTP.getJSONObject(i);
                 if(ob.toString().equals(o.toString())){
@@ -68,12 +70,13 @@ public class Cambios{
             cambiosTP.put(o);
     }
 
-    public void añadirCambioProductoComercial(int id,String operacion,int idLista,int unidades,String cadena,String receta,String marca){
+    public void añadirCambioProductoComercial(int id,String operacion,int idLista,int unidades,int cadena,int receta,String marca,String nombreLista){
         JSONObject o=new JSONObject();
         boolean existe=false;
         try {
             o.put("id",id);
             o.put("idLista",idLista);
+            o.put("nombreLista",nombreLista);
             o.put("operacion",operacion);
             o.put("unidades",unidades);
             o.put("cadena",cadena);

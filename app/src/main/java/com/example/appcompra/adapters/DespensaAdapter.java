@@ -69,30 +69,26 @@ public class DespensaAdapter extends RecyclerView.Adapter<DespensaAdapter.ViewHo
         nombre=nombre.substring(0,1).toUpperCase() + nombre.substring(1);
         viewHolder.nombre.setText(corregirNombre(nombre));
         viewHolder.unidades.setText(producto.getUnidades()+" u");
-
+        for (Lista l : Singleton.getInstance().getListas()) {
+            if (l.getId() == Singleton.getInstance().getIdListaSeleccionada())
+                li = l;
+        }
+        final Lista finalLi = li;
         if(producto.getUrl()!=null)
             Picasso.get().load(producto.getUrl()).into(viewHolder.imagen);
-        if(producto.getCadena()==null){
+        if(producto.getCadena()==0){
             viewHolder.imagen.setColorFilter(ContextCompat.getColor(context, R.color.white));
         }
         if(Singleton.getInstance().getIdListaSeleccionada()==0){
-            viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context,R.drawable.gradient));
-        }else{
-
-            for(Lista l:Singleton.getInstance().getListas()){
-                if(l.getId()==Singleton.getInstance().getIdListaSeleccionada())
-                    li=l;
-            }
-
-            final Lista finalLi = li;
-
-            if(finalLi !=null) {
+                viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context,R.drawable.gradient));
+        }else {
+            if (finalLi != null) {
                 Log.e("xd", "cambiado");
-                if(producto.isComprado()){
+                if (producto.isComprado()) {
                     viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_comprado));
-                    viewHolder.nombre.setText(producto.getNombre()+" (Comprado)");
+                    viewHolder.nombre.setText(producto.getNombre() + " (Comprado)");
                     viewHolder.nombre.setTypeface(null, Typeface.ITALIC);
-                }else {
+                } else {
                     switch (finalLi.getRol().toLowerCase()) {
                         case "administrador":
                             viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_lista_admin));
@@ -105,38 +101,43 @@ public class DespensaAdapter extends RecyclerView.Adapter<DespensaAdapter.ViewHo
                             break;
                     }
                 }
-                viewHolder.linearProducto.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        producto.setSeleccionado(!producto.isSeleccionado());
-                        if (producto.isSeleccionado()) {
-                            viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.producto_seleccionado));
-                        } else {
-                            if(producto.isComprado()){
-                                viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_comprado));
-                                viewHolder.nombre.setText(producto.getNombre()+" (Comprado)");
-                                viewHolder.nombre.setTypeface(null, Typeface.ITALIC);
-                            }else {
-                                switch (finalLi.getRol().toLowerCase()) {
-                                    case "administrador":
-                                        viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_lista_admin));
-                                        break;
-                                    case "participante":
-                                        viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_lista_participante));
-                                        break;
-                                    case "espectador":
-                                        viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_lista_espectador));
-                                        break;
-                                }
-                            }
-                        }
-                        listener.onSeleccionarLista();
-                    }
-                });
             }
         }
 
+        viewHolder.linearProducto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                producto.setSeleccionado(!producto.isSeleccionado());
+                listener.onSeleccionarLista();
+                if (producto.isSeleccionado()) {
+                    viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.producto_seleccionado));
+                } else {
+                    if(Singleton.getInstance().getIdListaSeleccionada()!=0){
+                        if(producto.isComprado()){
+                            viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_comprado));
+                            viewHolder.nombre.setText(producto.getNombre()+" (Comprado)");
+                            viewHolder.nombre.setTypeface(null, Typeface.ITALIC);
+                        }else {
+                            switch (finalLi.getRol().toLowerCase()) {
+                                case "administrador":
+                                    viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_lista_admin));
+                                    break;
+                                case "participante":
+                                    viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_lista_participante));
+                                    break;
+                                case "espectador":
+                                    viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_lista_espectador));
+                                    break;
+                            }
+                        }
+                    }else{
+                        viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient));
+                    }
+                }
+            }
+        });
     }
+
 
 
     @Override

@@ -17,8 +17,12 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@drawable/gradient"
             app:popupTheme="@style/AppTheme.PopupOverlay">
-            <LinearLayout
+            <RelativeLayout
                 android:background="?android:attr/selectableItemBackground"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+            <LinearLayout
                 android:id="@+id/linearToolbar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -42,6 +46,17 @@
                 android:text="Subtitulo"
                 android:visibility="gone"/>
             </LinearLayout>
+                <ImageView
+                    android:visibility="gone"
+                    android:id="@+id/compartirReceta"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="22dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/share"
+                    android:tint="@color/white"/>
+            </RelativeLayout>
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>

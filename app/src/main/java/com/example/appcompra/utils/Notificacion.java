@@ -5,7 +5,7 @@ public class Notificacion {
     private String tipoNotificacion;
     private String operacion;
     private String rol;
-    private int idLista;
+    private String nombreLista;
 
     public Notificacion() {
     }
@@ -23,12 +23,20 @@ public class Notificacion {
         this.rol = rol;
     }
 
-    public Notificacion(String autor, String tipoNotificacion, String operacion, String rol, int idLista) {
+    public Notificacion(String autor, String tipoNotificacion, String operacion, String rol,String nombreLista) {
         this.autor = autor;
         this.tipoNotificacion = tipoNotificacion;
         this.operacion = operacion;
         this.rol = rol;
-        this.idLista = idLista;
+        this.nombreLista=nombreLista;
+    }
+
+    public String getNombreLista() {
+        return nombreLista;
+    }
+
+    public void setNombreLista(String nombreLista) {
+        this.nombreLista = nombreLista;
     }
 
     public String getAutor() {
@@ -63,15 +71,7 @@ public class Notificacion {
         this.rol = rol;
     }
 
-    public int getIdLista() {
-        return idLista;
-    }
-
-    public void setIdLista(int idLista) {
-        this.idLista = idLista;
-    }
-
     public String stringNotificacion() {
-        return "autor: "+autor+" tipo de notificacion "+tipoNotificacion+" operacion "+operacion+" rol "+rol+" lista "+idLista;
+        return "autor: "+autor+" tipo de notificacion "+tipoNotificacion+" operacion "+operacion+" rol "+rol+" lista "+nombreLista;
     }
 }

@@ -144,8 +144,8 @@ public class QueryUtils {
         String nombre;
         String urlImagen;
         String marca;
-        String receta;
-        String cadena;
+        int receta;
+        int cadena;
         String cantidad;
         int unidades;
         boolean comprado;
@@ -162,11 +162,11 @@ public class QueryUtils {
                 productoActual=tipos.getJSONObject(i);
                 id=productoActual.getInt("id");
                 nombre=productoActual.getString("nombre");
-                receta=productoActual.getString("receta");
+                receta=productoActual.getInt("receta");
                 unidades=productoActual.getInt("unidades");
                 comprado=productoActual.getBoolean("comprado");
                 urlImagen=productoActual.getString("urlimagen");
-                ProductoLista p=new ProductoLista(id,nombre,unidades,receta,null,comprado,urlImagen,null,null);
+                ProductoLista p=new ProductoLista(id,nombre,unidades,receta,0,comprado,urlImagen,null,null);
                 productos.add(p);
             }
 
@@ -176,8 +176,8 @@ public class QueryUtils {
                 nombre=productoActual.getString("nombre");
                 cantidad=productoActual.getString("cantidad");
                 unidades=productoActual.getInt("unidades");
-                receta=productoActual.getString("receta");
-                cadena=productoActual.getString("cadena");
+                receta=productoActual.getInt("receta");
+                cadena=productoActual.getInt("cadena");
                 comprado=productoActual.getBoolean("comprado");
                 urlImagen=productoActual.getString("urlimagen");
                 marca=productoActual.getString("marca");
@@ -199,8 +199,7 @@ public class QueryUtils {
         String tipoNotificacion;
         String operacion;
         String rol="";
-        int idLista;
-
+        String nombreLista;
         try{
             JSONObject raiz=new JSONObject(json);
             JSONArray data=raiz.getJSONArray("notificaciones");
@@ -219,9 +218,8 @@ public class QueryUtils {
                 }else{
                     tipoNotificacion="listas";
                 }
-
-                idLista=notificacionActual.getInt("idLista");
-                Notificacion n=new Notificacion(autor,tipoNotificacion,operacion,rol,idLista);
+                nombreLista=notificacionActual.getString("nombreLista");
+                Notificacion n=new Notificacion(autor,tipoNotificacion,operacion,rol,nombreLista);
                 if(!autor.equals(QueryUtils.getUsuario().getNombre()))
                     notificaciones.add(n);
             }
@@ -308,11 +306,11 @@ public class QueryUtils {
             preparacion=raiz.getString("preparacion");
             descripcion=raiz.getString("descripcion");
             urlImagen=raiz.getString("url");
-            TreeSet<Producto> ingredientes=new TreeSet<>();
+            TreeSet<ProductoLista> ingredientes=new TreeSet<>();
             JSONArray ing=raiz.getJSONArray("ingredientes");
             for(int j=0;j<ing.length();j++){
                 JSONObject ingre=ing.getJSONObject(j);
-                TipoProducto tp=new TipoProducto(ingre.getInt("id"),ingre.getString("nombre"),ingre.getString("urlimagen"));
+                ProductoLista tp=new ProductoLista(ingre.getInt("id"),ingre.getString("nombre"),1,id,0,false,ingre.getString("urlimagen"),"null","");
                 ingredientes.add(tp);
             }
             r=new Receta(id,nombre,descripcion,preparacion,urlImagen);

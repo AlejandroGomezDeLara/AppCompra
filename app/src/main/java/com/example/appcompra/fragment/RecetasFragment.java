@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,6 +30,7 @@ import com.example.appcompra.adapters.RecetaAdapter;
 import com.example.appcompra.clases.Categoria;
 import com.example.appcompra.clases.Receta;
 import com.example.appcompra.clases.Singleton;
+import com.example.appcompra.utils.Cambios;
 import com.example.appcompra.utils.Peticion;
 import com.example.appcompra.utils.QueryUtils;
 
@@ -115,6 +117,11 @@ public class RecetasFragment extends Fragment {
 
     public void onResume() {
         super.onResume();
+        if(Singleton.getInstance().existenNotificaciones())
+            Log.e("not",Singleton.getInstance().mostrarNotificaciones());
+        if(Cambios.getInstance().existenCambios()){
+            Singleton.getInstance().enviarPeticion(new Peticion(Constants.ENVIAR_NOTIFICACIONES,QueryUtils.getUsuario().getId(),Cambios.getInstance().getCambiosString(),1));
+        }
         ((MainActivity)getActivity()).getCategoriaViewModel().getCategoriasRecetas().observe(getActivity(),new Observer<TreeSet<Categoria>>(){
             @Override
             public void onChanged(@Nullable TreeSet<Categoria> c) {

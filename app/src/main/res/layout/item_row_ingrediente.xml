@@ -19,7 +19,7 @@
             android:layout_width="68dp"
             android:layout_height="match_parent"
             android:src="@drawable/ic_productos"
-            android:tint="@color/white"
+            android:tint="@color/colorProducto"
             android:padding="4dp"/>
             <TextView
                 android:id="@+id/nombre_producto"
@@ -32,7 +32,7 @@
                 android:textAlignment="center"
                 android:textSize="14dp"
                 android:textStyle="bold"
-                android:textColor="@color/white"
+                android:textColor="@color/colorProducto"
                 />
     </LinearLayout>
 </LinearLayout>

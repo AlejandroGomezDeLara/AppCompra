@@ -1,13 +1,17 @@
 package com.example.appcompra;
 
 import android.annotation.SuppressLint;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.content.ContextCompat;
@@ -60,6 +64,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +80,7 @@ public class MainActivity extends AppCompatActivity
     ListaAdapter adapter;
     Usuario usuario;
     Button botonNueva;
+    Button logout;
     String nombreNuevaLista;
     Toolbar toolbar;
     TextView titulo;
@@ -95,8 +101,15 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        socket= QueryUtils.getSocket();
+        usuario = (Usuario) getIntent().getExtras().getSerializable("Usuario");
+        QueryUtils.setUsuario(usuario);
+        setContentView(R.layout.activity_main);
+
         try {
+            if(QueryUtils.getSocket()==null)
+                socket=new Socket(InetAddress.getByName(QueryUtils.getIP()),Constants.PORT);
+            else
+                socket=QueryUtils.getSocket();
             in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out=new PrintWriter(socket.getOutputStream(),true);
         } catch (IOException e) {
@@ -112,9 +125,7 @@ public class MainActivity extends AppCompatActivity
         p.setDaemon(true);
         p.start();
 
-        PedirNotificacionesThread p3=new PedirNotificacionesThread();
-        p3.setDaemon(true);
-        p3.start();
+
 
 
         Singleton.getInstance().setHiloComunicacion(p2);
@@ -127,13 +138,19 @@ public class MainActivity extends AppCompatActivity
         this.recetaViewModel= ViewModelProviders.of(this).get(RecetaViewModel.class);
         this.interiorRecetaViewModel= ViewModelProviders.of(this).get(InteriorRecetaViewModel.class);
 
-        usuario = (Usuario) getIntent().getExtras().getSerializable("Usuario");
-        QueryUtils.setUsuario(usuario);
-        setContentView(R.layout.activity_main);
+
 
 
         recyclerView = findViewById(R.id.recyclerView);
         botonNueva = findViewById(R.id.boton_nueva_lista);
+        logout=findViewById(R.id.logout);
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopService(new Intent(getApplicationContext(),NotificationService.class));
+                logout();
+            }
+        });
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         titulo = toolbar.findViewById(R.id.title);
         toolbar.setTitle("");
@@ -301,6 +318,14 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+        listasViewModel.getListas().observe(this, new Observer<TreeSet<Lista>>() {
+            @Override
+            public void onChanged(@Nullable TreeSet<Lista> l) {
+                if(l!=null){
+                    updateUI(l);
+                }
+            }
+        });
     }
 
 
@@ -485,27 +510,20 @@ public class MainActivity extends AppCompatActivity
 
         public synchronized void rellenarColecciones(){
             try {
-                procesarEntrada(in.readLine());
+                String entrada=in.readLine();
+                Log.e("procesar",entrada);
+                procesarEntrada(entrada);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-        public void procesarEntrada(String entrada){
-            String codigoRespuesta=entrada.split(Constants.SEPARATOR)[0];
+        public void procesarEntrada(String entrada) {
+            if (entrada != null){
+                String codigoRespuesta = entrada.split(Constants.SEPARATOR)[0];
             //Esta peticion va a ser directa asi que comprobamos su codigo entre el de las peticiones directas
             try {
                 switch (codigoRespuesta) {
-                    case Constants.NOTIFICACIONES_PROCESADA_CORRECTA:
-                        Log.e("procesar", entrada.split(Constants.SEPARATOR)[1]);
-                        Singleton.getInstance().setNotificaciones(QueryUtils.procesarNotificacion(entrada.split(Constants.SEPARATOR)[1]));
-                        procesarNotificaciones();
-                        break;
-                    case Constants.PEDIR_NOTIFICACIONES_CORRECTA:
-                        Log.e("procesar", entrada.split(Constants.SEPARATOR)[1]);
-                        Singleton.getInstance().setNotificaciones(QueryUtils.procesarNotificacion(entrada.split(Constants.SEPARATOR)[1]));
-                        procesarNotificaciones();
-                        break;
                     case Constants.COMPARTIR_LISTA_CORRECTA:
                         if (entrada.split(Constants.SEPARATOR).length > 1) {
                             Log.e("procesar", "No se ha podido añadir el usuario");
@@ -574,10 +592,11 @@ public class MainActivity extends AppCompatActivity
                         break;
 
                     case Constants.RECETA_ALEATORIA_CORRECTA:
+                        Log.e("procesar", entrada);
 
                         break;
                     case Constants.INTERIOR_RECETA_CORRECTA:
-                        Log.e("procesar",entrada);
+                        Log.e("procesar", entrada);
                         Singleton.getInstance().setRecetaActual(QueryUtils.interiorRecetaJSON(entrada.split(Constants.SEPARATOR)[1]));
                         interiorRecetaViewModel.setReceta(Singleton.getInstance().getRecetaActual());
                         break;
@@ -585,42 +604,13 @@ public class MainActivity extends AppCompatActivity
                         Log.e("procesar", "Codigo de respuesta desconocido");
                         break;
                 }
-            }catch (ArrayIndexOutOfBoundsException e){
-                Log.e("error",e.getMessage());
+            } catch (ArrayIndexOutOfBoundsException e) {
+                Log.e("error", e.getMessage());
             }
             Singleton.getInstance().peticionProcesada();
         }
-
-        public void procesarNotificaciones(){
-            for(Notificacion n:Singleton.getInstance().getNotificaciones()){
-                String nombreLista="";
-                for(Lista l:Singleton.getInstance().getListas()){
-                    if(n.getIdLista()==l.getId())
-                        nombreLista=l.getTitulo();
-                }
-                switch (n.getOperacion()){
-                    case "add":
-                        backgroundToast(getApplicationContext(),n.getAutor()+" ha añadido un productos a la lista "+nombreLista);
-                        break;
-                    case "delete":
-                        backgroundToast(getApplicationContext(),n.getAutor()+" ha borrado un productos en la lista "+nombreLista);
-                        break;
-                    case "mark":
-                        backgroundToast(getApplicationContext(),n.getAutor()+" ha comprado productos de la lista "+nombreLista);
-                        break;
-                    case "unmark":
-                        backgroundToast(getApplicationContext(),n.getAutor()+" ha desmarcado productos de la lista "+nombreLista);
-                        break;
-                }
-                if(n.getTipoNotificacion().equals("usuarios")){
-                    //peticion listas
-                    Singleton.getInstance().enviarPeticion(new Peticion(Constants.LISTAS_PETICION,QueryUtils.getUsuario().getId(),4));
-                }else{
-                    Singleton.getInstance().enviarPeticion(new Peticion(Constants.PRODUCTOS_LISTA_PETICION,QueryUtils.getUsuario().getId(),n.getIdLista()+"",5));
-                    //peticion productos lista
-                }
-            }
         }
+
         public void backgroundToast(final Context context, final String msg) {
             if (context != null && msg != null) {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -633,19 +623,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Singleton.getInstance().enviarPeticion(new Peticion(Constants.LOGOUT,QueryUtils.getUsuario().getId(),20));
-        Log.e("logout","logout enviado");
-    }
-
-    @Override
-    public void finish() {
-        super.finish();
-        Singleton.getInstance().enviarPeticion(new Peticion(Constants.LOGOUT,QueryUtils.getUsuario().getId(),20));
-        Log.e("logout","logout enviado");
-    }
 
     public RecetaViewModel getRecetaViewModel() {
         return recetaViewModel;
@@ -653,5 +630,15 @@ public class MainActivity extends AppCompatActivity
 
     public InteriorRecetaViewModel getInteriorRecetaViewModel() {
         return interiorRecetaViewModel;
+    }
+
+    public void logout(){
+        Singleton.getInstance().enviarPeticion(new Peticion(Constants.LOGOUT,QueryUtils.getUsuario().getId(),20));
+        Singleton.getInstance().getEditor().clear();
+        Singleton.getInstance().getEditor().apply();
+        QueryUtils.setSocket(null);
+        finish();
+        startActivity(new Intent(getApplicationContext(),LoginActivity.class));
+
     }
 }
