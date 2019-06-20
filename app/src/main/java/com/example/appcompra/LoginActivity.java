@@ -75,7 +75,7 @@ public class LoginActivity extends AppCompatActivity implements Serializable,Loa
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
 
-        QueryUtils.setIP("192.168.1.132");
+        //QueryUtils.setIP("192.168.1.132");
 
         if(QueryUtils.getIP()==null)
             pedirIpPopup();

@@ -99,7 +99,7 @@ public class NotificationService extends Service {
 
             Log.e("service","dentro del hilo");
             try {
-                socketComunicacion=new Socket(InetAddress.getByName("192.168.1.132"),Constants.PORTSERVICE);
+                socketComunicacion=new Socket(QueryUtils.getIP(),Constants.PORTSERVICE);
                 Log.e("service","socketAceptado");
                 in = new BufferedReader(new InputStreamReader(socketComunicacion.getInputStream()));
                 out = new PrintWriter(socketComunicacion.getOutputStream(), true);

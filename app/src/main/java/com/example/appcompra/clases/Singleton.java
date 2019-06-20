@@ -133,15 +133,7 @@ public class Singleton {
         }else{
             productosLista.put(idLista,p);
         }
-        String nombreLista="";
-        for(Lista l:listas){
-            if(l.getId()==idLista){
-                nombreLista=l.getTitulo();
-            }
-        }
-        for(ProductoLista pro:p){
-            Cambios.getInstance().añadirCambioTipoProducto(pro.getId(),"add",idLista,pro.getUnidades(),pro.getCadena(),pro.getReceta(),nombreLista);
-        }
+
     }
     public synchronized boolean existenProductosLista(){
         if(productosLista.containsKey(idListaSeleccionada)){
