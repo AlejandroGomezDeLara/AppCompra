@@ -335,10 +335,13 @@ public class InteriorListaFragment extends Fragment {
 
     public void onResume() {
         super.onResume();
+        if(Cambios.getInstance().existenCambios()){
+            Singleton.getInstance().enviarPeticion(new Peticion(Constants.ENVIAR_NOTIFICACIONES,QueryUtils.getUsuario().getId(),Cambios.getInstance().getCambiosString(),1));
+        }
+        Singleton.getInstance().enviarPeticion(new Peticion(Constants.PRODUCTOS_LISTA_PETICION,QueryUtils.getUsuario().getId(),Singleton.getInstance().getIdListaSeleccionada()+"",5));
+
         if(Singleton.getInstance().existenProductosLista()){
             updateUI(Singleton.getInstance().getProductosListaLista(Singleton.getInstance().getIdListaSeleccionada()));
-        }else{
-            Singleton.getInstance().enviarPeticion(new Peticion(Constants.PRODUCTOS_LISTA_PETICION,QueryUtils.getUsuario().getId(),Singleton.getInstance().getIdListaSeleccionada()+"",5));
         }
         ((MainActivity)getActivity()).getProductosListaViewModel().getProductosLista().observe(getActivity(), new Observer<TreeSet<ProductoLista>>() {
             @Override
@@ -353,6 +356,7 @@ public class InteriorListaFragment extends Fragment {
 
     @Override
     public void onPause() {
+
         vincular.setVisibility(View.GONE);
         super.onPause();
     }

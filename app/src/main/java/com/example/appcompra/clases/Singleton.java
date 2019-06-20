@@ -31,6 +31,7 @@ public class Singleton {
     private TreeMap<Integer, TreeSet<ProductoLista>> productosLista;
     private TreeSet<Lista> listas;
     private TreeSet<ProductoLista> despensa;
+    private TreeMap<Integer, TreeSet<Receta>> recetas;
     private int posicionSpinnerCategorias;
     private int posicionSpinnerCategoriasRecetas;
     private int posicionSpinnerListas;
@@ -39,9 +40,10 @@ public class Singleton {
     private int idCategoriaRecetaSeleccionada;
     private int idRecetaSeleccionada;
     private Receta recetaActual;
+    private Oferta ofertaActual;
     private ArrayList<String> roles;
     private static Singleton instance;
-    private TreeMap<Integer, TreeSet<Receta>> recetas;
+    private ArrayList<Oferta> ofertas;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
@@ -74,6 +76,7 @@ public class Singleton {
         categoriasRecetas=new TreeSet<>();
         listas=new TreeSet<>();
         recetaActual=null;
+        ofertas=new ArrayList<>();
         productosCategoria=new TreeMap<>();
         productosLista=new TreeMap<>();
         notificaciones=new LinkedList<>();
@@ -106,6 +109,15 @@ public class Singleton {
             productosLista.get(idLista).addAll(p);
         }else{
             productosLista.put(idLista,p);
+        }
+        String nombreLista="";
+        for(Lista l:listas){
+            if(l.getId()==idLista){
+                nombreLista=l.getTitulo();
+            }
+        }
+        for(ProductoLista pro:p){
+            Cambios.getInstance().añadirCambioTipoProducto(pro.getId(),"add",idLista,pro.getUnidades(),pro.getCadena(),pro.getReceta(),nombreLista);
         }
     }
 
@@ -375,5 +387,21 @@ public class Singleton {
 
     public void setRecetaActual(Receta receta) {
         this.recetaActual=receta;
+    }
+
+    public Oferta getOfertaActual() {
+        return ofertaActual;
+    }
+
+    public void setOfertaActual(Oferta ofertaActual) {
+        this.ofertaActual = ofertaActual;
+    }
+
+    public ArrayList<Oferta> getOfertas() {
+        return ofertas;
+    }
+
+    public void setOfertas(ArrayList<Oferta> ofertas) {
+        this.ofertas = ofertas;
     }
 }

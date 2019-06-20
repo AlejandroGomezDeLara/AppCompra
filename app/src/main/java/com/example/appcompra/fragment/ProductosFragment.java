@@ -128,7 +128,6 @@ public class ProductosFragment extends Fragment {
             }
 
         });
-        //updateEditTextFiltrar(view);
         addProductoListaButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

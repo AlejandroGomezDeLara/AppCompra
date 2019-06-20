@@ -63,7 +63,8 @@ public class InteriorRecetaFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.interior_receta, container, false);
-        Singleton.getInstance().enviarPeticion(new Peticion(Constants.INTERIOR_RECETA_PETICION,QueryUtils.getUsuario().getId(),Singleton.getInstance().getIdRecetaSeleccionada()+"",5));
+        if(Singleton.getInstance().getRecetaActual()==null)
+            Singleton.getInstance().enviarPeticion(new Peticion(Constants.INTERIOR_RECETA_PETICION,QueryUtils.getUsuario().getId(),Singleton.getInstance().getIdRecetaSeleccionada()+"",5));
         recyclerView=view.findViewById(R.id.recyclerView);
         imagen=view.findViewById(R.id.imagen);
         nombre=view.findViewById(R.id.nombre);
@@ -72,6 +73,7 @@ public class InteriorRecetaFragment extends Fragment {
         preparacion_label=view.findViewById(R.id.preparacion_label);
         descripcion_label=view.findViewById(R.id.descripcion_label);
         ingredientes_label=view.findViewById(R.id.ingredientes_label);
+
         idListas=new ArrayList<>();
         Toolbar toolbar= (Toolbar)((AppCompatActivity) getActivity()).findViewById(R.id.toolbar);
         compartir=toolbar.findViewById(R.id.compartirReceta);

@@ -9,6 +9,7 @@ import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.RingtoneManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -35,6 +36,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.LinkedList;
+import java.util.Random;
 
 public class NotificationService extends Service {
     public static final int NOTIFICATION_ID = 234;
@@ -217,8 +219,13 @@ public class NotificationService extends Service {
                 .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_CHILDREN)
                 .setContentIntent(pendingIntent)
                 .setChannelId(CHANNEL_1_ID)
-                .setGroupSummary(true)
+                .setAutoCancel(true)
+                .setGroup("Notificaciones")
+                .setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 })
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setLights(Color.RED, 3000, 3000)
                 .build();
+
         notificationManager.notify(1, notification);
     }
 

@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.example.appcompra.clases.Categoria;
 import com.example.appcompra.clases.Lista;
+import com.example.appcompra.clases.Oferta;
 import com.example.appcompra.clases.Producto;
 import com.example.appcompra.clases.ProductosConID;
 import com.example.appcompra.clases.ProductosListaConID;
@@ -323,4 +324,32 @@ public class QueryUtils {
         return  r;
     }
 
+    public static ArrayList<Oferta> ofertasJSON(String json) {
+        int id;
+        String nombre;
+        String cadena;
+        String urlImagen;
+        String descripcion;
+        ArrayList<Oferta> ofertas=new ArrayList<>();
+        try{
+            JSONObject raiz=new JSONObject(json);
+            JSONArray data=raiz.getJSONArray("ofertas");
+            JSONObject ofertaActual;
+            for (int i=0;i<data.length();i++){
+                ofertaActual=data.getJSONObject(i);
+                id=ofertaActual.getInt("id");
+                nombre=ofertaActual.getString("nombre");
+                cadena=ofertaActual.getString("cadena");
+                urlImagen=ofertaActual.getString("urlImagen");
+                descripcion=ofertaActual.getString("descripcion");
+                Oferta f=new Oferta(id,nombre,cadena,descripcion,urlImagen);
+                ofertas.add(f);
+            }
+
+        }catch (JSONException e){
+            Log.e("JSONException ","JSON mal formado "+e.getMessage());
+        }
+
+        return ofertas;
+    }
 }

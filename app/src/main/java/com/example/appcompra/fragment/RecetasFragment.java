@@ -51,7 +51,7 @@ public class RecetasFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recetas, container, false);
         mEmptyStateTextView=view.findViewById(R.id.emptyStateView);
-        mEmptyStateTextView.setVisibility(View.GONE);
+        mEmptyStateTextView.setVisibility(View.VISIBLE);
         loadingIndicator=view.findViewById(R.id.loading_indicator);
         categoriasSpinner=view.findViewById(R.id.spinner_categorias);
         recetas=new TreeSet<>();

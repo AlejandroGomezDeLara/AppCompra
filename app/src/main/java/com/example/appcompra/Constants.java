@@ -71,6 +71,11 @@ public class Constants {
     public static final String PEDIR_OFERTAS_PETICION="PO";
     public static final String PEDIR_OFERTAS_CORRECTA="POC";
 
+    //Pedir Recomendaciones
+
+    public static final String RECOMENDACIONES_PETICION="RP";
+    public static final String RECOMENDACIONES_CORECTA="RPC";
+
     //Enviar Notificaciones
     public static final String ENVIAR_NOTIFICACIONES="N";
 

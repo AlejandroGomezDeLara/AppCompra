@@ -42,6 +42,8 @@ import com.example.appcompra.adapters.ListaAdapter;
 import com.example.appcompra.adapters.MenuAdapter;
 import com.example.appcompra.clases.Categoria;
 import com.example.appcompra.clases.Lista;
+import com.example.appcompra.clases.Oferta;
+import com.example.appcompra.clases.Producto;
 import com.example.appcompra.clases.ProductosConID;
 import com.example.appcompra.clases.ProductosListaConID;
 import com.example.appcompra.clases.Receta;
@@ -53,6 +55,8 @@ import com.example.appcompra.models.CategoriaViewModel;
 import com.example.appcompra.models.DespensaViewModel;
 import com.example.appcompra.models.InteriorRecetaViewModel;
 import com.example.appcompra.models.ListasViewModel;
+import com.example.appcompra.models.OfertaAleatoriaViewModel;
+import com.example.appcompra.models.OfertasViewModel;
 import com.example.appcompra.models.ProductoViewModel;
 import com.example.appcompra.models.ProductosListaViewModel;
 import com.example.appcompra.models.RecetaAleatoriaViewModel;
@@ -101,6 +105,9 @@ public class MainActivity extends AppCompatActivity
     protected RecetaViewModel recetaViewModel;
     protected InteriorRecetaViewModel interiorRecetaViewModel;
     protected RecetaAleatoriaViewModel recetaAleatoriaViewModel;
+    protected OfertasViewModel ofertasViewModel;
+    protected OfertaAleatoriaViewModel ofertaAleatoriaViewModel;
+
 
 
     @Override
@@ -143,7 +150,8 @@ public class MainActivity extends AppCompatActivity
         this.recetaViewModel= ViewModelProviders.of(this).get(RecetaViewModel.class);
         this.interiorRecetaViewModel= ViewModelProviders.of(this).get(InteriorRecetaViewModel.class);
         this.recetaAleatoriaViewModel= ViewModelProviders.of(this).get(RecetaAleatoriaViewModel.class);
-
+        this.ofertasViewModel= ViewModelProviders.of(this).get(OfertasViewModel.class);
+        this.ofertaAleatoriaViewModel= ViewModelProviders.of(this).get(OfertaAleatoriaViewModel.class);
 
 
         recyclerView = findViewById(R.id.recyclerView);
@@ -600,7 +608,7 @@ public class MainActivity extends AppCompatActivity
                         recetaViewModel.setRecetas(Singleton.getInstance().getRecetasCategoriaSelecionada());
                         int size = recetasCategoriaAleatoria.getRecetasConID().size();
                         if(recetasCategoriaAleatoria.getRecetasConID().size()>0){
-                            int item = new Random().nextInt(size); // In real life, the Random object should be rather more shared than this
+                            int item = new Random().nextInt(size);
                             int i = 0;
                             for(Receta r : recetasCategoriaAleatoria.getRecetasConID())
                             {
@@ -619,6 +627,30 @@ public class MainActivity extends AppCompatActivity
                         Log.e("procesar", entrada);
                         Singleton.getInstance().setRecetaActual(QueryUtils.interiorRecetaJSON(entrada.split(Constants.SEPARATOR)[1]));
                         interiorRecetaViewModel.setReceta(Singleton.getInstance().getRecetaActual());
+                        break;
+                    case Constants.PEDIR_OFERTAS_CORRECTA:
+                        Log.e("procesar", entrada);
+                        Singleton.getInstance().setOfertas(QueryUtils.ofertasJSON(entrada.split(Constants.SEPARATOR)[1]));
+                        ofertasViewModel.setOfertas(Singleton.getInstance().getOfertas());
+                        int tamanio = Singleton.getInstance().getOfertas().size();
+                        if(tamanio>0){
+                            int item = new Random().nextInt(tamanio);
+                            int i = 0;
+                            for(Oferta f : Singleton.getInstance().getOfertas())
+                            {
+                                if (i == item){
+                                    ofertaAleatoriaViewModel.setOfertaAleatoria(f);
+                                    break;
+                                }
+                                i++;
+                            }
+                        }
+                        break;
+                    case Constants.RECOMENDACIONES_CORECTA:
+                        Log.e("procesar",entrada);
+                        ProductosConID productosRecomendados=QueryUtils.tipoProductosJson(entrada.split(Constants.SEPARATOR)[1]);
+                        Singleton.getInstance().añadirNuevosProductosCategoria(productosRecomendados.getId(), productosRecomendados.getProductosConID());
+                        modelProductos.setProductos(productosRecomendados.getProductosConID());
                         break;
                     default:
                         Log.e("procesar", "Codigo de respuesta desconocido");
@@ -654,6 +686,14 @@ public class MainActivity extends AppCompatActivity
 
     public RecetaAleatoriaViewModel getRecetaAleatoriaViewModel() {
         return recetaAleatoriaViewModel;
+    }
+
+    public OfertasViewModel getOfertasViewModel() {
+        return ofertasViewModel;
+    }
+
+    public OfertaAleatoriaViewModel getOfertaAleatoriaViewModel() {
+        return ofertaAleatoriaViewModel;
     }
 
     public void logout(){

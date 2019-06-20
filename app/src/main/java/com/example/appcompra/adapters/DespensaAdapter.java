@@ -88,6 +88,7 @@ public class DespensaAdapter extends RecyclerView.Adapter<DespensaAdapter.ViewHo
                     viewHolder.linearProducto.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_comprado));
                     viewHolder.nombre.setText(producto.getNombre() + " (Comprado)");
                     viewHolder.nombre.setTypeface(null, Typeface.ITALIC);
+                    viewHolder.unidades.setTypeface(null,Typeface.ITALIC);
                 } else {
                     switch (finalLi.getRol().toLowerCase()) {
                         case "administrador":

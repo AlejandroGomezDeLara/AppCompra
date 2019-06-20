@@ -52,6 +52,7 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
         return viewHolder;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onBindViewHolder(@NonNull final ProductoAdapter.ViewHolder viewHolder,final int i) {
         final Producto producto=productos.get(i);
@@ -60,6 +61,15 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
         viewHolder.nombre.setText(corregirNombre(nombre));
         Picasso.get().load(producto.getUrl()).into(viewHolder.imagen);
         if(viewHolder.cardView!=null){
+            if(producto.isSeleccionado()){
+                viewHolder.cardView.setCardBackgroundColor(getContext().getResources().getColor(R.color.colorProducto));
+                viewHolder.nombre.setTextColor(getContext().getResources().getColor(R.color.white));
+                viewHolder.imagen.setImageTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.white)));
+            }else{
+                viewHolder.imagen.setImageTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorProducto)));
+                viewHolder.cardView.setCardBackgroundColor(getContext().getResources().getColor(R.color.white));
+                viewHolder.nombre.setTextColor(getContext().getResources().getColor(R.color.colorProducto));
+            }
             viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
                 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                 @Override
